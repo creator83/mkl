@@ -1,43 +1,40 @@
-#include "MKL17Z4.h"               // Device header
+#include "MKL26Z4.h"             // Device header
 
 #ifndef TACT_H
 #define TACT_H
 
 
-class tact
+class Tact
 {
   //variables
 public:
-  enum mode {LIRC_2, LIRC_8, HIRC, EXT};
   enum divider {div1, div2, div4, div8, div16, div32, div64, div128};
 
  private:
-  static uint8_t cpu_clock;
-  static uint8_t bus_clock;
-  static uint8_t mcgir_clock;
+  static uint16_t cpu_clock;
+  static uint16_t bus_clock;
+  static uint16_t mcgir_clock;
+  static uint16_t mcgpll_clock;
+  static uint16_t mcgfll_clock;
   uint8_t src;
   //functions
 public:
-  tact ();
-  tact (mode m, uint8_t frq);
-  static uint8_t & get_frq_cpu (){return cpu_clock;};
-  static uint8_t & get_frq_bus (){return bus_clock;};
-  static uint8_t & get_frq_mcgir (){return mcgir_clock;};
-  void get_LIRC_8 (divider div_1=div1, divider div_2=div1);
-
-  void get_LIRC_2 (divider div_1=div1, divider div_2=div1);
-
-  void set_LIRC_div (mode m, divider div_1, divider div_2);
+  Tact ();
+  static uint16_t & getFrqCpu (){return cpu_clock;};
+  static uint16_t & getFrqBus (){return bus_clock;};
+  static uint16_t & getFrqMcgir (){return mcgir_clock;};
+  static uint16_t & getFrqMcgpll (){return mcgir_clock;};
+  static uint16_t & getFrqMcgfll (){return mcgir_clock;};
 
 private:
 
-  void init_HIRC ();
+  void initFei ();
+  void initFee ();
+  void initFbi ();
+  void initFbe ();
+  void initPee ();
 
   //===ext_OSC===//
-
-  void get_EXT (uint8_t i);
-
-  void Set_frq (uint8_t frq);
 
 };
 

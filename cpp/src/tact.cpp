@@ -1,115 +1,40 @@
 #include "tact.h"
 
-uint8_t tact::cpu_clock;
-uint8_t tact::bus_clock;
-uint8_t tact::mcgir_clock;
+uint16_t Tact::cpu_clock;
+uint16_t Tact::bus_clock;
+uint16_t Tact::mcgir_clock;
+uint16_t Tact::mcgpll_clock;
+uint16_t Tact::mcgfll_clock;
 
-tact::tact ()
+Tact::Tact ()
 {
-	init_HIRC ();
+	initFee ();
+	cpu_clock = 40960;
+	bus_clock = 20480;
+	mcgir_clock = 32;
 }
 
-void tact::init_HIRC ()
+void Tact::initFee ()
 {
-	/* SIM->CLKDIV1: OUTDIV1=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,OUTDIV4=1,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0 */
-	SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x00) |//set prescaler for system and busclock
-	SIM_CLKDIV1_OUTDIV4(0x01); /* Set system prescalers for busclock */
-	/* MCG->SC: FCRDIV=1 */
-	/* MCG->MC: HIRC=1,LIRC_DIV2=0 */
-	MCG->MC = MCG_MC_HIRCEN_MASK;    /* Enable HIRC clock source*/
-	/* OSC0->CR: ERCLKEN=0,EREFSTEN=0,SC2P=0,SC4P=0,SC8P=0,SC16P=0 */
-	OSC0->CR = 0;         /* Disable External reference */
-	/* MCG->C2: RANGE0=0,HGO0=0,EREFS0=0,IRCS=1 */
-	/* Switch to HIRC Mode */
-	/* MCG->C1: CLKS=0,IRCLKEN=1,IREFSTEN=0 */
-	MCG->C1 = MCG_C1_CLKS(0x00) |
-	MCG_C1_IRCLKEN_MASK;       /* Leave LIRC enabled and select HIRC as a clock source */
-	while((MCG->S & MCG_S_CLKST_MASK) != 0x00u) ; /* Check that the clock source is the HIRC clock. */
+	/* SIM->CLKDIV1: OUTDIV1=0OUTDIV4=2 */
+	SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV4(1); /* Update system prescalers */
 
-	cpu_clock = 48;
-	bus_clock = 24;
-	mcgir_clock = 8;
+	/* Switch to FEI Mode */
+	/* MCG->C1: CLKS=0,FRDIV=0,IREFS=1,IRCLKEN=1,IREFSTEN=0 */
+	MCG->C1 = MCG_C1_IREFS_MASK|MCG_C1_IRCLKEN_MASK;
+
+	/* MCG->C2: LOCRE0=0,RANGE0=0,HGO0=0,EREFS0=0,LP=0,IRCS=0 */
+	MCG->C2 = MCG_C2_FCFTRIM_MASK;
+	/* MCG->C4: DMX32=0,DRST_DRS=1 */
+	MCG->C4 &= ~(MCG_C4_DRST_DRS_MASK|MCG_C4_DMX32_MASK);
+	MCG->C4 |= MCG_C4_DRST_DRS(1);
+
+	//=== Use FLL ===//
+	MCG->C5 = 0;
+	MCG->C6 = 0;
+
+	while((MCG->S & MCG_S_IREFST_MASK) == 0x00U);
+
+	while((MCG->S & MCG_S_CLKST_MASK) != 0) ;
 }
 
-void tact::get_LIRC_8 (divider div_1, divider div_2)
-{
-	SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x00) |//set prescaler for system and busclock
-	SIM_CLKDIV1_OUTDIV4(0x01); /* Set system prescalers for busclock */
-	/* MCG->SC: FCRDIV=1 */
-	/* MCG->MC: HIRC=1,LIRC_DIV2=0 */
-
-	// Enable HIRC clock source
-	MCG->MC = MCG_MC_HIRCEN_MASK;
-
-	//select HIRC as a clock source
-	MCG->C1 = MCG_C1_CLKS(0x00);
-
-	// Check that the clock source is the HIRC clock
-	while((MCG->S & MCG_S_CLKST_MASK) != 0x00u) ;
-
-	//Turn on LIRC8
-	MCG->C2 = MCG_C2_IRCS_MASK;
-	MCG->SC &= ~MCG_SC_FCRDIV_MASK;       /* Cler LIRC1 divider */
-	MCG->SC |= MCG_SC_FCRDIV(div_1);	  /* Set LIRC1 divider */
-	MCG->MC &= ~MCG_MC_LIRC_DIV2_MASK;	  /* Cler LIRC2 divider */
-	MCG->MC |= MCG_MC_LIRC_DIV2(div_2);   /* Set LIRC2 divider */
-	SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x00) |
-	SIM_CLKDIV1_OUTDIV4(0x00); /* Set system prescalers */
-	OSC0->CR = 0;         /* Disable External reference */
-
-	//Select LIRC as a clock source
-	MCG->C1 = MCG_C1_CLKS(0x01) |MCG_C1_IRCLKEN_MASK;
-	while((MCG->S & MCG_S_CLKST_MASK) != 0x01) ; /* Check that the clock source is the LIRC clock. */
-	cpu_clock = 8/(1<<div_1);
-	bus_clock = 8/(1<<div_1);
-	mcgir_clock = 8/((1<<div_1)*(1<<div_2));
-}
-
-void tact::get_LIRC_2 (divider div_1, divider div_2)
-{
-	SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x00) |//set prescaler for system and busclock
-	SIM_CLKDIV1_OUTDIV4(0x01); /* Set system prescalers for busclock */
-	/* MCG->SC: FCRDIV=1 */
-	/* MCG->MC: HIRC=1,LIRC_DIV2=0 */
-
-	// Enable HIRC clock source
-	MCG->MC = MCG_MC_HIRCEN_MASK;
-
-	//select HIRC as a clock source
-	MCG->C1 = MCG_C1_CLKS(0x00);
-
-	// Check that the clock source is the HIRC clock
-	while((MCG->S & MCG_S_CLKST_MASK) != 0x00u) ;
-
-	//Turn on LIRC2
-	MCG->C2 &= ~MCG_C2_IRCS_MASK;
-	MCG->SC &= ~MCG_SC_FCRDIV_MASK;       /* Cler LIRC1 divider */
-	MCG->SC |= MCG_SC_FCRDIV(div_1);	  /* Set LIRC1 divider */
-	MCG->MC &= ~MCG_MC_LIRC_DIV2_MASK;	  /* Cler LIRC2 divider */
-	MCG->MC |= MCG_MC_LIRC_DIV2(div_2);   /* Set LIRC2 divider */
-	SIM->CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x00) |
-	SIM_CLKDIV1_OUTDIV4(0x00); /* Set system prescalers */
-	OSC0->CR = 0;         /* Disable External reference */
-
-	//Select LIRC as a clock source
-	MCG->C1 = MCG_C1_CLKS(0x01) |MCG_C1_IRCLKEN_MASK;
-	while((MCG->S & MCG_S_CLKST_MASK) != 0x01) ; /* Check that the clock source is the LIRC clock. */
-	cpu_clock = 2/(1<<div_1);
-	bus_clock = 2/(1<<div_1);
-	mcgir_clock = 2/((1<<div_1)*(1<<div_2));
-
-}
-
-void tact::set_LIRC_div (mode m, divider div_1, divider div_2)
-{
-	//Clear LIRC source
-	MCG->C2 &= ~MCG_C2_IRCS_MASK;
-	//Set LIRC source
-	MCG->C2 |= m << MCG_C2_IRCS_SHIFT;
-	MCG->SC &= ~MCG_SC_FCRDIV_MASK;       /* Cler LIRC1 divider */
-	MCG->SC |= MCG_SC_FCRDIV(div_1);	  /* Set LIRC1 divider */
-	MCG->MC &= ~MCG_MC_LIRC_DIV2_MASK;	  /* Cler LIRC2 divider */
-	MCG->MC |= MCG_MC_LIRC_DIV2(div_2);   /* Set LIRC2 divider */
-	if (m) mcgir_clock = 8/((1<<div_1)*(1<<div_2));
-	else mcgir_clock = 2/((1<<div_1)*(1<<div_2));
-}
