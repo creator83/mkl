@@ -1,5 +1,6 @@
 #include "MKL26Z4.h"
 #include "tact.h"
+#include "pit.h"
 
 #ifndef DELAY_H
 #define DELAY_H

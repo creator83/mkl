@@ -69,3 +69,8 @@ bool Pin::state ()
 {
 	return (GPIO_PDIR_REG(GpioBase[prt])&(1 << pin_));
 }
+
+PORT_MemMapPtr & Pin::getPort ()
+{
+	return PortBase[prt];
+}

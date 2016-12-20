@@ -34,3 +34,5 @@ void Gpio::clearValPort (uint32_t value)
 	GPIO_PCOR_REG(GpioBase[prt])  |= value;
 }
 
+
+

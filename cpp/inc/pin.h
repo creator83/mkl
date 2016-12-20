@@ -26,6 +26,7 @@ public:
 	void clear ();
 	void togle ();
 	bool state ();
+	PORT_MemMapPtr & getPort ();
 };
 
 #endif

@@ -2,17 +2,17 @@
 #include "gpio.h"
 #include "pin.h"
 #include "port.h"
+#include "delay.h"
 
 const char ledPin = 16;
 
 int main ()
 {
 	Pin led (Gpio::Port::A, ledPin);
-	led.set();
-	led.togle();
 
 	while (1)
 	{
-
+		led.togle();
+		delay_ms(1000);
 	}
 }
