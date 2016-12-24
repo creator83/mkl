@@ -5,13 +5,13 @@
 #include "tact.h"
 #include "delay.h"
 
-Tact frq;
-const char ledPin = 16;
 
+const char ledPin = 16;
 
 int main ()
 {
-	Pin led (Gpio::Port::A, ledPin);
+  Tact frq;
+	Pin led (Gpio::A, ledPin);
 
 	while (1)
 	{
