@@ -109,7 +109,7 @@ void Ssd1289::setCursor (uint16_t x , uint16_t y)
 
 void Ssd1289::drawArr (uint16_t x , uint16_t y, const uint16_t color, uint16_t fon, const uint8_t *arr, uint16_t l, uint16_t width)
 {
-	uint16_t colors [2] = {fon, color};
+	uint16_t colors [2] = {color, fon};
 	for (uint16_t i=0;i<width;++i)
 	{
 		driver.cs.set();
@@ -120,9 +120,10 @@ void Ssd1289::drawArr (uint16_t x , uint16_t y, const uint16_t color, uint16_t f
 		driver.rs.set();
 		for (uint16_t j=0;j<l;++j)
 		{
-			for (uint8_t k=0;k<8;++k)
+			for (int8_t k=7;k>=0;--k)
 			{
-				driver.putData(colors [*arr&(1 << (7-k))]);
+				bool temp = (*arr)&(1 << k);
+				driver.putData(colors [temp]);
 			}
 		++arr;
 		}
