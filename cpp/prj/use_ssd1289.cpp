@@ -12,7 +12,7 @@
 Tact frq;
 
 
-Shape * layer1[]={};
+Shape * layer1[3];
 
 
 extern "C" {

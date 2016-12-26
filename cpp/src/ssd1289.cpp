@@ -107,19 +107,24 @@ void Ssd1289::setCursor (uint16_t x , uint16_t y)
 	driver.wReg(0x004f, y);
 }
 
-void Ssd1289::drawArr (uint16_t x , uint16_t y, const uint16_t color, uint16_t fon, const uint8_t *arr, uint8_t l)
+void Ssd1289::drawArr (uint16_t x , uint16_t y, const uint16_t color, uint16_t fon, const uint8_t *arr, uint16_t l, uint16_t width)
 {
 	uint16_t colors [2] = {fon, color};
-	setCursor(x, y);
-	driver.index(0x0022);
-	driver.cs.clear();
-	//data
-	driver.rs.set();
-	for (uint8_t j=0;j<l;++j, ++arr)
+	for (uint16_t i=0;i<width;++i)
 	{
-		for (uint8_t k=0;k<8;++k)
+		driver.cs.set();
+		setCursor(y-i, x);
+		driver.index(0x0022);
+		driver.cs.clear();
+		//data
+		driver.rs.set();
+		for (uint16_t j=0;j<l;++j)
 		{
-			driver.putData(colors [*arr&(1 << (7-k))]);
+			for (uint8_t k=0;k<8;++k)
+			{
+				driver.putData(colors [*arr&(1 << (7-k))]);
+			}
+		++arr;
 		}
 	}
 	driver.cs.set();
@@ -130,7 +135,7 @@ void Ssd1289::drawPic (uint16_t x , uint16_t y, const uint16_t *arr, uint8_t len
 	for (uint8_t i=0;i<width;++i)
 	{
 		driver.cs.set();
-		setCursor(x, y+i);
+		setCursor(y-i, x);
 		driver.index(0x0022);
 		driver.cs.clear();
 		//data
