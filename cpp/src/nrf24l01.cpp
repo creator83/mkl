@@ -7,6 +7,9 @@ uint8_t Nrf24l01::remoteAddress[5] = {0xC2, 0xC2, 0xC2, 0xC2, 0xC2};
 Nrf24l01::Nrf24l01 (Spi &d)
 {
   driver = d;
+  driver->setCpol(Spi::Cpol::neg);
+  driver->setCpha(Spi::Cpha::first);
+  driver->setDivision(Spi::Division::div4);
   cs.set ();
   chan = 3;
   //checking
