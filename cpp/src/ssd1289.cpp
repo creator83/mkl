@@ -81,7 +81,7 @@ void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 	ptrFont += (ch-s.shift)*s.width*s.height;
 	uint16_t colors [2] = {fon, color};
 
-	for (uint8_t i=0;i<s.height;++i, ++ptrFont)
+	for (uint8_t i=0;i<s.height;++i)
 	{
 		driver.cs.set();
 		setCursor(y-i, x);
