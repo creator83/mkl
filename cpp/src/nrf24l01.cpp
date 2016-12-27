@@ -5,12 +5,17 @@ uint8_t Nrf24l01::selfAddress[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
 uint8_t Nrf24l01::remoteAddress[5] = {0xC2, 0xC2, 0xC2, 0xC2, 0xC2};
 
 Nrf24l01::Nrf24l01 (Spi &d)
+:cs (nrf24Def::csPort, nrf24Def::csPin), ce (nrf24Def::cePort, nrf24Def::cePin),
+irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
 {
-  driver = d;
+  NVIC_EnableIRQ(PORTA_IRQn);
+  driver = &d;
   driver->setCpol(Spi::Cpol::neg);
   driver->setCpha(Spi::Cpha::first);
   driver->setDivision(Spi::Division::div4);
+  driver->setFrameSize(Spi::Size::bit8);
   cs.set ();
+  driver->start();
   chan = 3;
   //checking
   startup = init ();
@@ -40,7 +45,6 @@ Nrf24l01::Nrf24l01 (Spi &d)
   writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
   delay_ms (2);
   rxState ();
-  __enable_interrupt ();
 }
 
 void Nrf24l01::rxState ()
@@ -65,29 +69,27 @@ void Nrf24l01::txState ()
 void Nrf24l01::command (uint8_t com)
 {
   cs.clear ();
-  nop ();
-  spi1.putData(com);
+  while (!driver->flagSptef());
+  driver->putDataDl(com);
 }
 
 void Nrf24l01::comm (uint8_t com)
 {
   cs.clear ();
-  nop ();
-  spi1.putData(com);
-  while (spi1.flagBsy ());
+  while (!driver->flagSptef());
+  driver->putDataDl(com);
   cs.set ();
 }
 
 uint8_t Nrf24l01::readRegister (uint8_t reg)
 {
   command (R_REGISTER|reg);
-  while (!spi1.flagTxe());
-  spi1.putData (NOP); 
-  while (!spi1.flagRxne());
-  uint8_t status = spi1.getData();  
-  while (!spi1.flagRxne());
-  uint8_t reg_val = spi1.getData();
-  while (spi1.flagBsy ());
+  while (!driver->flagSprf());
+  uint8_t status = driver->getDataDl();
+  while (!driver->flagSptef());
+  driver->putDataDl(NOP);
+  while (!driver->flagSprf());
+  uint8_t reg_val = driver->getDataDl();
   cs.set ();
   return reg_val;   
 }
@@ -95,9 +97,8 @@ uint8_t Nrf24l01::readRegister (uint8_t reg)
 uint8_t Nrf24l01::readStatus ()
 {
   command (NOP);
-  uint8_t status = spi1.getData();  
-  while (!spi1.flagRxne());
-  while (spi1.flagBsy ());
+  while (!driver->flagSprf());
+  uint8_t status = driver->getDataDl();
   cs.set ();
   return status;
 }
@@ -105,9 +106,12 @@ uint8_t Nrf24l01::readStatus ()
 void Nrf24l01::writeRegister (uint8_t reg , uint8_t val)
 {
   command (W_REGISTER|reg);
-  while (!spi1.flagTxe());
-  spi1.putData (val); 
-  while (spi1.flagBsy ());
+  while (!driver->flagSprf());
+  uint8_t status = driver->getDataDl();
+  while (!driver->flagSptef());
+  driver->putDataDl (val);
+  //while (!driver->flagSprf());
+  while (!driver->flagSptef());
   cs.set ();
 }
 
@@ -116,11 +120,10 @@ void Nrf24l01::writeRegister (uint8_t reg , uint8_t * val, uint8_t count)
   command (W_REGISTER|reg);
   while (count--)
   {
-    while (!spi1.flagTxe());
-    spi1.putData (*val++); 
-    while (spi1.flagBsy ());
-    cs.set ();
+	while (!driver->flagSptef());
+	driver->putDataDl (*val++);
   }
+  cs.set ();
 }
 
 void Nrf24l01::changeBit (uint8_t reg, uint8_t bit, bool state)
@@ -135,9 +138,9 @@ void Nrf24l01::changeBit (uint8_t reg, uint8_t bit, bool state)
 void Nrf24l01::sendByte (uint8_t val)
 {
   command (W_TX_PAYLOAD);
-  while (!spi1.flagTxe());
-  spi1.putData (val); 
-  while (spi1.flagBsy ());
+  while (!driver->flagSptef());
+  driver->putDataDl (val);
+  while (!driver->flagSptef());
   cs.set ();
   txState ();
   rxState ();
@@ -163,13 +166,12 @@ bool Nrf24l01::init ()
 uint8_t Nrf24l01::receiveByte ()
 {
   command (R_RX_PAYLOAD);
-  while (!spi1.flagRxne());
-  uint8_t status = spi1.getData();
-  while (!spi1.flagTxe());
-  spi1.putData (NOP); 
-  while (!spi1.flagRxne());
-  uint8_t value = spi1.getData();
-  while (spi1.flagBsy ());
+  while (!driver->flagSprf());
+  uint8_t status = driver->getDataDl();
+  while (!driver->flagSptef());
+  driver->putDataDl (NOP);
+  while (!driver->flagSprf());
+  uint8_t value = driver->getDataDl();
   cs.set ();
   return value;
 }
