@@ -78,19 +78,25 @@ void Ssd1289::fillScreen (uint16_t color)
 void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, sFont & s)
 {
 	const uint8_t * ptrFont = s.font;
+	ptrFont += (ch-s.shift)*s.width*s.height;
 	uint16_t colors [2] = {fon, color};
 
 	for (uint8_t i=0;i<s.height;++i, ++ptrFont)
 	{
 		driver.cs.set();
-		setCursor(x, y+i);
+		setCursor(y-i, x);
 		driver.index(0x0022);
 		driver.cs.clear();
 		//data
 		driver.rs.set();
-		for (uint8_t j=0;j<s.width;++j, ++ptrFont)
+		for (uint8_t j=0;j<s.width;++j)
 		{
-			for (uint8_t k=0;k<8;++k) driver.putData(colors [*ptrFont&(1 << (7-k))]);
+			for (uint8_t k=0;k<8;++k)
+			{
+				bool temp = (*ptrFont)&(1 << k);
+				driver.putData(colors [temp]);
+			}
+			++ptrFont;
 		}
 	}
 }
@@ -109,7 +115,7 @@ void Ssd1289::setCursor (uint16_t x , uint16_t y)
 
 void Ssd1289::drawArr (uint16_t x , uint16_t y, const uint16_t color, uint16_t fon, const uint8_t *arr, uint16_t l, uint16_t width)
 {
-	uint16_t colors [2] = {color, fon};
+	uint16_t colors [2] = {fon, color};
 	for (uint16_t i=0;i<width;++i)
 	{
 		driver.cs.set();
