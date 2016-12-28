@@ -17,13 +17,34 @@ Tact frq;
 Horline hLine1 (0, 50, colors16bit::WHITE, 190, 5);
 Horline hLine2 (0, 70, colors16bit::WHITE, 190, 5);
 Verline vline1 (100, 0, colors16bit::WHITE, 200, 5);
-MonoPicture tools (30, 228, colors16bit::GRAY, colors16bit::BLACK, images::support, 12, 96);
-MonoPicture settings (30, 108, colors16bit::GRAY, colors16bit::BLACK, images::settings, 12, 96);
-MonoPicture watch (190, 228, colors16bit::GRAY, colors16bit::BLACK, images::alarm, 12, 96);
-MonoPicture pump (30, 228, colors16bit::GRAY, colors16bit::BLACK, images::pump, 12, 96);
-MonoPicture boiler (190, 228, colors16bit::GRAY, colors16bit::BLACK, images::boiler1, 12, 96);
+//main screen
+MonoPicture tools (30, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::support, 12, 96);
+MonoPicture outside (190, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::outside, 12, 96);
+MonoPicture watch (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::alarm, 12, 96);
+MonoPicture livingSmall (30, 108, colors16bit::GRAY, colors16bit::BLACK, smallImages::living, 5, 40);
+MonoPicture bathSmall (80, 108, colors16bit::GRAY, colors16bit::BLACK, smallImages::bath, 5, 40);
+MonoPicture diningSmall (30, 58, colors16bit::GRAY, colors16bit::BLACK, smallImages::bath, 5, 40);
+
+MonoPicture home (190, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::home, 12, 96);
+MonoPicture back (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::back, 12, 96);
+
+
+//equipment screen
+MonoPicture pump (30, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::pump, 12, 96);
+MonoPicture boiler (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::boiler1, 12, 96);
+MonoPicture fan (30, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::fan, 12, 96);
+
+//rooms screen
+MonoPicture livingBig (30, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::living, 12, 96);
+MonoPicture bathBig (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::bath, 12, 96);
+MonoPicture diningBig (30, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::dining, 12, 96);
+
+
+
+
 List mScreen;
 List equipment;
+List rooms;
 
 extern "C" {
 	void SysTick_Handler();
@@ -42,8 +63,8 @@ union rgb24
 };
 
 
-void mainScreen (Ssd1289 &);
-
+void mainScreenFon (Ssd1289 &);
+void otherScreenFon (Ssd1289 &);
 void screen ();
 void drawScreen (Shape **, uint8_t n);
 
@@ -52,7 +73,7 @@ const uint16_t colors [] = {colors16bit::BLACK, colors16bit::RED, colors16bit::B
  colors16bit::GOLD,  colors16bit::BEGH, colors16bit::NAVY, colors16bit::DARK_GREEN, colors16bit::DARK_CYAN, colors16bit::MAROON,  colors16bit::PURPLE,
 colors16bit::LIGHT_GREY,  colors16bit::DARK_GREY};
 
-List * Screens [] = {&mScreen, &equipment};
+List * Screens [] = {&mScreen, &equipment, &rooms};
 const uint8_t number[] = {
     0xff, 0xff, 0xff,
     0xff, 0xff, 0xff,
@@ -111,11 +132,24 @@ const uint8_t number[] = {
     0xff, 0xff, 0xff};
 int main()
 {
+	//main screen
 	mScreen.addLast(&tools);
-	mScreen.addLast(&settings);
 	mScreen.addLast(&watch);
+	mScreen.addLast(&outside);
+	mScreen.addLast(&livingSmall);
+	mScreen.addLast(&diningSmall);
+	mScreen.addLast(&bathSmall);
+
+	//equipment screen
 	equipment.addLast(&pump);
 	equipment.addLast(&boiler);
+	equipment.addLast(&fan);
+
+	//rooms screen
+	rooms.addLast(&livingBig);
+	rooms.addLast(&diningBig);
+	rooms.addLast(&bathBig);
+
 	Ssd1289 display;
 	Ssd1289::sFont num;
 	num.font = number;
@@ -129,24 +163,22 @@ int main()
 
 	while (1)
 	{
-		for (uint8_t i=0;i<2;++i)
+		for (uint8_t i=0;i<3;++i)
 		{
-			mainScreen (display);
+			if (!i)	mainScreenFon (display);
+			else otherScreenFon(display);
 			Screens [i]->iterate();
 			delay_ms(1000);
 		}
 	}
 }
 
-void mainScreen (Ssd1289 & d)
+void mainScreenFon (Ssd1289 & d)
 {
 	d.fillScreen(colors16bit::SILVER);
 
-
-
 	d.verLine(160, 0, colors16bit::BLACK, 240, 1);
 	d.horLine(0, 120, colors16bit::BLACK, 320, 1);
-
 
 	//gradient
 	d.rectangle(5,5, colors16bit::BLACK,150, 110, 1);
@@ -157,6 +189,30 @@ void mainScreen (Ssd1289 & d)
 	d.horLine(166, 6, colors16bit::GRAY, 149, 109);
 	d.horLine(6, 126, colors16bit::GRAY, 149, 109);
 	d.horLine(166, 126, colors16bit::GRAY, 149, 109);
+}
+
+void otherScreenFon (Ssd1289 &d)
+{
+	d.fillScreen(colors16bit::SILVER);
+
+	d.verLine(106, 0, colors16bit::BLACK, 240, 1);
+	d.verLine(212, 0, colors16bit::BLACK, 240, 1);
+	d.horLine(0, 120, colors16bit::BLACK, 320, 1);
+
+	d.rectangle(5,5, colors16bit::BLACK,96, 110, 1);
+	d.rectangle(111,5, colors16bit::BLACK,96, 110, 1);
+	d.rectangle(218,5, colors16bit::BLACK,96, 110, 1);
+	d.rectangle(5,125, colors16bit::BLACK,96, 110, 1);
+	d.rectangle(111,125, colors16bit::BLACK,96, 110, 1);
+	d.rectangle(218,125, colors16bit::BLACK,96, 110, 1);
+	d.horLine(6, 6, colors16bit::GRAY, 95, 109);
+	d.horLine(112, 6, colors16bit::GRAY, 95, 109);
+	d.horLine(219, 6, colors16bit::GRAY, 95, 109);
+	d.horLine(6, 126, colors16bit::GRAY, 95, 109);
+	d.horLine(112, 126, colors16bit::GRAY, 95, 109);
+	d.horLine(219, 126, colors16bit::GRAY, 95, 109);
+	back.draw();
+	home.draw();
 }
 
 
