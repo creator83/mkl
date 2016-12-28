@@ -21,9 +21,9 @@ Verline vline1 (100, 0, colors16bit::WHITE, 200, 5);
 MonoPicture tools (30, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::support, 12, 96);
 MonoPicture outside (190, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::outside, 12, 96);
 MonoPicture watch (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::alarm, 12, 96);
-MonoPicture livingSmall (30, 108, colors16bit::GRAY, colors16bit::BLACK, smallImages::living, 5, 40);
-MonoPicture bathSmall (80, 108, colors16bit::GRAY, colors16bit::BLACK, smallImages::bath, 5, 40);
-MonoPicture diningSmall (30, 58, colors16bit::GRAY, colors16bit::BLACK, smallImages::bath, 5, 40);
+MonoPicture livingSmall (25, 113, colors16bit::GRAY, colors16bit::BLACK, smallImages::living, 5, 40);
+MonoPicture bathSmall (90, 113, colors16bit::GRAY, colors16bit::BLACK, smallImages::bath, 5, 40);
+MonoPicture diningSmall (25, 53, colors16bit::GRAY, colors16bit::BLACK, smallImages::dining, 5, 40);
 
 MonoPicture home (190, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::home, 12, 96);
 MonoPicture back (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::back, 12, 96);
