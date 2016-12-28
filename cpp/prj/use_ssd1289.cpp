@@ -31,8 +31,9 @@ MonoPicture back (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::ba
 
 //equipment screen
 MonoPicture pump (30, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::pump, 12, 96);
-MonoPicture boiler (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::boiler1, 12, 96);
+MonoPicture boiler (190, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::level, 12, 96);
 MonoPicture fan (30, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::fan, 12, 96);
+MonoPicture floor (190, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::floor, 12, 96);
 
 //rooms screen
 MonoPicture livingBig (30, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::living, 12, 96);
@@ -144,6 +145,7 @@ int main()
 	equipment.addLast(&pump);
 	equipment.addLast(&boiler);
 	equipment.addLast(&fan);
+	equipment.addLast(&floor);
 
 	//rooms screen
 	rooms.addLast(&livingBig);
@@ -158,8 +160,6 @@ int main()
 	num.shift = 0;
 	Shape::driver = &display;
 	display.symbol(50,50,  colors16bit::BLACK, colors16bit::GRAY, 0, num);
-
-
 
 	while (1)
 	{
