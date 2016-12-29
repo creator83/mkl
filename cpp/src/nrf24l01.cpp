@@ -38,8 +38,7 @@ irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
   writeRegister(RX_PW_P1, 32); 
   writeRegister(DYNPD, (1 << DPL_P0) | (1 << DPL_P1)); // включение произвольной длины для каналов 0 и 1
   writeRegister(FEATURE, 0x04); // разрешение произвольной длины пакета данных
-  
-  
+
   //===Standby-1 mode===//
   delay_ms (15);
   writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
