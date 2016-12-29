@@ -18,6 +18,7 @@ Tact frq;
 Horline hLine1 (0, 50, colors16bit::WHITE, 190, 5);
 Horline hLine2 (0, 70, colors16bit::WHITE, 190, 5);
 Verline vline1 (100, 0, colors16bit::WHITE, 200, 5);
+
 //main screen
 MonoPicture tools (30, 228, colors16bit::GRAY, colors16bit::BLACK, bigImages::support, 12, 96);
 MonoPicture outside (190, 108, colors16bit::GRAY, colors16bit::BLACK, bigImages::outside, 12, 96);
@@ -67,8 +68,6 @@ union rgb24
 
 void mainScreenFon (Ssd1289 &);
 void otherScreenFon (Ssd1289 &);
-void screen ();
-void drawScreen (Shape **, uint8_t n);
 
 const uint16_t colors [] = {colors16bit::BLACK, colors16bit::RED, colors16bit::BLUE,  colors16bit::GREEN, colors16bit::CYAN, colors16bit::MAGENTA,  colors16bit::YELLOW, colors16bit::WHITE,
  colors16bit::GRAY, colors16bit::SKY, colors16bit::ORANGE,  colors16bit::PINK, colors16bit::BROWN,colors16bit::VIOLET, colors16bit::SILVER,
