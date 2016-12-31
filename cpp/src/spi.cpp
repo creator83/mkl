@@ -116,5 +116,5 @@ bool Spi::flagSptef ()
 
 bool Spi::flagSprf ()
 {
-	return SPI0->S & SPI_S_SPRF_MASK;
+	return SPI_S_REG(spiAdr[n_spi]) & SPI_S_SPRF_MASK;
 }

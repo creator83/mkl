@@ -13,7 +13,7 @@ const uint8_t channelX = 0xD0;
 namespace xpt2046Def
 {
   //CS
-  const Gpio::Port csPort = Gpio::C;
+  const Gpio::Port csPort = Gpio::E;
   const uint8_t csPin = 4;
   //IRQ
   const Gpio::Port irqPort = Gpio::B;
@@ -34,6 +34,8 @@ public:
 
   Xpt2046 (Spi &);
   void getData ();
+  uint16_t & getX ();
+  uint16_t & getY ();
 
 };
 

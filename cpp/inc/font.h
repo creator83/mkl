@@ -7,6 +7,7 @@
 
 namespace bigNumbers
 {
+//3*55
 const uint8_t numbers[] = {
     0xff, 0xff, 0xff,
     0xff, 0xff, 0xff,
@@ -575,7 +576,7 @@ namespace midlleTimesNewRomanRus
 {
 const uint8_t rus[] = {
 
-		    0xff, 0xc0,
+		    0xff, 0xff,
 		    0xff, 0xc0,
 		    0xff, 0xc0,
 		    0xff, 0xc0,
@@ -1730,8 +1731,8 @@ const uint8_t rus[] = {
 
 
 
-};
 }
+
 
 
 #endif

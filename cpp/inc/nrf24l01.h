@@ -11,10 +11,10 @@
 namespace nrf24Def
 {
   //CE
-  const Gpio::Port cePort = Gpio::C;
-  const uint8_t cePin = 3;
+  const Gpio::Port cePort = Gpio::E;
+  const uint8_t cePin = 0;
   //CS
-  const Gpio::Port csPort = Gpio::C;
+  const Gpio::Port csPort = Gpio::E;
   const uint8_t csPin = 4;
   //IRQ
   const Gpio::Port irqPort = Gpio::B;

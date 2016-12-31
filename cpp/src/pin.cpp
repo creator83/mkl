@@ -76,3 +76,8 @@ PORT_MemMapPtr & Pin::getPort ()
 {
 	return PortBase[prt];
 }
+
+uint8_t & Pin::getPin ()
+{
+	return pin_;
+}

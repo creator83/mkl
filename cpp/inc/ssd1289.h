@@ -40,6 +40,7 @@ public:
 	void fillScreen (uint16_t color);
 	void symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, sFont & s);
 	void string (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const char *str, sFont &f, uint8_t interval);
+	void string (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const char *str, sFont &f, uint16_t n,uint8_t interval);
 	void setCursor (uint16_t x , uint16_t y);
 	void drawArr (uint16_t x , uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t *arr, uint16_t l, uint16_t width);
 	void drawPic (uint16_t x , uint16_t y, const uint16_t *arr, uint8_t length, uint16_t width);

@@ -15,6 +15,7 @@ private:
 	uint8_t pin_;
 //functions
 public:
+	Pin (){}
 	Pin (Port prt, uint8_t p , mux mx);
 	Pin (Port prt, uint8_t p);
 	Pin (Port prt, uint8_t p , PP m);
@@ -27,6 +28,7 @@ public:
 	void togle ();
 	bool state ();
 	PORT_MemMapPtr & getPort ();
+	uint8_t & getPin ();
 };
 
 #endif

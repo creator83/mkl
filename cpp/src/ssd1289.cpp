@@ -78,8 +78,9 @@ void Ssd1289::fillScreen (uint16_t color)
 void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, sFont & s)
 {
 	const uint8_t * ptrFont = s.font;
-	ptrFont += (ch-s.shift)*s.width*s.height;
-	uint16_t colors [2] = {fon, color};
+	uint16_t num = (ch-s.shift)*s.width*s.height;
+	ptrFont += num;
+	uint16_t colors [2] = { color, fon};
 
 	for (uint8_t i=0;i<s.height;++i)
 	{
@@ -91,7 +92,7 @@ void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 		driver.rs.set();
 		for (uint8_t j=0;j<s.width;++j)
 		{
-			for (uint8_t k=0;k<8;++k)
+			for (int8_t k=7;k>=0;--k)
 			{
 				bool temp = (*ptrFont)&(1 << k);
 				driver.putData(colors [temp]);
@@ -103,10 +104,23 @@ void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 
 void Ssd1289::string (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const char *str, sFont &s, uint8_t interval)
 {
-	const uint8_t * ptrFont = s.font;
-	uint16_t colors [2] = {fon, color};
+	uint16_t tempX = x;
+	while (*str)
+	{
+		symbol (tempX, y, color, fon, *str++, s);
+		tempX +=  s.width*8 + interval;
+	}
 }
 
+void Ssd1289::string (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const char *str, sFont &s, uint16_t n, uint8_t interval)
+{
+	uint16_t tempX = x;
+	while (n--)
+	{
+		symbol (tempX, y, color, fon, *str++, s);
+		tempX +=  s.width*8 + interval;
+	}
+}
 void Ssd1289::setCursor (uint16_t x , uint16_t y)
 {
 	driver.wReg(0x004e, x);

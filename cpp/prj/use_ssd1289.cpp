@@ -27,20 +27,20 @@ MonoPicture livingSmall (25, 113, colors16bit::GRAY, colors16bit::BLACK, smallIm
 MonoPicture bathSmall (90, 113, colors16bit::GRAY, colors16bit::BLACK, smallImages::bath, 5, 40);
 MonoPicture diningSmall (25, 53, colors16bit::GRAY, colors16bit::BLACK, smallImages::dining, 5, 40);
 
-MonoPicture home (227, 108, colors16bit::GRAY, colors16bit::BLACK, midlleImages::home, 9, 72);
-MonoPicture back (227, 228, colors16bit::GRAY, colors16bit::BLACK, midlleImages::back, 9, 72);
+MonoPicture home (227, 96, colors16bit::GRAY, colors16bit::BLACK, midlleImages::home, 9, 72);
+MonoPicture back (227, 216, colors16bit::GRAY, colors16bit::BLACK, midlleImages::back, 9, 72);
 
 
 //equipment screen
-MonoPicture pump (14, 228, colors16bit::GRAY, colors16bit::BLACK, midlleImages::pump, 9, 72);
-MonoPicture boiler (120, 228, colors16bit::GRAY, colors16bit::BLACK, midlleImages::level, 9, 72);
-MonoPicture fan (14, 108, colors16bit::GRAY, colors16bit::BLACK, midlleImages::fan, 9, 72);
-MonoPicture floor (120, 108, colors16bit::GRAY, colors16bit::BLACK, midlleImages::floor, 9, 72);
+MonoPicture pump (14, 216, colors16bit::GRAY, colors16bit::BLACK, midlleImages::pump, 9, 72);
+MonoPicture boiler (120, 216, colors16bit::GRAY, colors16bit::BLACK, midlleImages::level, 9, 72);
+MonoPicture fan (14, 96, colors16bit::GRAY, colors16bit::BLACK, midlleImages::fan, 9, 72);
+MonoPicture floor (120, 96, colors16bit::GRAY, colors16bit::BLACK, midlleImages::floor, 9, 72);
 
 //rooms screen
-MonoPicture livingBig (14, 228, colors16bit::GRAY, colors16bit::BLACK, midlleImages::living, 9, 72);
-MonoPicture bathBig (120, 228, colors16bit::GRAY, colors16bit::BLACK, midlleImages::bath, 9, 72);
-MonoPicture diningBig (14, 108, colors16bit::GRAY, colors16bit::BLACK, midlleImages::dining, 9, 72);
+MonoPicture livingBig (14, 216, colors16bit::GRAY, colors16bit::BLACK, midlleImages::living, 9, 72);
+MonoPicture bathBig (120, 216, colors16bit::GRAY, colors16bit::BLACK, midlleImages::bath, 9, 72);
+MonoPicture diningBig (14, 96, colors16bit::GRAY, colors16bit::BLACK, midlleImages::dining, 9, 72);
 
 
 

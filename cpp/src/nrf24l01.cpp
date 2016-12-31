@@ -8,15 +8,16 @@ Nrf24l01::Nrf24l01 (Spi &d)
 :cs (nrf24Def::csPort, nrf24Def::csPin), ce (nrf24Def::cePort, nrf24Def::cePin),
 irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
 {
+  delay_ms (15);
   NVIC_EnableIRQ(PORTA_IRQn);
   driver = &d;
   driver->setCpol(Spi::Cpol::neg);
   driver->setCpha(Spi::Cpha::first);
-  driver->setDivision(Spi::Division::div4);
+  driver->setDivision(Spi::Division::div64);
   driver->setFrameSize(Spi::Size::bit8);
   cs.set ();
   driver->start();
-  chan = 3;
+  /*chan = 3;
   //checking
   startup = init ();
   
@@ -43,7 +44,7 @@ irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
   delay_ms (15);
   writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
   delay_ms (2);
-  rxState ();
+  rxState ();*/
 }
 
 void Nrf24l01::rxState ()
@@ -109,8 +110,8 @@ void Nrf24l01::writeRegister (uint8_t reg , uint8_t val)
   uint8_t status = driver->getDataDl();
   while (!driver->flagSptef());
   driver->putDataDl (val);
-  //while (!driver->flagSprf());
-  while (!driver->flagSptef());
+  while (!driver->flagSprf());
+  //while (!driver->flagSptef());
   cs.set ();
 }
 

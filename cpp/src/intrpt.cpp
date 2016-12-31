@@ -15,3 +15,8 @@ Intrpt::Intrpt (Gpio::Port p, uint8_t pi_, mode m, Gpio::PP f)
 		NVIC_EnableIRQ(PORTC_PORTD_IRQn);
 	}
 }
+
+void Intrpt::clearFlag ()
+{
+	PORT_ISFR_REG(pin_.getPort()) |= 1 << pin_.getPin();
+}
