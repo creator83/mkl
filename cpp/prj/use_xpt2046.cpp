@@ -31,7 +31,6 @@ extern "C" {
 void PORTA_IRQHandler()
 {
 	led.clearFlag();
-
 }
 
 
