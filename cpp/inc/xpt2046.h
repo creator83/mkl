@@ -16,8 +16,8 @@ namespace xpt2046Def
   const Gpio::Port csPort = Gpio::E;
   const uint8_t csPin = 4;
   //IRQ
-  const Gpio::Port irqPort = Gpio::B;
-  const uint8_t irqPin = 5;
+  const Gpio::Port irqPort = Gpio::A;
+  const uint8_t irqPin = 1;
 }
 
 
@@ -36,6 +36,7 @@ public:
   void getData ();
   uint16_t & getX ();
   uint16_t & getY ();
+  void clearFlag ();
 
 };
 

@@ -45,7 +45,7 @@ void List::iterate ()
 	Item * current = nullptr;
 	Item * next = first;
 	uint16_t counter = count;
-
+	function ();
 	while (counter--)
 	{
 		next->object->draw();
@@ -64,5 +64,10 @@ void List::print (uint16_t n)
 		next = next->next;
 	}
 	next->object->draw();
+}
+
+void List::setFunction (void (*f)())
+{
+	function = f;
 }
 

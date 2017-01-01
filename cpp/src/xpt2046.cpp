@@ -76,5 +76,10 @@ uint16_t & Xpt2046::getY ()
 	return y;
 }
 
+void Xpt2046::clearFlag ()
+{
+	irq.clearFlag();
+}
+
 
 
