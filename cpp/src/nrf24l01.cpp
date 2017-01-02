@@ -23,10 +23,15 @@ irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
   driver->start();
   delay_ms (15);
 
+
   writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
   delay_ms (2);
-  /*chan = 3;
-  //checking
+  uint8_t status = readStatus();
+  writeRegister (STATUS, status);
+  comm (FLUSH_TX);
+
+  chan = 3;
+ /* //checking
   startup = init ();*/
   
   //settings register
@@ -65,7 +70,7 @@ void Nrf24l01::rxState ()
 void Nrf24l01::txState ()
 {
   ce.clear ();
-  //writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
+  writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
   ce.set ();
   delay_us(15);
   ce.clear ();
@@ -84,6 +89,8 @@ void Nrf24l01::comm (uint8_t com)
   cs.clear ();
   while (!driver->flagSptef());
   driver->putDataDl(com);
+  while (!driver->flagSprf());
+  uint8_t status = driver->getDataDl();
   cs.set ();
 }
 

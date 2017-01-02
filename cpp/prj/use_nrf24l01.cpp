@@ -47,7 +47,9 @@ extern "C" {
 void PORTC_PORTD_IRQHandler()
 {
 	radio.clearFlag();
-	bin (150,180, radio.readStatus());
+	uint8_t status = radio.readStatus();
+	radio.writeRegister (STATUS, status);
+	bin (150,180, status);
 }
 
 
@@ -81,10 +83,11 @@ int main()
 	//display.drawArr(10, 200, colors16bit::BLACK, colors16bit::SILVER, midlleTimesNewRomanRus::rus, 2,17);
 
 	bin (70,200, radio.readRegister(CONFIG));
+	bin (70,180, radio.readStatus());
 
-	radio.sendByte(0x0F);
 	while (1)
 	{
+		radio.sendByte(0x0F);
 		bin (70,180, radio.readStatus());
 		delay_ms(200);
 
