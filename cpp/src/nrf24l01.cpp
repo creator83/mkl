@@ -9,17 +9,25 @@ Nrf24l01::Nrf24l01 (Spi &d)
 irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
 {
   delay_ms (15);
-  NVIC_EnableIRQ(PORTA_IRQn);
+  NVIC_EnableIRQ(PORTC_PORTD_IRQn);
   driver = &d;
   driver->setCpol(Spi::Cpol::neg);
   driver->setCpha(Spi::Cpha::first);
   driver->setDivision(Spi::Division::div64);
   driver->setFrameSize(Spi::Size::bit8);
+  driver->setMode(Spi::Mode::software);
+  Pin sck (Gpio::Port::E, 17, Gpio::mux::Alt2);
+  Pin mosi (Gpio::Port::E, 18, Gpio::mux::Alt2);
+  Pin miso (Gpio::Port::E, 19, Gpio::mux::Alt2);
   cs.set ();
   driver->start();
+  delay_ms (15);
+
+  writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
+  delay_ms (2);
   /*chan = 3;
   //checking
-  startup = init ();
+  startup = init ();*/
   
   //settings register
   
@@ -41,16 +49,14 @@ irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
   writeRegister(FEATURE, 0x04); // разрешение произвольной длины пакета данных
 
   //===Standby-1 mode===//
-  delay_ms (15);
-  writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
-  delay_ms (2);
-  rxState ();*/
+
+  rxState ();
 }
 
 void Nrf24l01::rxState ()
 {
   //переключение в RX Mode
-  writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC|1 << CRCO| 1 << PRIM_RX));
+  writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC/*|1 << CRCO*/| 1 << PRIM_RX));
   //changeBit (CONFIG, PRIM_RX, 1);
   ce.set();
   delay_us(140);
@@ -59,7 +65,7 @@ void Nrf24l01::rxState ()
 void Nrf24l01::txState ()
 {
   ce.clear ();
-  writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
+  //writeRegister (CONFIG, (1 <<PWR_UP | 1 << EN_CRC));
   ce.set ();
   delay_us(15);
   ce.clear ();
@@ -111,17 +117,21 @@ void Nrf24l01::writeRegister (uint8_t reg , uint8_t val)
   while (!driver->flagSptef());
   driver->putDataDl (val);
   while (!driver->flagSprf());
-  //while (!driver->flagSptef());
+  uint8_t dummy = driver->getDataDl();
   cs.set ();
 }
 
 void Nrf24l01::writeRegister (uint8_t reg , uint8_t * val, uint8_t count)
 {
   command (W_REGISTER|reg);
+  while (!driver->flagSprf());
+  uint8_t status = driver->getDataDl();
   while (count--)
   {
 	while (!driver->flagSptef());
 	driver->putDataDl (*val++);
+	while (!driver->flagSprf());
+	uint8_t dummy = driver->getDataDl();
   }
   cs.set ();
 }
@@ -138,9 +148,12 @@ void Nrf24l01::changeBit (uint8_t reg, uint8_t bit, bool state)
 void Nrf24l01::sendByte (uint8_t val)
 {
   command (W_TX_PAYLOAD);
+  while (!driver->flagSprf());
+  uint8_t status = driver->getDataDl();
   while (!driver->flagSptef());
   driver->putDataDl (val);
-  while (!driver->flagSptef());
+  while (!driver->flagSprf());
+  uint8_t dummy = driver->getDataDl();
   cs.set ();
   txState ();
   rxState ();
@@ -174,6 +187,11 @@ uint8_t Nrf24l01::receiveByte ()
   uint8_t value = driver->getDataDl();
   cs.set ();
   return value;
+}
+
+void Nrf24l01::clearFlag ()
+{
+	irq.clearFlag();
 }
 
 

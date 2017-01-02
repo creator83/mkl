@@ -1,42 +1,38 @@
-#include "MKL17Z4.h"
-#include "gpio.h"
+#include "MKL26Z4.h"
+#include "pin.h"
 #include "tact.h"
 #include "delay.h"
 #include "spi.h"
 
 
-tact frq;
-const char CS=4;
-const char SCK=5;
-const char MOSI=6;
-const char MISO=7;
+Tact frq;
+Spi spi0 (Spi::SPI_N::SPI_1);
 
-//Tact port C
-gpio spi_pin (gpio::C);
-
-
+uint8_t arr [] = {0xc0, 0xfe, 0x07, 0xe0};
 
 int main()
 {
-	spi spi_0 (spi::SPI_0, spi::C, spi::div32);
+	spi0.setMode(Spi::Mode::hardware);
+	Pin cs (Gpio::Port::D, 4, Gpio::mux::Alt2);
+	Pin sck (Gpio::Port::D, 5, Gpio::mux::Alt2);
+	Pin mosi (Gpio::Port::D, 6, Gpio::mux::Alt2);
+	Pin miso (Gpio::Port::D, 7, Gpio::mux::Alt2);
+
+	spi0.setCpha(Spi::Cpha::first);
+	spi0.setCpol(Spi::Cpol::neg);
+	spi0.setDivision(Spi::Division::div32);
+	spi0.setFrameSize(Spi::Size::bit8);
+	spi0.start();
+	SPI1->C3 |= SPI_C3_FIFOMODE_MASK ;
 
   while (1)
   {
-
-	  spi_0.transmit_8(0xF0);
-	  delay_ms (500);
-	  spi_0.transmit_8(0x0F);
-	  delay_ms (500);
-
-<<<<<<< HEAD
-	//===Settings SPI0===//
-	// div=32
-	SPI0->BR |= SPI_BR_SPR(6);
-	SPI0->C2 |= SPI_C2_MODFEN_MASK;
-	SPI0->C1 |= SPI_C1_MSTR_MASK |SPI_C1_SSOE_MASK | SPI_C1_SPE_MASK ;
-=======
->>>>>>> f421c2740bb825a19a056ba5c013110c8570a68d
-
+	  for (uint8_t i=0;i<4;++i)
+	  {
+		  spi0.putDataDl(arr[i]);
+		  while (SPI1->S & SPI_S_TXFULLF_MASK);
+	  }
+	  delay_ms(100);
   }
 }
 

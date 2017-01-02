@@ -15,7 +15,6 @@ struct Item
 	Item * first;
 	Item * last;
 	void (*function)();
-	Ssd1289 * driver;
 	uint16_t count;
 public:
 	List(){count = 0; first = last = nullptr;}
