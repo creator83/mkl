@@ -74,7 +74,7 @@ int main()
 	Pin mosi (Gpio::Port::E, 18, Gpio::mux::Alt2);
 	Pin miso (Gpio::Port::E, 19, Gpio::mux::Alt2);*/
 
-
+	Pin radioIrq (Gpio::Port::D, 1, Gpio::PP::PullUp);
 
 	display.string(10,200, colors16bit::SILVER,colors16bit::BLACK,  "CONFIG", small, 0);
 	display.string(10,180, colors16bit::SILVER,colors16bit::BLACK,  "STATUS", small, 0);
@@ -87,10 +87,16 @@ int main()
 
 	while (1)
 	{
-		radio.sendByte(0x0F);
-		bin (70,180, radio.readStatus());
-		delay_ms(200);
-
+		for (uint8_t i=0;i<0xFF;++i)
+		{
+			radio.writeRegister(W_TX_PAYLOAD, i);
+			radio.txState();
+			while (radioIrq.state());
+			uint8_t b = radio.readStatus();
+			bin (70,180, b);
+			radio.writeRegister(STATUS, b);
+			delay_ms(1000);
+		}
 	}
 }
 

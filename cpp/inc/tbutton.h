@@ -1,26 +1,39 @@
 #include "MKL26Z4.h"                 // Device header
+#include "tgrid.h"
 
 
 
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef TBUTTON_H
+#define TBUTTON_H
 
 class Tbutton
 {
+struct Item
+{
+	uint16_t key;
+	void (*function)();
+	Item * next;
+	Item (uint16_t k, void (*f)(), Item * n = nullptr){key = k; function = f; next = n;}
+};
 //variables
 public:
 private:
   uint16_t Xmin, Ymin, dX, dY, xValue, yValue;
   uint8_t hValue, vValue, result;
-
+  Item * first;
+  Item * last;
+  uint16_t count;
+  Tgrid * grid;
 //func
 public:
-  Tbutton ();
+  Tbutton (Tgrid &);
+  ~Tbutton ();
+  void addButton (uint16_t,  void (*f)());
   void setCount (uint8_t hor, uint8_t ver);
   void calculateTouch (uint16_t x, uint16_t y);
   uint8_t & getResult ();
-  void setshortPressAction (void (*f)());
-  void setlongPressAction (void (*f)());
+private:
+  void searchKey (uint8_t k);
 };
 
 #endif

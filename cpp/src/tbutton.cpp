@@ -1,27 +1,64 @@
 #include "tbutton.h"
 
-Tbutton::Tbutton ()
-:Xmin (300), Ymin (300), dX (3300), dY(3300)
+Tbutton::Tbutton ( Tgrid & g)
+:count (0), first (nullptr), last (nullptr)
 {
+	grid = &g;
 }
 
-void Tbutton::setCount (uint8_t hor, uint8_t ver)
+Tbutton::~Tbutton ()
 {
-	hValue = hor;
-	vValue = ver;
-	xValue = dX/hValue;
-	yValue = dY/vValue;
+	Item * current = nullptr;
+	Item * next = first;
+	while (1)
+	{
+		current = next;
+		next = next->next;
+		delete current;
+	}
+}
+
+void Tbutton::addButton (uint16_t k,  void (*f)())
+{
+	Item * newItem = new Item (k, f);
+	if (last == nullptr)
+	{
+		first = newItem;
+	}
+	else
+	{
+		last->next = newItem;
+	}
+	last = newItem;
+	++count;
 }
 
 void Tbutton::calculateTouch (uint16_t x, uint16_t y)
 {
-	result = (x-Xmin)/xValue;
+	result = x/grid->getXgrid();
 	result <<= 1;
-	uint8_t temp = (y-Ymin)/yValue;
+	uint8_t temp = y/grid->getYgrid();
 	result += temp;
+	searchKey(result);
 }
 
 uint8_t & Tbutton::getResult ()
 {
 	return result;
 }
+
+void Tbutton::searchKey (uint8_t k)
+{
+	Item * next = first;
+	for (uint16_t i=0;i<count;++i)
+	{
+		if (next->key == k)
+		{
+			next->function ();
+			return;
+		}
+		next = next->next;
+	}
+
+}
+

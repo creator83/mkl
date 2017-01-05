@@ -4,7 +4,7 @@
 
 Xpt2046::Xpt2046 (Spi &d)
 :cs(xpt2046Def::csPort, xpt2046Def::csPin), irq (xpt2046Def::irqPort, xpt2046Def::irqPin, Intrpt::mode::fallingEdge),
- x(0), y(0)
+ x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300)
 {
 	driver = &d;
 	NVIC_EnableIRQ(PORTA_IRQn);
@@ -62,8 +62,8 @@ void Xpt2046::getData ()
 	tempY |= driver->getDataDl();
 	tempY >>=3;
 	cs.set();
-	y = tempX;
-	x = 4096 - tempY;
+	y = tempX-Xmin;
+	x = 4096 - tempY-Ymin;
 }
 
 uint16_t & Xpt2046::getX ()
@@ -74,6 +74,16 @@ uint16_t & Xpt2046::getX ()
 uint16_t & Xpt2046::getY ()
 {
 	return y;
+}
+
+uint16_t & Xpt2046::getdX ()
+{
+	return dX;
+}
+
+uint16_t & Xpt2046::getdY ()
+{
+	return dY;
 }
 
 void Xpt2046::clearFlag ()

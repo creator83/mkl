@@ -125,7 +125,7 @@ private:
   mode m;
   Pin cs, ce;
   Spi * driver;
-  Intrpt irq;
+  //Intrpt irq;
   uint8_t chan;
   //functions
 public:

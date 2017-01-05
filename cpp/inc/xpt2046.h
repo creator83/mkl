@@ -25,6 +25,7 @@ class Xpt2046
 {
 //variables
 	uint16_t x, y;
+	uint16_t Xmin, Ymin, dX, dY;
 public:
   Pin cs;
   Spi * driver;
@@ -36,6 +37,9 @@ public:
   void getData ();
   uint16_t & getX ();
   uint16_t & getY ();
+  uint16_t & getdX ();
+  uint16_t & getdY ();
+
   void clearFlag ();
 
 };

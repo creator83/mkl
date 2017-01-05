@@ -42,14 +42,13 @@ void List::addLast (Shape * o)
 
 void List::iterate ()
 {
-	Item * current = nullptr;
+	//Item * current = nullptr;
 	Item * next = first;
-	uint16_t counter = count;
+	//uint16_t counter = count;
 	function ();
-	while (counter--)
+	for (uint16_t i=0;i<count;++i)
 	{
 		next->object->draw();
-		current = next;
 		next = next->next;
 	}
 }

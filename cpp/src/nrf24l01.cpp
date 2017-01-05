@@ -5,11 +5,11 @@ uint8_t Nrf24l01::selfAddress[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
 uint8_t Nrf24l01::remoteAddress[5] = {0xC2, 0xC2, 0xC2, 0xC2, 0xC2};
 
 Nrf24l01::Nrf24l01 (Spi &d)
-:cs (nrf24Def::csPort, nrf24Def::csPin), ce (nrf24Def::cePort, nrf24Def::cePin),
-irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
+:cs (nrf24Def::csPort, nrf24Def::csPin), ce (nrf24Def::cePort, nrf24Def::cePin)
+//,irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
 {
   delay_ms (15);
-  NVIC_EnableIRQ(PORTC_PORTD_IRQn);
+  //NVIC_EnableIRQ(PORTC_PORTD_IRQn);
   driver = &d;
   driver->setCpol(Spi::Cpol::neg);
   driver->setCpha(Spi::Cpha::first);
@@ -29,10 +29,10 @@ irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
   uint8_t status = readStatus();
   writeRegister (STATUS, status);
   comm (FLUSH_TX);
-
+  writeRegister(RX_PW_P0, 1);
   chan = 3;
  /* //checking
-  startup = init ();*/
+  startup = init ();
   
   //settings register
   
@@ -52,7 +52,7 @@ irq (nrf24Def::irqPort, nrf24Def::irqPin, Intrpt::mode::fallingEdge)
   writeRegister(RX_PW_P1, 32); 
   writeRegister(DYNPD, (1 << DPL_P0) | (1 << DPL_P1)); // включение произвольной длины для каналов 0 и 1
   writeRegister(FEATURE, 0x04); // разрешение произвольной длины пакета данных
-
+*/
   //===Standby-1 mode===//
 
   rxState ();
@@ -198,7 +198,7 @@ uint8_t Nrf24l01::receiveByte ()
 
 void Nrf24l01::clearFlag ()
 {
-	irq.clearFlag();
+	//irq.clearFlag();
 }
 
 
