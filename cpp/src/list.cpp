@@ -4,12 +4,14 @@ List::~List()
 {
 	Item * current = nullptr;
 	Item * next = first;
-	while (1)
+	while (next->next != nullptr)
 	{
 		current = next;
 		next = next->next;
 		delete current;
 	}
+	current = last;
+	delete current;
 }
 
 

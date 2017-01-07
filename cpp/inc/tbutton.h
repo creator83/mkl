@@ -3,11 +3,13 @@
 
 
 
+
 #ifndef TBUTTON_H
 #define TBUTTON_H
 
 class Tbutton
 {
+
 struct Item
 {
 	uint16_t key;
@@ -18,22 +20,25 @@ struct Item
 //variables
 public:
 private:
-  uint16_t Xmin, Ymin, dX, dY, xValue, yValue;
+  uint16_t xValue, yValue;
   uint8_t hValue, vValue, result;
   Item * first;
   Item * last;
   uint16_t count;
   Tgrid * grid;
+  Item * current;
 //func
 public:
   Tbutton (Tgrid &);
   ~Tbutton ();
   void addButton (uint16_t,  void (*f)());
   void setCount (uint8_t hor, uint8_t ver);
-  void calculateTouch (uint16_t x, uint16_t y);
+  void calculateTouch ();
   uint8_t & getResult ();
+  void setCurrent ();
 private:
   void searchKey (uint8_t k);
+
 };
 
 #endif

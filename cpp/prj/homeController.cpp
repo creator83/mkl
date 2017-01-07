@@ -17,6 +17,7 @@
 #include "tbutton.h"
 #include "pit.h"
 #include "tgrid.h"
+#include "tree.h"
 
 Tact frq;
 Spi spi1 (Spi::SPI_N::SPI_1);
@@ -25,8 +26,47 @@ Ssd1289 display;
 Tgrid fourArea (touch, 2,2);
 Tgrid sixArea (touch,3,2);
 Tgrid settingsArea (touch,6,4);
+
+
 Tbutton tMainScreen (fourArea);
-Tbutton tSubScreens (sixArea);
+Tbutton tEqipmentScreens (sixArea);
+Tbutton tRoomsScreens (sixArea);
+Tbutton tPump (sixArea);
+Tbutton tdryPressure (settingsArea);
+
+//main screen objects
+List mScreen;
+
+//equipment screen objects
+List equipment;
+
+//external
+List external;
+
+//clock
+List clock;
+
+//sub equioment
+List fanScreen;
+List pumpScreen;
+List floorScreen;
+List levelScreen;
+
+List hiPressure;
+List lowPressure;
+List dryPressure;
+
+//romms screen
+List rooms;
+
+//
+List diningScreen;
+List livingScreen;
+List bathScreen;
+
+List settingValue;
+
+Tree menu (&mScreen, &tMainScreen);
 //Pit mainloop (Pit::ch1, 1, Pit::ms);
 
 Horline hLine1 (0, 50, colors16bit::WHITE, 190, 5);
@@ -64,17 +104,11 @@ MonoPicture plus (111, 53, colors16bit::GRAY, colors16bit::BLACK, smallImages::p
 MonoPicture minus (163, 53, colors16bit::GRAY, colors16bit::BLACK, smallImages::minus, 5, 40);
 
 
-List mScreen;
-List equipment;
-List rooms;
-List settingValue;
+
 
 struct flags
 {
   unsigned touch :1;
-  unsigned mainScreen :1;
-  unsigned subScreen :2;
-  unsigned screens :3;
 }flag;
 
 List * Subscreens [] = { &rooms, &equipment} ;
@@ -94,21 +128,8 @@ void PORTA_IRQHandler()
 	if (flag.touch)
 	{
 		touch.getData();
-		if (flag.mainScreen)
-		{
-			tMainScreen.calculateTouch(touch.getX(), touch.getY());
-			flag.mainScreen = 0;
-
-			/*flag.subScreen = mainScreen.getResult();
-			Subscreens [flag.subScreen]->iterate();*/
-		}
-		else
-		{
-			tSubScreens.calculateTouch(touch.getX(), touch.getY());
-			flag.mainScreen = 1;
-		}
-
-
+		menu.treeAction();
+		menu.useCurrent();
 	}
 }
 
@@ -126,6 +147,7 @@ union rgb24
 void mainScreenFon ();
 void subScreenFon ();
 void settingValueFon ();
+void subEquipmentFon ();
 
 void drawMainScreen();
 void drawRoomScreen();
@@ -140,14 +162,48 @@ colors16bit::LIGHT_GREY,  colors16bit::DARK_GREY};
 
 List * Screens [] = {&mScreen, &equipment, &rooms};
 
+void backF ();
+void homeF ();
+void forward ();
+void forward1 ();
+void makeTree ();
+
 
 int main()
 {
-	tMainScreen.addButton(0, drawRoomScreen);
-	tMainScreen.addButton(1, drawEqupmentScreen);
-	tSubScreens.addButton(4,drawMainScreen);
-	tSubScreens.addButton(5,drawMainScreen);
-	flag.mainScreen = 1;
+	Shape::driver = &display;
+	tMainScreen.addButton(0, forward);
+	tMainScreen.addButton(1, forward);
+	tMainScreen.addButton(2, forward);
+	tMainScreen.addButton(3, forward);
+
+	tEqipmentScreens.addButton(0,forward);
+	tEqipmentScreens.addButton(1,forward);
+	tEqipmentScreens.addButton(2,forward);
+	tEqipmentScreens.addButton(3,forward);
+	tEqipmentScreens.addButton(4,homeF);
+	tEqipmentScreens.addButton(5,backF);
+
+	tRoomsScreens.addButton(0,forward);
+	tRoomsScreens.addButton(1,forward);
+	tRoomsScreens.addButton(3,forward1);
+	tRoomsScreens.addButton(4,homeF);
+	tRoomsScreens.addButton(5,backF);
+
+	tPump.addButton(0,forward);
+	tPump.addButton(2,forward);
+	tPump.addButton(3,forward);
+	tPump.addButton(4,homeF);
+	tPump.addButton(5,backF);
+
+	tdryPressure.addButton(16,homeF);
+	tdryPressure.addButton(17,homeF);
+	tdryPressure.addButton(20,homeF);
+	tdryPressure.addButton(21,homeF);
+	tdryPressure.addButton(23,backF);
+	tdryPressure.addButton(22,backF);
+	tdryPressure.addButton(18,backF);
+	tdryPressure.addButton(19,backF);
 
 	spi1.setMode(Spi::Mode::software);
 	Pin sck (Gpio::Port::E, 2, Gpio::mux::Alt2);
@@ -176,14 +232,37 @@ int main()
 	rooms.addLast(&bathBig);
 	rooms.setFunction(subScreenFon);
 
+	external.setFunction(subEquipmentFon);
+
+	//clock
+	clock.setFunction(subEquipmentFon);
+
+	//sub equipment screen
+	fanScreen.setFunction(subEquipmentFon);
+	pumpScreen.setFunction(subEquipmentFon);
+	floorScreen.setFunction(subEquipmentFon);
+	levelScreen.setFunction(subEquipmentFon);
+
+	//pump setting screen
+	hiPressure.setFunction(settingValueFon);
+	lowPressure.setFunction(settingValueFon);
+	dryPressure.setFunction(settingValueFon);
+
+	//sub rooms screen
+	diningScreen.setFunction(subEquipmentFon);
+	livingScreen.setFunction(subEquipmentFon);
+	bathScreen.setFunction(subEquipmentFon);
+
 	//settings Value screen
 	settingValue.setFunction(settingValueFon);
 
+	makeTree ();
 
-	Shape::driver = &display;
+	//menu.addItem(&rooms, &tSubScreens, &root);
+
+
+
 	//NVIC_EnableIRQ(PIT_IRQn);
-	mScreen.iterate();
-	settingValue.iterate();
 	//mainloop.start();
 	//Systimer mainLoop (Systimer::mode::ms, 1000);
 	while (1)
@@ -267,6 +346,23 @@ void settingValueFon ()
 	minus.draw();
 }
 
+void subEquipmentFon ()
+{
+	display.fillScreen(colors16bit::SILVER);
+	display.verLine(106, 0, colors16bit::BLACK, 240, 2);
+	display.verLine(212, 0, colors16bit::BLACK, 240, 2);
+	display.horLine(0, 120, colors16bit::BLACK, 320, 2);
+
+	//home and back
+	display.rectangle(218,5, colors16bit::BLACK,96, 110, 1);
+	display.rectangle(218,125, colors16bit::BLACK,96, 110, 1);
+	display.horLine(219, 6, colors16bit::GRAY, 95, 109);
+	display.horLine(219, 126, colors16bit::GRAY, 95, 109);
+	back.draw();
+	home.draw();
+
+}
+
 
 void drawMainScreen()
 {
@@ -284,8 +380,52 @@ void drawEqupmentScreen()
 }
 
 
+void backF ()
+{
+	getBack (menu);
+}
+
+void homeF ()
+{
+	getRoot (menu);
+}
+void forward ()
+{
+	getForward (menu);
+
+}
+void forward1 ()
+{
+	getForward (menu, 2);
+}
 
 
+void makeTree ()
+{
+	menu.addSon(&rooms, &tRoomsScreens);
+	menu.addBrother(&equipment, &tEqipmentScreens);
+	menu.addBrother(&external, &tEqipmentScreens);
+	menu.addBrother(&clock, &tEqipmentScreens);
+	menu.getRoot();
+	menu.getForward(0);
+	menu.addSon(&diningScreen, &tRoomsScreens);
+	menu.addBrother(&livingScreen, &tRoomsScreens);
+	menu.addBrother(&bathScreen, &tRoomsScreens);
+
+	//eqipment sub screen
+	menu.getRoot();
+	menu.getForward(1);
+	menu.addSon(&fanScreen, &tEqipmentScreens);
+	menu.addBrother(&pumpScreen, &tPump);
+	menu.addBrother(&floorScreen, &tEqipmentScreens);
+	menu.addBrother(&levelScreen, &tEqipmentScreens);
+	menu.getBack();
+	menu.getForward(1);
+	menu.addSon(&dryPressure, &tdryPressure);
+
+	menu.getRoot();
+	menu.useCurrent();
+}
 
 
 

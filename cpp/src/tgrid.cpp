@@ -16,3 +16,8 @@ uint16_t & Tgrid::getYgrid ()
 {
 	return yGrid;
 }
+
+Xpt2046 * Tgrid::getDriver ()
+{
+	return driver;
+}

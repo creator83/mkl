@@ -1,34 +1,53 @@
 #include "MKL26Z4.h"
 #include "list.h"
+#include "tbutton.h"
 
 #ifndef TREE_H
 #define TREE_H
 
 class Tree {
+public:
+	//enum class action {act, back, home};
 struct Item
 {
 	List * object;
-	Item * next;
-	Item (List *o, Item * n = nullptr){object = o; next = n;}
+	Tbutton * buttons;
+	Item * parent;
+	Item * brother;
+	Item * son;
+	Item (List *o, Tbutton * but, Item * p = nullptr, Item * b = nullptr, Item * s = nullptr);
 };
-
-	Item * first;
-	Item * last;
-	void (*function)();
-	uint16_t count;
+private:
+	//uint16_t count;
 public:
-	Tree(){count = 0; first = last = nullptr;}
+	Item * root;
+	Item * currentItem;
+
+public:
+	Tree(List *o, Tbutton * but);
 	~Tree();
-	List* head () const {return first->object;}
-	List* tail () const {return last->object;}
-	void addFirst (List *);
-	void addLast (List *);
-	void iterate ();
-	void print (uint16_t);
-	uint16_t & getCount (){return count;}
-	void setFunction (void (*f)());
+	void addItem (List *, Tbutton * but, Item *);
+	void addSon (List *o, Tbutton * but);
+	void addBrother (List *o, Tbutton * but);
+	void setCurrent (List *);
+
+	void treeAction ();
+
+	void getBack ();
+	void getForward (uint16_t val);
+	void getRoot ();
+	void useCurrent ();
+
+	friend void getForward (Tree &);
+	friend void getForward (Tree &, uint16_t val);
+	friend void getBack (Tree &);
+	friend void getRoot (Tree &);
 };
 
+void getForward (Tree &);
+void getForward (Tree &, uint16_t val);
+void getBack (Tree &);
+void getRoot (Tree &);
 
 
 #endif /* LIST_H_ */

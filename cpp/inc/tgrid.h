@@ -19,7 +19,7 @@ public:
   Tgrid ( Xpt2046 &, uint8_t hor, uint8_t ver);
   uint16_t & getXgrid ();
   uint16_t & getYgrid ();
-
+  Xpt2046 * getDriver ();
 };
 
 #endif

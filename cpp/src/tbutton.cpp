@@ -1,7 +1,7 @@
 #include "tbutton.h"
 
 Tbutton::Tbutton ( Tgrid & g)
-:count (0), first (nullptr), last (nullptr)
+:count (0), first (nullptr), last (nullptr), current (nullptr)
 {
 	grid = &g;
 }
@@ -33,19 +33,22 @@ void Tbutton::addButton (uint16_t k,  void (*f)())
 	++count;
 }
 
-void Tbutton::calculateTouch (uint16_t x, uint16_t y)
+
+
+void Tbutton::calculateTouch ()
 {
-	result = x/grid->getXgrid();
+	result = grid->getDriver()->getX()/grid->getXgrid();
 	result <<= 1;
-	uint8_t temp = y/grid->getYgrid();
+	uint8_t temp = grid->getDriver()->getY()/grid->getYgrid();
 	result += temp;
-	searchKey(result);
+	searchKey (result);
 }
 
 uint8_t & Tbutton::getResult ()
 {
 	return result;
 }
+
 
 void Tbutton::searchKey (uint8_t k)
 {
@@ -59,6 +62,20 @@ void Tbutton::searchKey (uint8_t k)
 		}
 		next = next->next;
 	}
-
 }
+
+void Tbutton::setCurrent ()
+{
+	current = first;
+	for (uint16_t i=0;i<count;++i)
+	{
+		if (current->key == result)
+		{
+			return;
+		}
+		current = current->next;
+	}
+}
+
+
 
