@@ -38,7 +38,7 @@ void Tbutton::addButton (uint16_t k,  void (*f)())
 void Tbutton::calculateTouch ()
 {
 	result = grid->getDriver()->getX()/grid->getXgrid();
-	result <<= 1;
+	result *= grid->getV();
 	uint8_t temp = grid->getDriver()->getY()/grid->getYgrid();
 	result += temp;
 	searchKey (result);

@@ -9,6 +9,7 @@
 #include "rectangle.h"
 #include "colors16bit.h"
 #include "image.h"
+#include "font.h"
 #include "list.h"
 #include "mpic.h"
 #include "spi.h"
@@ -18,6 +19,16 @@
 #include "pit.h"
 #include "tgrid.h"
 #include "tree.h"
+#include "data.h"
+
+//Pressure data
+
+Ssd1289::sFont mNumber;
+Ssd1289::sFont bNumber;
+Data dryPressureValue (23, 88, colors16bit::BLACK, colors16bit::SILVER, 8, 2, &bNumber);
+Data lowPressureValue (129, 88, colors16bit::BLACK, colors16bit::SILVER, 22, 2, &bNumber);
+Data hiPressureValue (129, 208, colors16bit::BLACK, colors16bit::SILVER, 34, 2, &bNumber);
+Data currentPressureValue (23, 208, colors16bit::BLACK, colors16bit::SILVER, 0, 2, &bNumber);
 
 Tact frq;
 Spi spi1 (Spi::SPI_N::SPI_1);
@@ -32,7 +43,9 @@ Tbutton tMainScreen (fourArea);
 Tbutton tEqipmentScreens (sixArea);
 Tbutton tRoomsScreens (sixArea);
 Tbutton tPump (sixArea);
-Tbutton tdryPressure (settingsArea);
+Tbutton tDryPressure (settingsArea);
+Tbutton tLowPressure (settingsArea);
+Tbutton tHiPressure (settingsArea);
 
 //main screen objects
 List mScreen;
@@ -153,6 +166,8 @@ void drawMainScreen();
 void drawRoomScreen();
 void drawEqupmentScreen();
 
+void drawLowPressureScreen();
+void drawHiPressureScreen();
 
 
 const uint16_t colors [] = {colors16bit::BLACK, colors16bit::RED, colors16bit::BLUE,  colors16bit::GREEN, colors16bit::CYAN, colors16bit::MAGENTA,  colors16bit::YELLOW, colors16bit::WHITE,
@@ -167,111 +182,35 @@ void homeF ();
 void forward ();
 void forward1 ();
 void makeTree ();
+void initTouchButton ();
+void initScreens ();
 
 
 int main()
 {
 	Shape::driver = &display;
-	tMainScreen.addButton(0, forward);
-	tMainScreen.addButton(1, forward);
-	tMainScreen.addButton(2, forward);
-	tMainScreen.addButton(3, forward);
-
-	tEqipmentScreens.addButton(0,forward);
-	tEqipmentScreens.addButton(1,forward);
-	tEqipmentScreens.addButton(2,forward);
-	tEqipmentScreens.addButton(3,forward);
-	tEqipmentScreens.addButton(4,homeF);
-	tEqipmentScreens.addButton(5,backF);
-
-	tRoomsScreens.addButton(0,forward);
-	tRoomsScreens.addButton(1,forward);
-	tRoomsScreens.addButton(3,forward1);
-	tRoomsScreens.addButton(4,homeF);
-	tRoomsScreens.addButton(5,backF);
-
-	tPump.addButton(0,forward);
-	tPump.addButton(2,forward);
-	tPump.addButton(3,forward);
-	tPump.addButton(4,homeF);
-	tPump.addButton(5,backF);
-
-	tdryPressure.addButton(16,homeF);
-	tdryPressure.addButton(17,homeF);
-	tdryPressure.addButton(20,homeF);
-	tdryPressure.addButton(21,homeF);
-	tdryPressure.addButton(23,backF);
-	tdryPressure.addButton(22,backF);
-	tdryPressure.addButton(18,backF);
-	tdryPressure.addButton(19,backF);
-
 	spi1.setMode(Spi::Mode::software);
 	Pin sck (Gpio::Port::E, 2, Gpio::mux::Alt2);
 	Pin mosi (Gpio::Port::E, 1, Gpio::mux::Alt2);
 	Pin miso (Gpio::Port::E, 3, Gpio::mux::Alt2);
 
-	//main screen
-	mScreen.addLast(&tools);
-	mScreen.addLast(&watch);
-	mScreen.addLast(&outside);
-	mScreen.addLast(&livingSmall);
-	mScreen.addLast(&diningSmall);
-	mScreen.addLast(&bathSmall);
-	mScreen.setFunction(mainScreenFon);
+	mNumber.font = midleNumbers::number;
+	mNumber.height = 36;
+	mNumber.width = 2;
 
-	//equipment screen
-	equipment.addLast(&pump);
-	equipment.addLast(&boiler);
-	equipment.addLast(&fan);
-	equipment.addLast(&floor);
-	equipment.setFunction(subScreenFon);
+	bNumber.font = bigNumbers::numbers;
+	bNumber.height = 55;
+	bNumber.width = 3;
 
-	//rooms screen
-	rooms.addLast(&livingBig);
-	rooms.addLast(&diningBig);
-	rooms.addLast(&bathBig);
-	rooms.setFunction(subScreenFon);
-
-	external.setFunction(subEquipmentFon);
-
-	//clock
-	clock.setFunction(subEquipmentFon);
-
-	//sub equipment screen
-	fanScreen.setFunction(subEquipmentFon);
-	pumpScreen.setFunction(subEquipmentFon);
-	floorScreen.setFunction(subEquipmentFon);
-	levelScreen.setFunction(subEquipmentFon);
-
-	//pump setting screen
-	hiPressure.setFunction(settingValueFon);
-	lowPressure.setFunction(settingValueFon);
-	dryPressure.setFunction(settingValueFon);
-
-	//sub rooms screen
-	diningScreen.setFunction(subEquipmentFon);
-	livingScreen.setFunction(subEquipmentFon);
-	bathScreen.setFunction(subEquipmentFon);
-
-	//settings Value screen
-	settingValue.setFunction(settingValueFon);
-
+	initScreens ();
+	initTouchButton ();
 	makeTree ();
-
-	//menu.addItem(&rooms, &tSubScreens, &root);
-
-
 
 	//NVIC_EnableIRQ(PIT_IRQn);
 	//mainloop.start();
 	//Systimer mainLoop (Systimer::mode::ms, 1000);
 	while (1)
 	{
-		/*for (uint8_t i=0;i<3;++i)
-		{
-			Screens [i]->iterate();
-			delay_ms(1000);
-		}*/
 	}
 }
 
@@ -412,20 +351,138 @@ void makeTree ()
 	menu.addBrother(&livingScreen, &tRoomsScreens);
 	menu.addBrother(&bathScreen, &tRoomsScreens);
 
-	//eqipment sub screen
+	//eqipment sub screens
 	menu.getRoot();
 	menu.getForward(1);
 	menu.addSon(&fanScreen, &tEqipmentScreens);
 	menu.addBrother(&pumpScreen, &tPump);
 	menu.addBrother(&floorScreen, &tEqipmentScreens);
 	menu.addBrother(&levelScreen, &tEqipmentScreens);
+
+	//pump screens
 	menu.getBack();
 	menu.getForward(1);
-	menu.addSon(&dryPressure, &tdryPressure);
-
+	menu.addSon(&dryPressure, &tDryPressure);
+	menu.addBrother(&lowPressure, &tLowPressure);
+	menu.addBrother(&hiPressure, &tHiPressure);
+	//menu.getBack();
 	menu.getRoot();
 	menu.useCurrent();
 }
 
+void initTouchButton ()
+{
+		tMainScreen.addButton(0, forward);
+		tMainScreen.addButton(1, forward);
+		tMainScreen.addButton(2, forward);
+		tMainScreen.addButton(3, forward);
+
+		tEqipmentScreens.addButton(0,forward);
+		tEqipmentScreens.addButton(1,forward);
+		tEqipmentScreens.addButton(2,forward);
+		tEqipmentScreens.addButton(3,forward);
+		tEqipmentScreens.addButton(4,homeF);
+		tEqipmentScreens.addButton(5,backF);
+
+		tRoomsScreens.addButton(0,forward);
+		tRoomsScreens.addButton(1,forward);
+		tRoomsScreens.addButton(3,forward1);
+		tRoomsScreens.addButton(4,homeF);
+		tRoomsScreens.addButton(5,backF);
+
+		tPump.addButton(0,forward);
+		tPump.addButton(2,drawLowPressureScreen);
+		tPump.addButton(3,drawHiPressureScreen);
+		tPump.addButton(4,homeF);
+		tPump.addButton(5,backF);
+
+		tDryPressure.addButton(16,homeF);
+		tDryPressure.addButton(17,homeF);
+		tDryPressure.addButton(20,homeF);
+		tDryPressure.addButton(21,homeF);
+		tDryPressure.addButton(23,backF);
+		tDryPressure.addButton(22,backF);
+		tDryPressure.addButton(18,backF);
+		tDryPressure.addButton(19,backF);
+
+		tLowPressure.addButton(16,homeF);
+		tLowPressure.addButton(17,homeF);
+		tLowPressure.addButton(20,homeF);
+		tLowPressure.addButton(21,homeF);
+		tLowPressure.addButton(23,backF);
+		tLowPressure.addButton(22,backF);
+		tLowPressure.addButton(18,backF);
+		tLowPressure.addButton(19,backF);
+
+		tHiPressure.addButton(16,homeF);
+		tHiPressure.addButton(17,homeF);
+		tHiPressure.addButton(20,homeF);
+		tHiPressure.addButton(21,homeF);
+		tHiPressure.addButton(23,backF);
+		tHiPressure.addButton(22,backF);
+		tHiPressure.addButton(18,backF);
+		tHiPressure.addButton(19,backF);
+}
+
+void initScreens ()
+{
+	//main screen
+		mScreen.addLast(&tools);
+		mScreen.addLast(&watch);
+		mScreen.addLast(&outside);
+		mScreen.addLast(&livingSmall);
+		mScreen.addLast(&diningSmall);
+		mScreen.addLast(&bathSmall);
+		mScreen.setFunction(mainScreenFon);
+
+		//equipment screen
+		equipment.addLast(&pump);
+		equipment.addLast(&boiler);
+		equipment.addLast(&fan);
+		equipment.addLast(&floor);
+		equipment.setFunction(subScreenFon);
+
+		//rooms screen
+		rooms.addLast(&livingBig);
+		rooms.addLast(&diningBig);
+		rooms.addLast(&bathBig);
+		rooms.setFunction(subScreenFon);
+
+		external.setFunction(subEquipmentFon);
+
+		//clock
+		clock.setFunction(subEquipmentFon);
+
+		//sub equipment screen
+		fanScreen.setFunction(subEquipmentFon);
+		pumpScreen.setFunction(subEquipmentFon);
+		pumpScreen.addFirst(&dryPressureValue);
+		pumpScreen.addFirst(&lowPressureValue);
+		pumpScreen.addFirst(&hiPressureValue);
+		pumpScreen.addFirst(&currentPressureValue);
+		floorScreen.setFunction(subEquipmentFon);
+		levelScreen.setFunction(subEquipmentFon);
+
+		//pump setting screen
+		hiPressure.setFunction(settingValueFon);
+		lowPressure.setFunction(settingValueFon);
+		dryPressure.setFunction(settingValueFon);
+
+		//sub rooms screen
+		diningScreen.setFunction(subEquipmentFon);
+		livingScreen.setFunction(subEquipmentFon);
+		bathScreen.setFunction(subEquipmentFon);
+
+}
+
+void drawLowPressureScreen()
+{
+	getForward (menu, 1);
+}
+
+void drawHiPressureScreen()
+{
+	getForward (menu, 2);
+}
 
 
