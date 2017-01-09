@@ -9,9 +9,11 @@
 #include "rectangle.h"
 #include "colors16bit.h"
 #include "image.h"
+#include "rgb.h"
 #include "font.h"
 #include "list.h"
 #include "mpic.h"
+#include "cpic.h"
 #include "spi.h"
 #include "xpt2046.h"
 #include "systimer.h"
@@ -46,6 +48,7 @@ Tbutton tRoomsScreens (sixArea);
 Tbutton tBathScreens (sixArea);
 Tbutton tDiningScreens (sixArea);
 Tbutton tLivingScreens (sixArea);
+Tbutton tRgbScreens (sixArea);
 
 Tbutton tPump (sixArea);
 Tbutton tDryPressure (settingsArea);
@@ -81,6 +84,8 @@ List rooms;
 List diningScreen;
 List livingScreen;
 List bathScreen;
+
+List rgbScreen;
 
 List settingValue;
 
@@ -134,6 +139,11 @@ MonoPicture drop (54, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::w
 MonoPicture floorBath (22, 80, colors16bit::GRAY, colors16bit::BLACK, smallImages::floor, 8, 64);
 MonoPicture fanBath (128, 80, colors16bit::GRAY, colors16bit::BLACK, smallImages::fan, 8, 64);
 
+//living screen
+MonoPicture lightLiving (26, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::light, 7, 56);
+MonoPicture settingLiving (132, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::settings, 7, 56);
+
+ColorPicture rgbCircle (0, 230, picture::rgb, 210, 219);
 
 
 
@@ -180,6 +190,7 @@ void subScreenFon ();
 void settingValueFon ();
 void subEquipmentFon ();
 void roomsFon ();
+void rgbFon ();
 
 void drawMainScreen();
 void drawRoomScreen();
@@ -356,6 +367,22 @@ void roomsFon ()
 	home.draw();
 }
 
+void rgbFon ()
+{
+	display.fillScreen(colors16bit::WHITE);
+	display.verLine(212, 0, colors16bit::BLACK, 240, 2);
+	display.horLine(212, 120, colors16bit::BLACK, 108, 2);
+
+	//home and back
+	display.rectangle(218,5, colors16bit::BLACK,96, 110, 1);
+	display.rectangle(218,125, colors16bit::BLACK,96, 110, 1);
+	display.horLine(219, 6, colors16bit::GRAY, 95, 109);
+	display.horLine(219, 126, colors16bit::GRAY, 95, 109);
+	back.draw();
+	home.draw();
+}
+
+
 void drawMainScreen()
 {
 	mScreen.iterate();
@@ -452,6 +479,10 @@ void initTouchButton ()
 		tLivingScreens.addButton(4,homeF);
 		tLivingScreens.addButton(5,backF);
 
+		tRgbScreens.addButton(4,homeF);
+		tRgbScreens.addButton(5,backF);
+
+
 		tPump.addButton(0,forward);
 		tPump.addButton(2,drawLowPressureScreen);
 		tPump.addButton(3,drawHiPressureScreen);
@@ -540,9 +571,14 @@ void initScreens ()
 		//sub rooms screen
 		diningScreen.setFunction(roomsFon);
 		livingScreen.setFunction(roomsFon);
+		livingScreen.addLast(&lightLiving);
+		livingScreen.addLast(&settingLiving);
 		bathScreen.setFunction(roomsFon);
 		bathScreen.addLast(&floorBath);
 		bathScreen.addLast(&fanBath);
+
+		rgbScreen.setFunction(rgbFon);
+		rgbScreen.addLast(&rgbCircle);
 }
 
 void drawLowPressureScreen()

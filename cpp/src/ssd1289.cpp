@@ -151,7 +151,7 @@ void Ssd1289::drawArr (uint16_t x , uint16_t y, const uint16_t color, uint16_t f
 	driver.cs.set();
 }
 
-void Ssd1289::drawPic (uint16_t x , uint16_t y, const uint16_t *arr, uint8_t length, uint16_t width)
+void Ssd1289::drawPic (uint16_t x , uint16_t y, const uint16_t *arr, uint16_t length, uint16_t width)
 {
 	for (uint8_t i=0;i<width;++i)
 	{
