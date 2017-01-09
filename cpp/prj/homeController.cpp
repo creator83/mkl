@@ -44,6 +44,9 @@ Tbutton tMainScreen (fourArea);
 Tbutton tEqipmentScreens (sixArea);
 Tbutton tRoomsScreens (sixArea);
 Tbutton tBathScreens (sixArea);
+Tbutton tDiningScreens (sixArea);
+Tbutton tLivingScreens (sixArea);
+
 Tbutton tPump (sixArea);
 Tbutton tDryPressure (settingsArea);
 Tbutton tLowPressure (settingsArea);
@@ -396,9 +399,9 @@ void makeTree ()
 	menu.addBrother(&clock, &tEqipmentScreens);
 	menu.getRoot();
 	menu.getForward(0);
-	menu.addSon(&diningScreen, &tRoomsScreens);
-	menu.addBrother(&livingScreen, &tRoomsScreens);
-	menu.addBrother(&bathScreen, &tRoomsScreens);
+	menu.addSon(&diningScreen, &tDiningScreens);
+	menu.addBrother(&livingScreen, &tLivingScreens);
+	menu.addBrother(&bathScreen, &tBathScreens);
 
 	//eqipment sub screens
 	menu.getRoot();
@@ -441,6 +444,12 @@ void initTouchButton ()
 
 		tBathScreens.addButton(4,homeF);
 		tBathScreens.addButton(5,backF);
+
+		tDiningScreens.addButton(4,homeF);
+		tDiningScreens.addButton(5,backF);
+
+		tLivingScreens.addButton(4,homeF);
+		tLivingScreens.addButton(5,backF);
 
 		tPump.addButton(0,forward);
 		tPump.addButton(2,drawLowPressureScreen);
