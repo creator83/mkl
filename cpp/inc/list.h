@@ -1,5 +1,7 @@
 #include "MKL26Z4.h"
 #include "shape.h"
+#include "data.h"
+
 
 #ifndef LIST_H
 #define LIST_H
@@ -24,6 +26,7 @@ public:
 	void addFirst (Shape *);
 	void addLast (Shape *);
 	void iterate ();
+	void iterateData ();
 	void print (uint16_t);
 	uint16_t & getCount (){return count;}
 	void setFunction (void (*f)());

@@ -136,14 +136,14 @@ MonoPicture up (160, 230, colors16bit::GRAY, colors16bit::BLACK, smallImages::up
 MonoPicture drop (54, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::water, 5, 40);
 
 //bath screen
-MonoPicture floorBath (22, 80, colors16bit::GRAY, colors16bit::BLACK, smallImages::floor, 8, 64);
-MonoPicture fanBath (128, 80, colors16bit::GRAY, colors16bit::BLACK, smallImages::fan, 8, 64);
+MonoPicture floorBath (26, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::floor1, 7, 56);
+MonoPicture fanBath (132, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::fan1, 7, 56);
 
 //living screen
 MonoPicture lightLiving (26, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::light, 7, 56);
 MonoPicture settingLiving (132, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::settings, 7, 56);
 
-ColorPicture rgbCircle (0, 230, picture::rgb, 210, 219);
+//ColorPicture rgbCircle (0, 230, picture::rgb, 210, 219);
 
 
 
@@ -429,6 +429,8 @@ void makeTree ()
 	menu.getForward(0);
 	menu.addSon(&diningScreen, &tDiningScreens);
 	menu.addBrother(&livingScreen, &tLivingScreens);
+	//menu.addSon(&rgbScreen, &tRgbScreens);
+	//menu.getBack();
 	menu.addBrother(&bathScreen, &tBathScreens);
 
 	//eqipment sub screens
@@ -476,6 +478,7 @@ void initTouchButton ()
 		tDiningScreens.addButton(4,homeF);
 		tDiningScreens.addButton(5,backF);
 
+		tLivingScreens.addButton(2,forward);
 		tLivingScreens.addButton(4,homeF);
 		tLivingScreens.addButton(5,backF);
 
@@ -578,7 +581,7 @@ void initScreens ()
 		bathScreen.addLast(&fanBath);
 
 		rgbScreen.setFunction(rgbFon);
-		rgbScreen.addLast(&rgbCircle);
+		//rgbScreen.addLast(&rgbCircle);
 }
 
 void drawLowPressureScreen()

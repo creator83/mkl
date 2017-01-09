@@ -44,13 +44,22 @@ void List::addLast (Shape * o)
 
 void List::iterate ()
 {
-	//Item * current = nullptr;
 	Item * next = first;
 	//uint16_t counter = count;
 	function ();
 	for (uint16_t i=0;i<count;++i)
 	{
 		next->object->draw();
+		next = next->next;
+	}
+}
+
+void List::iterateData ()
+{
+	Item * next = first;
+	for (uint16_t i=0;i<count;++i)
+	{
+		if (Data * ptr = dynamic_cast <Data *>(next->object)) next->object->draw();
 		next = next->next;
 	}
 }
