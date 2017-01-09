@@ -26,10 +26,10 @@
 
 Ssd1289::sFont mNumber;
 Ssd1289::sFont bNumber;
-Data dryPressureValue (23, 75, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
-Data lowPressureValue (129, 75, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &bNumber);
-Data hiPressureValue (129, 166, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
-Data currentPressureValue (23, 166, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
+Data dryPressureValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
+Data lowPressureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &bNumber);
+Data hiPressureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
+Data currentPressureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
 
 Tact frq;
 Spi spi1 (Spi::SPI_N::SPI_1);
@@ -127,7 +127,7 @@ MonoPicture upPressure (120, 230, colors16bit::GRAY, colors16bit::BLACK, smallIm
 MonoPicture downPressure (120, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::pressure, 5, 40);
 MonoPicture dPressure (14, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::pressure, 5, 40);
 MonoPicture down (160, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::down, 5, 40);
-MonoPicture up (160, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::up, 5, 40);
+MonoPicture up (160, 230, colors16bit::GRAY, colors16bit::BLACK, smallImages::up, 5, 40);
 MonoPicture drop (54, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::water, 5, 40);
 
 //bath screen
@@ -334,7 +334,7 @@ void subEquipmentFon ()
 void roomsFon ()
 {
 	display.fillScreen(colors16bit::SILVER);
-	display.verLine(106, 120, colors16bit::BLACK, 120, 2);
+	display.verLine(106, 0, colors16bit::BLACK, 120, 2);
 	display.verLine(212, 0, colors16bit::BLACK, 240, 2);
 	display.horLine(0, 120, colors16bit::BLACK, 320, 2);
 
@@ -345,11 +345,12 @@ void roomsFon ()
 	display.rectangle(5,5, colors16bit::BLACK,96, 110, 1);
 	display.rectangle(111,5, colors16bit::BLACK,96, 110, 1);
 
-	display.horLine(219, 6, colors16bit::GRAY, 95, 109);
+
 	display.horLine(6, 6, colors16bit::GRAY, 95, 109);
 	display.horLine(112, 6, colors16bit::GRAY, 95, 109);
 	display.horLine(6, 126, colors16bit::GRAY, 201, 109);
-	display.horLine(112, 126, colors16bit::GRAY, 95, 109);
+	display.horLine(219, 126, colors16bit::GRAY, 95, 109);
+	display.horLine(219, 6, colors16bit::GRAY, 95, 109);
 
 	back.draw();
 	home.draw();

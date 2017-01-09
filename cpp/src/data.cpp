@@ -44,7 +44,7 @@ void Data::setValue (uint16_t val)
 void Data::draw () const
 {
 	driver->symbol (x, y, color, fon, data[0], *font_);
-	driver->drawArr(x+26, y-36, color, fon, point, 1, 8);
+	driver->drawArr(x+26, y-27, color, fon, point, 1, 8);
 	driver->symbol(x+36, y, color, fon, data[2], *font_);
 }
 
