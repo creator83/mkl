@@ -20,15 +20,16 @@
 #include "tgrid.h"
 #include "tree.h"
 #include "data.h"
+#include "sstring.h"
 
 //Pressure data
 
 Ssd1289::sFont mNumber;
 Ssd1289::sFont bNumber;
-Data dryPressureValue (23, 88, colors16bit::BLACK, colors16bit::SILVER, 8, 2, &bNumber);
-Data lowPressureValue (129, 88, colors16bit::BLACK, colors16bit::SILVER, 22, 2, &bNumber);
-Data hiPressureValue (129, 208, colors16bit::BLACK, colors16bit::SILVER, 34, 2, &bNumber);
-Data currentPressureValue (23, 208, colors16bit::BLACK, colors16bit::SILVER, 0, 2, &bNumber);
+Data dryPressureValue (23, 75, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
+Data lowPressureValue (129, 75, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &bNumber);
+Data hiPressureValue (129, 166, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
+Data currentPressureValue (23, 166, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
 
 Tact frq;
 Spi spi1 (Spi::SPI_N::SPI_1);
@@ -42,6 +43,7 @@ Tgrid settingsArea (touch,6,4);
 Tbutton tMainScreen (fourArea);
 Tbutton tEqipmentScreens (sixArea);
 Tbutton tRoomsScreens (sixArea);
+Tbutton tBathScreens (sixArea);
 Tbutton tPump (sixArea);
 Tbutton tDryPressure (settingsArea);
 Tbutton tLowPressure (settingsArea);
@@ -116,6 +118,19 @@ MonoPicture right (59, 53, colors16bit::GRAY, colors16bit::BLACK, smallImages::r
 MonoPicture plus (111, 53, colors16bit::GRAY, colors16bit::BLACK, smallImages::plus, 5, 40);
 MonoPicture minus (163, 53, colors16bit::GRAY, colors16bit::BLACK, smallImages::minus, 5, 40);
 
+//pump screen
+MonoPicture cPressure (34, 230, colors16bit::GRAY, colors16bit::BLACK, smallImages::pressure, 5, 40);
+MonoPicture upPressure (120, 230, colors16bit::GRAY, colors16bit::BLACK, smallImages::pressure, 5, 40);
+MonoPicture downPressure (120, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::pressure, 5, 40);
+MonoPicture dPressure (14, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::pressure, 5, 40);
+MonoPicture down (160, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::down, 5, 40);
+MonoPicture up (160, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::up, 5, 40);
+MonoPicture drop (54, 110, colors16bit::GRAY, colors16bit::BLACK, smallImages::water, 5, 40);
+
+//bath screen
+MonoPicture floorBath (22, 80, colors16bit::GRAY, colors16bit::BLACK, smallImages::floor, 8, 64);
+MonoPicture fanBath (128, 80, colors16bit::GRAY, colors16bit::BLACK, smallImages::fan, 8, 64);
+
 
 
 
@@ -161,10 +176,12 @@ void mainScreenFon ();
 void subScreenFon ();
 void settingValueFon ();
 void subEquipmentFon ();
+void roomsFon ();
 
 void drawMainScreen();
 void drawRoomScreen();
 void drawEqupmentScreen();
+
 
 void drawLowPressureScreen();
 void drawHiPressureScreen();
@@ -199,7 +216,7 @@ int main()
 	mNumber.width = 2;
 
 	bNumber.font = bigNumbers::numbers;
-	bNumber.height = 55;
+	bNumber.height = 35;
 	bNumber.width = 3;
 
 	initScreens ();
@@ -295,13 +312,45 @@ void subEquipmentFon ()
 	//home and back
 	display.rectangle(218,5, colors16bit::BLACK,96, 110, 1);
 	display.rectangle(218,125, colors16bit::BLACK,96, 110, 1);
+
+	display.rectangle(5,5, colors16bit::BLACK,96, 110, 1);
+	display.rectangle(111,5, colors16bit::BLACK,96, 110, 1);
+
 	display.horLine(219, 6, colors16bit::GRAY, 95, 109);
 	display.horLine(219, 126, colors16bit::GRAY, 95, 109);
+	display.horLine(6, 6, colors16bit::GRAY, 95, 109);
+	display.horLine(112, 6, colors16bit::GRAY, 95, 109);
+	display.horLine(6, 126, colors16bit::GRAY, 95, 109);
+	display.horLine(112, 126, colors16bit::GRAY, 95, 109);
+
 	back.draw();
 	home.draw();
 
 }
 
+void roomsFon ()
+{
+	display.fillScreen(colors16bit::SILVER);
+	display.verLine(106, 120, colors16bit::BLACK, 120, 2);
+	display.verLine(212, 0, colors16bit::BLACK, 240, 2);
+	display.horLine(0, 120, colors16bit::BLACK, 320, 2);
+
+	//home and back
+	display.rectangle(218,5, colors16bit::BLACK,96, 110, 1);
+	display.rectangle(218,125, colors16bit::BLACK,96, 110, 1);
+
+	display.rectangle(5,5, colors16bit::BLACK,96, 110, 1);
+	display.rectangle(111,5, colors16bit::BLACK,96, 110, 1);
+
+	display.horLine(219, 6, colors16bit::GRAY, 95, 109);
+	display.horLine(6, 6, colors16bit::GRAY, 95, 109);
+	display.horLine(112, 6, colors16bit::GRAY, 95, 109);
+	display.horLine(6, 126, colors16bit::GRAY, 201, 109);
+	display.horLine(112, 126, colors16bit::GRAY, 95, 109);
+
+	back.draw();
+	home.draw();
+}
 
 void drawMainScreen()
 {
@@ -390,6 +439,9 @@ void initTouchButton ()
 		tRoomsScreens.addButton(4,homeF);
 		tRoomsScreens.addButton(5,backF);
 
+		tBathScreens.addButton(4,homeF);
+		tBathScreens.addButton(5,backF);
+
 		tPump.addButton(0,forward);
 		tPump.addButton(2,drawLowPressureScreen);
 		tPump.addButton(3,drawHiPressureScreen);
@@ -456,10 +508,17 @@ void initScreens ()
 		//sub equipment screen
 		fanScreen.setFunction(subEquipmentFon);
 		pumpScreen.setFunction(subEquipmentFon);
-		pumpScreen.addFirst(&dryPressureValue);
-		pumpScreen.addFirst(&lowPressureValue);
-		pumpScreen.addFirst(&hiPressureValue);
-		pumpScreen.addFirst(&currentPressureValue);
+		pumpScreen.addLast(&cPressure);
+		pumpScreen.addLast(&upPressure);
+		pumpScreen.addLast(&downPressure);
+		pumpScreen.addLast(&dPressure);
+		pumpScreen.addLast(&up);
+		pumpScreen.addLast(&down);
+		pumpScreen.addLast(&drop);
+		pumpScreen.addLast(&dryPressureValue);
+		pumpScreen.addLast(&lowPressureValue);
+		pumpScreen.addLast(&hiPressureValue);
+		pumpScreen.addLast(&currentPressureValue);
 		floorScreen.setFunction(subEquipmentFon);
 		levelScreen.setFunction(subEquipmentFon);
 
@@ -469,10 +528,11 @@ void initScreens ()
 		dryPressure.setFunction(settingValueFon);
 
 		//sub rooms screen
-		diningScreen.setFunction(subEquipmentFon);
-		livingScreen.setFunction(subEquipmentFon);
-		bathScreen.setFunction(subEquipmentFon);
-
+		diningScreen.setFunction(roomsFon);
+		livingScreen.setFunction(roomsFon);
+		bathScreen.setFunction(roomsFon);
+		bathScreen.addLast(&floorBath);
+		bathScreen.addLast(&fanBath);
 }
 
 void drawLowPressureScreen()
