@@ -26,13 +26,6 @@
 
 //Pressure data
 
-Ssd1289::sFont mNumber;
-Ssd1289::sFont bNumber;
-Data dryPressureValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
-Data lowPressureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &bNumber);
-Data hiPressureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
-Data currentPressureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
-
 Tact frq;
 Spi spi1 (Spi::SPI_N::SPI_1);
 Xpt2046 touch (spi1);
@@ -41,6 +34,13 @@ Tgrid fourArea (touch, 2,2);
 Tgrid sixArea (touch,3,2);
 Tgrid settingsArea (touch,6,4);
 
+
+Ssd1289::sFont mNumber;
+Ssd1289::sFont bNumber;
+Data dryPressureValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
+Data lowPressureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &bNumber);
+Data hiPressureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
+Data currentPressureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
 
 Tbutton tMainScreen (fourArea);
 Tbutton tEqipmentScreens (sixArea);
