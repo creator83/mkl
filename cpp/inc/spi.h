@@ -1,5 +1,5 @@
 #include "MKL26Z4.h"                 // Device header
-
+#include "dma.h"
 
 /*
  SPI0
@@ -33,7 +33,7 @@ public:
   enum class Cpha {first, second};
   enum class Size {bit8, bit16};
   enum class Mode {software, hardware};
-  enum class Dma {transmit=5, receive=2};
+  enum class dma {transmit=5, receive=2};
 
 
 protected:
@@ -51,6 +51,7 @@ private:
   static PotMemF ptr_transmite[2];
   static ptr_ex ptr_exchange[2];
   static SPI_MemMapPtr spiAdr [2];
+  Dma * driverDma;
 
 //functions
 public:
@@ -64,8 +65,9 @@ public:
   void setDivision (Division);
   void setFrameSize (Size);
   void setMode (Mode);
-  void enableDma (Dma);
-  void disableDma (Dma);
+  void setDma (Dma &);
+  void enableDma (dma);
+  void disableDma (dma);
   void putDataDh (uint8_t data);
   void putDataDl (uint8_t data);
   uint8_t getDataDh ();

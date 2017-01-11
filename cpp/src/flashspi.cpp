@@ -2,7 +2,7 @@
 
 
 
-Flash::Flash (Spi &d, Gpio::Port &p, uint8_t &pin)
+Flash::Flash (Spi &d, Gpio::Port p, uint8_t pin)
 :cs(p, pin)
 {
 	driver = &d;

@@ -82,12 +82,19 @@ void Spi::setMode (Mode m)
 	SPI_C1_REG(spiAdr [n_spi]) |= (uint8_t)m << SPI_C1_SSOE_SHIFT;
 }
 
-void Spi::enableDma (Dma d)
+void Spi::setDma (Dma &d)
+{
+	driverDma = &d;
+	DMA0->DMA[d.getChannel()].DCR &= ~  DMA_DCR_CS_MASK;
+	DMA0->DMA[d.getChannel()].DCR |= DMA_DCR_EADREQ_MASK| DMA_DCR_ERQ_MASK;
+}
+
+void Spi::enableDma (dma d)
 {
 	SPI_C2_REG(spiAdr [n_spi]) |= 1 << (uint8_t)d;
 }
 
-void Spi::disableDma (Dma d)
+void Spi::disableDma (dma d)
 {
 	SPI_C2_REG(spiAdr [n_spi]) &= ~(1 << (uint8_t)d);
 }

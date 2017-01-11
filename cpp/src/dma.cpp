@@ -104,3 +104,13 @@ void Dma::clearFlags ()
 {
 	DMA0->DMA[ch].DSR_BCR |= DMA_DSR_BCR_DONE_MASK;
 }
+
+bool Dma::flagDone()
+{
+	return DMA0->DMA[ch].DSR_BCR&DMA_DSR_BCR_DONE_MASK;
+}
+
+uint8_t & Dma::getChannel ()
+{
+	return ch;
+}

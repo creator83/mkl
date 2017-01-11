@@ -49,7 +49,7 @@ class Dma
 {
 	//variables
 public:
-	enum class dmaChannel {ch1, ch2, ch3 , ch4};
+	enum class dmaChannel {ch0, ch1, ch2 , ch3};
 	enum class dmaMux {uart0Rx = 2, uart0Tx, uart1Rx, uart1Tx,
 	uart2Rx, uart2Tx, i2sRx = 14, i2sTx, spi0Rx, spi0Tx, spi1Rx, spi1Tx,
 	i2c0 = 22, i2c1, tpm0ch0, tpm0ch1, tpm0ch2, tpm0ch3, tpm0ch4, tpm0ch5,
@@ -81,6 +81,8 @@ public:
 	void disablePeriph ();
 	void start ();
 	void clearFlags ();
+	bool flagDone();
+	uint8_t & getChannel ();
 };
 
 #endif
