@@ -146,7 +146,6 @@ MonoPicture settingLiving (132, 70, colors16bit::GRAY, colors16bit::BLACK, small
 //ColorPicture rgbCircle (0, 230, picture::rgb, 210, 219);
 
 
-
 struct flags
 {
   unsigned touch :1;
