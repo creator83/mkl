@@ -16,7 +16,7 @@ protected:
 
 
 private:
-
+	static I2C_MemMapPtr i2cAdr [2];
 //functions
 public:
   I2c ();
