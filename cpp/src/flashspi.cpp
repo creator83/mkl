@@ -49,6 +49,8 @@ void Flash::readID ()
 	cs.clear();
 	while (!driver->flagSptef());
 	driver->putDataDl(ManufactDeviceID);
+	while (!driver->flagSprf());
+	uint8_t dummy = driver->getDataDl();
 	while (!driver->flagSptef());
 	driver->putDataDl(0);
 	while (!driver->flagSprf());
@@ -69,6 +71,8 @@ uint16_t Flash::readStatus ()
 	cs.clear();
 	while (!driver->flagSptef());
 	driver->putDataDl(ReadStatusReg);
+	while (!driver->flagSprf());
+	uint8_t dummy = driver->getDataDl();
 	while (!driver->flagSptef());
 	driver->putDataDl(0);
 	while (!driver->flagSprf());
