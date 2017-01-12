@@ -83,27 +83,33 @@ int main()
 	dma1.enableDmaMux(Dma::dmaMux::spi0Tx);
 
 
-	spi.setMode(Spi::Mode::hardware);
-	spi.setDivision(Spi::Division::div16);
+	spi.setMode(Spi::Mode::software);
+	spi.setDivision(Spi::Division::div4);
 	spi.setFrameSize(Spi::Size::bit8);
-	Pin cs (Gpio::Port::E, 16, Gpio::mux::Alt2);
+	Pin cs (Gpio::Port::E, 16);
 	Pin sck (Gpio::Port::E, 17, Gpio::mux::Alt2);
 	Pin mosi (Gpio::Port::E, 18, Gpio::mux::Alt2);
 	Pin miso (Gpio::Port::E, 19, Gpio::mux::Alt2);
-	/*spi.setDma(dma1);
+	cs.set();
+	spi.setDma(dma1);
 	spi.start();
-	spi.enableDma(Spi::dma::transmit);*/
-	I2c i2c0 (I2c::nI2c::I2c0);
-	Ds1307 time (i2c0);
+	cs.clear();
+	spi.enableDma(Spi::dma::transmit);
+	while (!dma1.flagDone());
+	while (!spi.flagSptef());
+	cs.set();
+	/*I2c i2c0 (I2c::nI2c::I2c0);
+	Ds1307 time (i2c0);*/
 
 
 
 
 	while (1)
 	{
-		time.read(ds1307reg::Seconds);
+
+		/*time.read(ds1307reg::Seconds);
 		delay_ms(100);
-		/*	delay_ms(100);
+			delay_ms(100);
 		dma1.clearFlags();
 		dma1.setLength(10);
 		while (!spi.flagSptef());

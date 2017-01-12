@@ -85,7 +85,7 @@ void Spi::setMode (Mode m)
 void Spi::setDma (Dma &d)
 {
 	driverDma = &d;
-	DMA0->DMA[d.getChannel()].DCR &= ~  DMA_DCR_CS_MASK;
+	DMA0->DMA[d.getChannel()].DCR |= DMA_DCR_CS_MASK;
 	DMA0->DMA[d.getChannel()].DCR |= DMA_DCR_EADREQ_MASK| DMA_DCR_ERQ_MASK;
 }
 
