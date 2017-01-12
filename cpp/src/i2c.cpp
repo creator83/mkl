@@ -5,6 +5,7 @@ I2C_MemMapPtr I2c::i2cAdr [2] = {I2C0_BASE_PTR, I2C1_BASE_PTR};
 I2c::I2c (nI2c n)
 {
 	numberI2c = static_cast <uint8_t> (n);
+	SIM->SCGC4 |= 1 << (SIM_SCGC4_I2C0_SHIFT + numberI2c);
 	i2cAdr [numberI2c]->F = 0x1F;
 	i2cAdr [numberI2c]->C1 =  I2C_C1_MST_MASK| I2C_C1_IICEN_MASK;
 }
@@ -13,19 +14,19 @@ void I2c::start ()
 {
 	i2cAdr [numberI2c]->C1 |= I2C_C1_TX_MASK;
 	i2cAdr [numberI2c]->C1 =  I2C_C1_MST_MASK;
-	while (!flagBusy());
+	while (flagBusy());
 }
 
 void I2c::restart ()
 {
 	i2cAdr [numberI2c]->C1 |= I2C_C1_RSTA_MASK;
-	while (!flagBusy());
+	while (flagBusy());
 }
 
 void I2c::stop ()
 {
 	i2cAdr [numberI2c]->C1 &= ~I2C_C1_MST_MASK;
-	while (!flagBusy());
+	while (flagBusy());
 }
 
 void I2c::putData (uint8_t val)

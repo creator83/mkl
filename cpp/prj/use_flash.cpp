@@ -19,7 +19,8 @@
 #include "tbutton.h"
 #include "flashspi.h"
 #include "dma.h"
-
+#include "ds1307.h"
+#include "i2c.h"
 
 Tact frq;
 Spi spi (Spi::SPI_N::SPI_0);
@@ -43,7 +44,7 @@ extern "C" {
 
 uint8_t dest [10];
 
-
+uint8_t test [10] = {24,1,2,3,4,5,6,7,8,9};
 int main()
 {
 	value.setFont(Array_dec);
@@ -73,7 +74,7 @@ int main()
 	//display.symbol (50,50,  colors16bit::BLACK, colors16bit::GRAY);
 	Dma dma1 (Dma::dmaChannel::ch1);
 	dma1.setDestination((uint32_t)&SPI0->DL);
-	dma1.setSource((uint32_t)midlleTimesNewRomanRus::rus);
+	dma1.setSource((uint32_t)test);
 	dma1.setDsize(Dma::size::bit8);
 	dma1.setSsize(Dma::size::bit8);
 	dma1.setIncDestination(false);
@@ -89,14 +90,22 @@ int main()
 	Pin sck (Gpio::Port::E, 17, Gpio::mux::Alt2);
 	Pin mosi (Gpio::Port::E, 18, Gpio::mux::Alt2);
 	Pin miso (Gpio::Port::E, 19, Gpio::mux::Alt2);
+	/*spi.setDma(dma1);
 	spi.start();
-	spi.setDma(dma1);
+	spi.enableDma(Spi::dma::transmit);*/
+	I2c i2c0 (I2c::nI2c::I2c0);
+	Ds1307 time (i2c0);
 
-	//dma1.start();
+
 
 
 	while (1)
 	{
+		time.read(ds1307reg::Seconds);
+		delay_ms(100);
+		/*	delay_ms(100);
+		dma1.clearFlags();
+		dma1.setLength(10);
 		while (!spi.flagSptef());
 		spi.putDataDl(0x00);
 		spi.enableDma(Spi::dma::transmit);
@@ -105,7 +114,7 @@ int main()
 		spi.disableDma(Spi::dma::transmit);
 		dma1.setLength(10);
 		dma1.clearFlags();
-		delay_ms(100);
+		delay_ms(100);*/
 
 
 	}

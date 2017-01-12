@@ -8,13 +8,13 @@
 
 namespace ds1307def
 {
-	const Gpio::Port sdaPort = Gpio::Port::A;
-	const uint8_t sdaPin = 1;
-	const Gpio::mux sdaMux = Gpio::mux::Alt2;
+	const Gpio::Port sdaPort = Gpio::Port::E;
+	const uint8_t sdaPin = 25;
+	const Gpio::mux sdaMux = Gpio::mux::Alt5;
 
-	const Gpio::Port sdlPort = Gpio::Port::A;
-	const uint8_t sdlPin = 1;
-	const Gpio::mux sdlMux = Gpio::mux::Alt2;
+	const Gpio::Port sdlPort = Gpio::Port::E;
+	const uint8_t sdlPin = 24;
+	const Gpio::mux sdlMux = Gpio::mux::Alt5;
 }
 
 namespace ds1307reg

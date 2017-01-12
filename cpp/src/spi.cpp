@@ -91,7 +91,7 @@ void Spi::setDma (Dma &d)
 
 void Spi::enableDma (dma d)
 {
-	SPI_C2_REG(spiAdr [n_spi]) |= 1 << (uint8_t)d;
+	SPI_C2_REG(spiAdr [n_spi]) |= (1 << (uint8_t)d);
 }
 
 void Spi::disableDma (dma d)
