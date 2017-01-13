@@ -7,6 +7,8 @@ PotMemFn Spi::ptr_receive[2] = {};
 PotMemF Spi::ptr_transmite[2] = {};
 ptr_ex Spi::ptr_exchange[2] =  {};
 
+
+
 Spi::Spi(SPI_N n, Division d, Cpol cpol, Cpha cpha, Size s, Mode m, Role r)
 {
   n_spi = (uint8_t) n;
@@ -124,4 +126,9 @@ bool Spi::flagSptef ()
 bool Spi::flagSprf ()
 {
 	return SPI_S_REG(spiAdr[n_spi]) & SPI_S_SPRF_MASK;
+}
+
+SPI_MemMapPtr & Spi::getSpiPtr ()
+{
+	return spiAdr[n_spi];
 }

@@ -2,6 +2,8 @@
 #include "delay.h"
 #include "spi.h"
 #include "pin.h"
+#include "dma.h"
+
 
 #ifndef ILI9341_H
 #define ILI9341_H
@@ -14,7 +16,14 @@ namespace ili9341Commands
 	const uint8_t vcomControl1  = 0xC5;
 	const uint8_t vcomControl2  = 0xC7;
 	const uint8_t frameControl  = 0xB1;
-	const uint8_t verticalScroll2 = 0x0042;
+	const uint8_t memryAccessControl = 0x36;
+	const uint8_t pixelFormatSet = 0x3A;
+	const uint8_t displayFunctionControl = 0xB6;
+	const uint8_t sleepOut      = 0x11;
+	const uint8_t displayOn     = 0x29;
+	const uint8_t coloumnAddressSet = 0x2A;
+	const uint8_t pageAddressSet = 0x2B;
+	const uint8_t memoryWrite   = 0x2C;
 
 }
 
@@ -33,10 +42,12 @@ public:
 protected:
 private:
 	Spi * driver;
+	Dma * dma;
 	Pin dc;
 //functions
 public:
 	Ili9341(Spi &, Gpio::Port po, uint8_t p);
+	void setDma (Dma &);
 	void pixel (uint16_t x , uint16_t y, const uint16_t color);
 	void fillScreen (uint16_t color);
 	void symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, sFont & s);
@@ -53,9 +64,14 @@ public:
 protected:
 private:
 	void data (uint8_t);
+	void data16 (uint16_t);
+	void dataDma (uint16_t * buf, uint32_t n);
 	void command (uint8_t);
 	void write (uint8_t);
 	void init ();
+	void setPage (uint16_t x1, uint16_t x2);
+	void setColoumn (uint16_t y1, uint16_t y2);
+	void pixel (const uint16_t color);
 
 }; //ssd1289
 

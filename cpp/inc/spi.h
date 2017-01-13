@@ -74,6 +74,7 @@ public:
   uint8_t getDataDl ();
   bool flagSptef ();
   bool flagSprf ();
+  SPI_MemMapPtr & getSpiPtr ();
 
 private:
 };
