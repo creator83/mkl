@@ -33,6 +33,7 @@ public:
   bool flagBusy ();
   bool flagTcf ();
   bool flagIicif ();
+  bool flagRxak ();
   void setAddress (uint8_t);
 
 private:
