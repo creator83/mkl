@@ -27,8 +27,9 @@ Spi spi (Spi::SPI_N::SPI_0);
 Ssd1289::sFont bNum;
 Buffer value;
 Ssd1289 display;
-Flash memry (spi, Gpio::Port::E, 16);
-
+//Flash memry (spi, Gpio::Port::E, 16);
+Pin sda (Gpio::Port::E, 18, Gpio::mux::Alt4);
+Pin scl (Gpio::Port::E, 19, Gpio::mux::Alt4);
 struct flags
 {
   unsigned touch :1;
@@ -47,6 +48,10 @@ uint8_t dest [10];
 uint8_t test [10] = {24,1,2,3,4,5,6,7,8,9};
 int main()
 {
+	I2c driverI2c (I2c::nI2c::I2c0);
+	driverI2c.wByte(0xD0, 0x02, 0x03);
+
+
 	value.setFont(Array_dec);
 
 	Shape::driver = &display;
@@ -125,3 +130,4 @@ int main()
 
 	}
 }
+

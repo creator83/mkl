@@ -35,6 +35,7 @@ public:
   bool flagIicif ();
   bool flagRxak ();
   void setAddress (uint8_t);
+  void wByte (uint8_t address, uint8_t reg, uint8_t data);
 
 private:
 };
