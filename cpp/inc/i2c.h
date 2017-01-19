@@ -28,13 +28,14 @@ public:
   void stop ();
   void putData (uint8_t);
   uint8_t getData ();
+  void setAddress (uint8_t);
   void write (uint8_t);
   uint8_t read (bool);
   bool flagBusy ();
   bool flagTcf ();
   bool flagIicif ();
   bool flagRxak ();
-  void setAddress (uint8_t);
+
   void wByte (uint8_t address, uint8_t reg, uint8_t data);
 
 private:

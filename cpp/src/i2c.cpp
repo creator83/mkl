@@ -15,15 +15,14 @@ I2c::I2c (nI2c n)
 
 void I2c::start ()
 {
-	//while (flagBusy());
 	i2cAdr [numberI2c]->C1 |= I2C_C1_TX_MASK;
-	i2cAdr [numberI2c]->C1 |=  I2C_C1_MST_MASK;
+	i2cAdr [numberI2c]->C1 |= I2C_C1_MST_MASK;
+	while (!flagBusy());
 }
 
 void I2c::restart ()
 {
 	i2cAdr [numberI2c]->C1 |= I2C_C1_RSTA_MASK;
-	while (flagBusy());
 }
 
 void I2c::stop ()
@@ -40,6 +39,11 @@ void I2c::putData (uint8_t val)
 uint8_t I2c::getData ()
 {
 	return i2cAdr [numberI2c]->D;
+}
+
+void I2c::setAddress (uint8_t addr)
+{
+	putData(addr&0xFE);
 }
 
 void I2c::write (uint8_t val)
@@ -82,11 +86,6 @@ bool I2c::flagIicif ()
 bool I2c::flagRxak ()
 {
 	return i2cAdr [numberI2c]->S & I2C_S_RXAK_MASK;
-}
-
-void I2c::setAddress (uint8_t addr)
-{
-	putData(addr&0xFE);
 }
 
 void I2c::wByte (uint8_t addr, uint8_t reg, uint8_t d)
