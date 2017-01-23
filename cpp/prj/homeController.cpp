@@ -37,10 +37,32 @@ Tgrid settingsArea (touch,6,4);
 
 Ssd1289::sFont mNumber;
 Ssd1289::sFont bNumber;
+Ssd1289::sFont rusFont;
+
+
+//pump data
 Data dryPressureValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
 Data lowPressureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &bNumber);
 Data hiPressureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
 Data currentPressureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
+
+//rooms data
+Data livingRoomTemperature  (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
+Data livingRoomHummidity (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
+Data bathRoomTemperature  (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
+Data bathRoomHummidity (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
+
+
+//String high pressure
+Sstring hiPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление отключения",&rusFont, 0);
+Sstring lowPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление включения",&rusFont, 0);
+Sstring dryPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление сухого хода",&rusFont, 0);
+
+//String rooms
+Sstring livingRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Жилая комната",&rusFont, 0);
+Sstring bathRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Ванная комната",&rusFont, 0);
+
+
 
 Tbutton tMainScreen (fourArea);
 Tbutton tEqipmentScreens (sixArea);
@@ -232,9 +254,14 @@ int main()
 	bNumber.height = 35;
 	bNumber.width = 3;
 
+	rusFont.font = midlleTimesNewRomanRus::rus14;
+	rusFont.height = 14;
+	rusFont.width = 2;
+
 	initScreens ();
 	initTouchButton ();
 	makeTree ();
+	display.string(10, 50, colors16bit::BLACK, colors16bit::GRAY, "Привет", rusFont,0);
 
 	//NVIC_EnableIRQ(PIT_IRQn);
 	//mainloop.start();
@@ -567,8 +594,13 @@ void initScreens ()
 
 		//pump setting screen
 		hiPressure.setFunction(settingValueFon);
+		hiPressure.addLast(&hiPressureString);
+
 		lowPressure.setFunction(settingValueFon);
+		lowPressure.addLast(&lowPressureString);
+
 		dryPressure.setFunction(settingValueFon);
+		dryPressure.addLast(&dryPressureString);
 
 		//sub rooms screen
 		diningScreen.setFunction(roomsFon);

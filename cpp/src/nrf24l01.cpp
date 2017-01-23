@@ -201,5 +201,9 @@ void Nrf24l01::clearFlag ()
 	//irq.clearFlag();
 }
 
+void Nrf24l01::enableChannels (channel)
+{
+
+}
 
 

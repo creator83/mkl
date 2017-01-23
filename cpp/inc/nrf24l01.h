@@ -118,7 +118,8 @@ class Nrf24l01
 //variables
 public:
   uint8_t count;
-  enum mode {TXmode , RXmode, PWR_DOWN, STANDBY_1, STANDBY_2};  
+  enum mode {TXmode , RXmode, PWR_DOWN, STANDBY_1, STANDBY_2};
+  enum class channel {channel0, channel1, channel2, channel3, channel4, channel5};
 private:
   static uint8_t selfAddress [5];
   static uint8_t remoteAddress [5];
@@ -127,6 +128,7 @@ private:
   Spi * driver;
   //Intrpt irq;
   uint8_t chan;
+  uint8_t nChannel;
   //functions
 public:
 
@@ -147,6 +149,7 @@ public:
   uint8_t get_status ();
   bool init ();
   void clearFlag ();
+  void enableChannels (channel);
   //uint8_t state;
 
 private:

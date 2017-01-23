@@ -9,7 +9,7 @@ I2c::I2c (nI2c n)
 
 	i2cAdr [numberI2c]->F = 0x1F;
 	i2cAdr [numberI2c]->C2 &= ~ (I2C_C2_HDRS_MASK|I2C_C2_ADEXT_MASK);
-	i2cAdr [numberI2c]->C1 =  I2C_C1_MST_MASK| I2C_C1_IICEN_MASK;
+	i2cAdr [numberI2c]->C1 =  I2C_C1_IICEN_MASK;
 	//i2cAdr [numberI2c]->C1 |= I2C_C1_IICIE_MASK;
 }
 
@@ -28,6 +28,7 @@ void I2c::restart ()
 void I2c::stop ()
 {
 	i2cAdr [numberI2c]->C1 &= ~I2C_C1_MST_MASK;
+	i2cAdr [numberI2c]->C1 &= ~I2C_C1_TX_MASK;
 	while (flagBusy());
 }
 
@@ -92,8 +93,8 @@ void I2c::wByte (uint8_t addr, uint8_t reg, uint8_t d)
 {
 	start ();
 	putData(addr&0xFE);
-	while (!flagRxak());
-	i2cAdr [numberI2c]->S |= I2C_S_IICIF_MASK;
+	//while (!flagRxak());
+	//i2cAdr [numberI2c]->S |= I2C_S_IICIF_MASK;
 
 	write (reg);
 	write (d);
