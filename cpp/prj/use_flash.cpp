@@ -44,13 +44,15 @@ extern "C" {
 }
 
 uint8_t dest [10];
-
+uint8_t data [7];
 uint8_t test [10] = {24,1,2,3,4,5,6,7,8,9};
 int main()
 {
 	I2c driverI2c (I2c::nI2c::I2c0);
-	driverI2c.wByte(0xD0, 0x02, 0x03);
-
+	driverI2c.wByte(0xD0, 0x0F, 0x08);
+	driverI2c.read(data, 0xD0, 0, 7);
+	driverI2c.rByte(0xD0, 0x0F);
+	driverI2c.read(data, 0xD0, 0x0E, 2);
 
 	value.setFont(Array_dec);
 
