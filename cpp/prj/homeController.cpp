@@ -23,7 +23,8 @@
 #include "tree.h"
 #include "data.h"
 #include "sstring.h"
-
+#include "ds3231.h"
+#include "i2c.h"
 //Pressure data
 
 Tact frq;
@@ -33,12 +34,41 @@ Ssd1289 display;
 Tgrid fourArea (touch, 2,2);
 Tgrid sixArea (touch,3,2);
 Tgrid settingsArea (touch,6,4);
+Pin sda (Gpio::Port::E, 18, Gpio::mux::Alt4);
+Pin scl (Gpio::Port::E, 19, Gpio::mux::Alt4);
+I2c i2c0 (I2c::nI2c::I2c0);
+Ds3231 calendar (i2c0);
 
 
 Ssd1289::sFont mNumber;
 Ssd1289::sFont bNumber;
+Ssd1289::sFont hNumber;
 Ssd1289::sFont rusFont;
 
+const char * days [7][12] = {
+	{"Понедельник"},
+	{"Вторник"},
+	{"Среда"},
+	{"Четверг"},
+	{"Пятница"},
+	{"Суббота"},
+	{"Восскресенье"}
+};
+
+const char * months [12][3] = {
+	{"Янв"},
+	{"Фев"},
+	{"Мар"},
+	{"Апр"},
+	{"Май"},
+	{"Июн"},
+	{"Июл"},
+	{"Авг"},
+	{"Сен"},
+	{"Окт"},
+	{"Ноя"},
+	{"Дек"}
+};
 
 //pump data
 Data dryPressureValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
@@ -61,6 +91,15 @@ Sstring dryPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Дав
 //String rooms
 Sstring livingRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Жилая комната",&rusFont, 0);
 Sstring bathRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Ванная комната",&rusFont, 0);
+
+//String calendar
+
+Sstring hoursString (10, 197,  colors16bit::BLACK, colors16bit::GRAY, "00",&hNumber, 0);
+Sstring minutesString (82, 197,  colors16bit::BLACK, colors16bit::GRAY, "00",&hNumber, 0);
+Sstring secondsString (154, 197,  colors16bit::BLACK, colors16bit::GRAY, "00",&hNumber, 0);
+Sstring daysString (10, 230,  colors16bit::BLACK, colors16bit::GRAY, 12 ,&rusFont, 0);
+Sstring monthsString (50, 140,  colors16bit::BLACK, colors16bit::GRAY, 3,&rusFont, 0);
+
 
 
 
@@ -165,6 +204,10 @@ MonoPicture fanBath (132, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages
 MonoPicture lightLiving (26, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::light, 7, 56);
 MonoPicture settingLiving (132, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::settings, 7, 56);
 
+//time point
+MonoPicture dPoint1 (26, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::dPoint, 1, 45);
+MonoPicture dPoint2 (26, 70, colors16bit::GRAY, colors16bit::BLACK, smallImages::dPoint, 1, 45);
+
 //ColorPicture rgbCircle (0, 230, picture::rgb, 210, 219);
 
 
@@ -221,6 +264,8 @@ void drawEqupmentScreen();
 void drawLowPressureScreen();
 void drawHiPressureScreen();
 
+void setClock ();
+void readClock ();
 
 const uint16_t colors [] = {colors16bit::BLACK, colors16bit::RED, colors16bit::BLUE,  colors16bit::GREEN, colors16bit::CYAN, colors16bit::MAGENTA,  colors16bit::YELLOW, colors16bit::WHITE,
  colors16bit::GRAY, colors16bit::SKY, colors16bit::ORANGE,  colors16bit::PINK, colors16bit::BROWN,colors16bit::VIOLET, colors16bit::SILVER,
@@ -240,6 +285,7 @@ void initScreens ();
 
 int main()
 {
+	setClock ();
 	Shape::driver = &display;
 	spi1.setMode(Spi::Mode::software);
 	Pin sck (Gpio::Port::E, 2, Gpio::mux::Alt2);
@@ -258,6 +304,10 @@ int main()
 	rusFont.height = 14;
 	rusFont.width = 2;
 
+	hNumber.font = bigNumbers::huge;
+	rusFont.height = 45;
+	rusFont.width = 4;
+
 	initScreens ();
 	initTouchButton ();
 	makeTree ();
@@ -268,6 +318,9 @@ int main()
 	//Systimer mainLoop (Systimer::mode::ms, 1000);
 	while (1)
 	{
+		readClock ();
+
+		delay_ms(100);
 	}
 }
 
@@ -625,4 +678,41 @@ void drawHiPressureScreen()
 	getForward (menu, 2);
 }
 
+void setClock ()
+{
+	calendar.stop();
+	calendar.setSeconds(0);
+	calendar.setMinutes(10);
+	calendar.setHours(19);
+	calendar.setDay(2);
+	calendar.setDate(24);
+	calendar.setMonth(1);
+	calendar.setYear(17);
+	calendar.setData();
+	calendar.start();
+}
 
+void readClock ()
+{
+	uint8_t temp, result;
+	calendar.readCalendar();
+	temp = calendar.getHours();
+	temp &= valueMask::Dhours >> 4;
+	hoursString.setElement(0, temp);
+	temp = calendar.getHours()&valueMask::hours;
+	hoursString.setElement(1, temp);
+
+	temp = calendar.getMinutes();
+	temp &= valueMask::Dminutes >> 4;
+	minutesString.setElement(0, temp);
+	temp = calendar.getMinutes()&valueMask::minutes;
+	minutesString.setElement(1, temp);
+
+	temp = calendar.getSeconds();
+	temp &= valueMask::Dseconds >> 4;
+	secondsString.setElement(0, temp);
+	temp = calendar.getSeconds()&valueMask::seconds;
+	secondsString.setElement(1, temp);
+	temp = calendar.getDay()&valueMask::day;
+	daysString.copy(days[temp][0]);
+}

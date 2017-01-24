@@ -16,6 +16,7 @@ enum class nI2c {I2c0,I2c1};
 enum class mode {receiver, transmitter};
 enum class directionBit {write, read};
 
+
 protected:
 
 

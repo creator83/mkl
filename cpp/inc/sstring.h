@@ -11,9 +11,12 @@ private:
 	uint16_t x, y, color, fon;
 	char * str;
 	Ssd1289::sFont * font_;
-	uint8_t interval;
+	uint8_t interval, nChar;
 public:
 	Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, char *str_, Ssd1289::sFont *f, uint8_t interval_);
+	Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, uint8_t n, Ssd1289::sFont *f, uint8_t interval_);
+	void setElement (uint8_t n, uint8_t val);
+	void copy (const char *);
 	~Sstring ();
 	void draw () const override;
 
