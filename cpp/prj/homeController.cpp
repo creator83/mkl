@@ -76,6 +76,27 @@ Data lowPressureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &b
 Data hiPressureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
 Data currentPressureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
 
+//level data
+Data hiLevelValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 190, 3, &bNumber);
+Data lowLevelValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 140, 3, &bNumber);
+Data currentLevelValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 0, 3, &bNumber);
+
+//fan data
+Data onHummidityValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 600, 3, &bNumber);
+Data offHummidityValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 400, 3, &bNumber);
+Data currentHummidityValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 0, 3, &bNumber);
+
+//floor data
+Data offTemperatureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 280, 3, &bNumber);
+Data currentTemperatureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 0, 3, &bNumber);
+
+//Alarm
+Data alarm1TurnOnValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 6, 2, &bNumber);
+Data alarm1TurnOffValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 9, 2, &bNumber);
+Data alarm2TurnOnValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 18, 2, &bNumber);
+Data alarm2TurnOffValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 21, 2, &bNumber);
+
+
 //rooms data
 Data livingRoomTemperature  (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
 Data livingRoomHummidity (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
@@ -106,6 +127,9 @@ Sstring monthsString (50, 140,  colors16bit::BLACK, colors16bit::GRAY, 3,&rusFon
 Tbutton tMainScreen (fourArea);
 Tbutton tEqipmentScreens (sixArea);
 Tbutton tRoomsScreens (sixArea);
+Tbutton tCalendarScreens (sixArea);
+Tbutton tExternalScreens (sixArea);
+
 Tbutton tBathScreens (sixArea);
 Tbutton tDiningScreens (sixArea);
 Tbutton tLivingScreens (sixArea);
@@ -115,6 +139,19 @@ Tbutton tPump (sixArea);
 Tbutton tDryPressure (settingsArea);
 Tbutton tLowPressure (settingsArea);
 Tbutton tHiPressure (settingsArea);
+
+Tbutton tLevel (sixArea);
+Tbutton tOnLevel (settingsArea);
+Tbutton tOffLevel (settingsArea);
+Tbutton tAlarm1 (settingsArea);
+Tbutton tAlarm2 (settingsArea);
+
+Tbutton tFloor (sixArea);
+Tbutton tOnTemperature (settingsArea);
+
+Tbutton tFan (sixArea);
+Tbutton tOnHummidity (settingsArea);
+Tbutton tOffHummidity (settingsArea);
 
 //main screen objects
 List mScreen;
@@ -597,6 +634,46 @@ void initTouchButton ()
 		tHiPressure.addButton(22,backF);
 		tHiPressure.addButton(18,backF);
 		tHiPressure.addButton(19,backF);
+
+		tLevel.addButton(4,homeF);
+		tLevel.addButton(5,backF);
+
+		tOnLevel.addButton(16,homeF);
+		tOnLevel.addButton(17,homeF);
+		tOnLevel.addButton(20,homeF);
+		tOnLevel.addButton(21,homeF);
+		tOnLevel.addButton(23,backF);
+		tOnLevel.addButton(22,backF);
+		tOnLevel.addButton(18,backF);
+		tOnLevel.addButton(19,backF);
+
+
+		tOffLevel.addButton(16,homeF);
+		tOffLevel.addButton(17,homeF);
+		tOffLevel.addButton(20,homeF);
+		tOffLevel.addButton(21,homeF);
+		tOffLevel.addButton(23,backF);
+		tOffLevel.addButton(22,backF);
+		tOffLevel.addButton(18,backF);
+		tOffLevel.addButton(19,backF);
+
+		tAlarm1.addButton(16,homeF);
+		tAlarm1.addButton(17,homeF);
+		tAlarm1.addButton(20,homeF);
+		tAlarm1.addButton(21,homeF);
+		tAlarm1.addButton(23,backF);
+		tAlarm1.addButton(22,backF);
+		tAlarm1.addButton(18,backF);
+		tAlarm1.addButton(19,backF);
+
+		tAlarm2.addButton(16,homeF);
+		tAlarm2.addButton(17,homeF);
+		tAlarm2.addButton(20,homeF);
+		tAlarm2.addButton(21,homeF);
+		tAlarm2.addButton(23,backF);
+		tAlarm2.addButton(22,backF);
+		tAlarm2.addButton(18,backF);
+		tAlarm2.addButton(19,backF);
 }
 
 void initScreens ()
