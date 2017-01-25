@@ -37,8 +37,7 @@ Tgrid sixArea (touch,3,2);
 Tgrid settingsArea (touch,6,4);
 Pin sda (Gpio::Port::E, 18, Gpio::mux::Alt4);
 Pin scl (Gpio::Port::E, 19, Gpio::mux::Alt4);
-I2c i2c0 (I2c::nI2c::I2c0);
-Ds3231 calendar (i2c0);
+
 Buffer buffer;
 
 uint16_t dryPressureData = 5;
@@ -323,8 +322,8 @@ void drawEqupmentScreen();
 void drawLowPressureScreen();
 void drawHiPressureScreen();
 
-void setClock ();
-void readClock ();
+/*void setClock ();
+void readClock ();*/
 
 const uint16_t colors [] = {colors16bit::BLACK, colors16bit::RED, colors16bit::BLUE,  colors16bit::GREEN, colors16bit::CYAN, colors16bit::MAGENTA,  colors16bit::YELLOW, colors16bit::WHITE,
  colors16bit::GRAY, colors16bit::SKY, colors16bit::ORANGE,  colors16bit::PINK, colors16bit::BROWN,colors16bit::VIOLET, colors16bit::SILVER,
@@ -348,7 +347,9 @@ void parsTemperatureData (Sstring &, uint16_t &);
 
 int main()
 {
-	setClock ();
+	/*I2c i2c0 (I2c::nI2c::I2c0);
+	Ds3231 calendar (i2c0);
+	setClock ();*/
 	Shape::driver = &display;
 	spi1.setMode(Spi::Mode::software);
 	Pin sck (Gpio::Port::E, 2, Gpio::mux::Alt2);
@@ -363,9 +364,10 @@ int main()
 	bNumber.height = 27;
 	bNumber.width = 17;
 
-	rFont.font = rusFont::times14;
-	rFont.height = 13;
-	rFont.width = 14;
+	rFont.font = rusFont::times16;
+	rFont.height = 14;
+	rFont.width = 16;
+	rFont.shift = 192;
 
 	hNumber.font = numbers::times48;
 	hNumber.height = 32;
@@ -376,14 +378,14 @@ int main()
 	initData ();
 
 	makeTree ();
-	display.string(10, 50, colors16bit::BLACK, colors16bit::GRAY, "Привет", rFont,0);
+	display.string(10, 50,  colors16bit::GRAY, colors16bit::BLACK,"Привет", rFont,0);
 
 	//NVIC_EnableIRQ(PIT_IRQn);
 	//mainloop.start();
 	//Systimer mainLoop (Systimer::mode::ms, 1000);
 	while (1)
 	{
-		readClock ();
+		//readClock ();
 
 		delay_ms(100);
 	}
@@ -782,7 +784,7 @@ void drawHiPressureScreen()
 {
 	getForward (menu, 2);
 }
-
+/*
 void setClock ()
 {
 	calendar.stop();
@@ -820,7 +822,7 @@ void readClock ()
 	secondsString.setElement(1, temp);
 	temp = calendar.getDay()&valueMask::day;
 	daysString.copy(days[temp][0]);
-}
+}*/
 
 void initData ()
 {

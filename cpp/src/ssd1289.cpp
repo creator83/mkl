@@ -80,7 +80,9 @@ void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 	const uint8_t * ptrFont = s.font;
 	uint8_t byte = s.width>>3;
 	uint8_t pix = s.width%8;
-	uint16_t num = (ch-s.shift)*s.width*s.height;
+	uint16_t num;
+	if (pix)  num = (ch-s.shift)*(byte+1)*s.height;
+	else num = (ch-s.shift)*byte*s.height;
 	ptrFont += num;
 	uint16_t colors [2] = { color, fon};
 
@@ -106,7 +108,7 @@ void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 			bool temp = (*ptrFont)&(1 << k);
 			driver.putData(colors [temp]);
 		}
-		++ptrFont;
+		if (pix) ++ptrFont;
 	}
 }
 
@@ -116,7 +118,7 @@ void Ssd1289::string (uint16_t x, uint16_t y, const uint16_t color, const uint16
 	while (*str)
 	{
 		symbol (tempX, y, color, fon, *str++, s);
-		tempX +=  s.width*8 + interval;
+		tempX +=  s.width + interval;
 	}
 }
 
@@ -126,7 +128,7 @@ void Ssd1289::string (uint16_t x, uint16_t y, const uint16_t color, const uint16
 	while (n--)
 	{
 		symbol (tempX, y, color, fon, *str++, s);
-		tempX +=  s.width*8 + interval;
+		tempX +=  s.width + interval;
 	}
 }
 void Ssd1289::setCursor (uint16_t x , uint16_t y)
