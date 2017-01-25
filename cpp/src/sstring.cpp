@@ -21,7 +21,7 @@ Sstring::Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, uint
 	nChar = n+1;
 }
 
-void Sstring::setElement (uint8_t n, uint8_t val)
+void Sstring::setElement (uint8_t n, char val)
 {
 	char * ptr = &str[n];
 	*ptr = val;

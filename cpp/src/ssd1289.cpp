@@ -78,6 +78,8 @@ void Ssd1289::fillScreen (uint16_t color)
 void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, sFont & s)
 {
 	const uint8_t * ptrFont = s.font;
+	uint8_t byte = s.width>>3;
+	uint8_t pix = s.width%8;
 	uint16_t num = (ch-s.shift)*s.width*s.height;
 	ptrFont += num;
 	uint16_t colors [2] = { color, fon};
@@ -90,7 +92,7 @@ void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 		driver.cs.clear();
 		//data
 		driver.rs.set();
-		for (uint8_t j=0;j<s.width;++j)
+		for (uint8_t j=0;j<byte;++j)
 		{
 			for (int8_t k=7;k>=0;--k)
 			{
@@ -99,6 +101,12 @@ void Ssd1289::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 			}
 			++ptrFont;
 		}
+		for (int8_t k=7, j=0;j<pix;--k, ++j)
+		{
+			bool temp = (*ptrFont)&(1 << k);
+			driver.putData(colors [temp]);
+		}
+		++ptrFont;
 	}
 }
 

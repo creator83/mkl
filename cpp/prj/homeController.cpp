@@ -25,6 +25,7 @@
 #include "sstring.h"
 #include "ds3231.h"
 #include "i2c.h"
+#include "buffer.h"
 //Pressure data
 
 Tact frq;
@@ -38,12 +39,33 @@ Pin sda (Gpio::Port::E, 18, Gpio::mux::Alt4);
 Pin scl (Gpio::Port::E, 19, Gpio::mux::Alt4);
 I2c i2c0 (I2c::nI2c::I2c0);
 Ds3231 calendar (i2c0);
+Buffer buffer;
 
+uint16_t dryPressureData = 5;
+uint16_t hiPressureData = 32;
+uint16_t lowPressureData = 18;
+uint16_t currentPressureData = 0;
 
+uint16_t lowLevelData = 150;
+uint16_t hiLevelData = 190;
+uint16_t currentLevelData = 0;
+
+uint16_t onHummidityData = 650;
+uint16_t offHummidityData = 350;
+uint16_t currentHummidityData = 350;
+
+uint16_t offTemperatureData = 285;
+uint16_t currentTemperatureData = 0;
+
+uint16_t currentTemperatureLiving = 0;
+uint16_t currentHummidityLiving = 0;
+
+uint16_t currentTemperatureBath = 0;
+uint16_t currentHummidityBath = 0;
 Ssd1289::sFont mNumber;
 Ssd1289::sFont bNumber;
 Ssd1289::sFont hNumber;
-Ssd1289::sFont rusFont;
+Ssd1289::sFont rFont;
 
 const char * days [7][12] = {
 	{"Понедельник"},
@@ -71,55 +93,55 @@ const char * months [12][3] = {
 };
 
 //pump data
-Data dryPressureValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 8, 2, &bNumber);
-Data lowPressureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 22, 2, &bNumber);
-Data hiPressureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
-Data currentPressureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
+Sstring dryPressureValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring lowPressureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring hiPressureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring currentPressureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
 
 //level data
-Data hiLevelValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 190, 3, &bNumber);
-Data lowLevelValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 140, 3, &bNumber);
-Data currentLevelValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 0, 3, &bNumber);
+Sstring hiLevelValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring lowLevelValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring currentLevelValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
 
 //fan data
-Data onHummidityValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 600, 3, &bNumber);
-Data offHummidityValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 400, 3, &bNumber);
-Data currentHummidityValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 0, 3, &bNumber);
+Sstring onHummidityValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring offHummidityValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring currentHummidityValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
 
 //floor data
-Data offTemperatureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 280, 3, &bNumber);
-Data currentTemperatureValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 0, 3, &bNumber);
-
+Sstring offTemperatureValue (129, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring currentTemperatureValue (23, 170, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+/*
 //Alarm
 Data alarm1TurnOnValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 6, 2, &bNumber);
 Data alarm1TurnOffValue (129, 50, colors16bit::BLACK, colors16bit::GRAY, 9, 2, &bNumber);
 Data alarm2TurnOnValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 18, 2, &bNumber);
 Data alarm2TurnOffValue (23, 50, colors16bit::BLACK, colors16bit::GRAY, 21, 2, &bNumber);
-
+*/
 
 //rooms data
-Data livingRoomTemperature  (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
-Data livingRoomHummidity (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
-Data bathRoomTemperature  (129, 170, colors16bit::BLACK, colors16bit::GRAY, 34, 2, &bNumber);
-Data bathRoomHummidity (23, 170, colors16bit::BLACK, colors16bit::GRAY, 0, 2, &bNumber);
+Sstring livingRoomTemperature  (16, 190, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring livingRoomHummidity (148, 190, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring bathRoomTemperature  (16, 190, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
+Sstring bathRoomHummidity (148, 190, colors16bit::BLACK, colors16bit::GRAY, 3, &bNumber, 1);
 
 
 //String high pressure
-Sstring hiPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление отключения",&rusFont, 0);
-Sstring lowPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление включения",&rusFont, 0);
-Sstring dryPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление сухого хода",&rusFont, 0);
+Sstring hiPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление отключения",&rFont, 0);
+Sstring lowPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление включения",&rFont, 0);
+Sstring dryPressureString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Давление сухого хода",&rFont, 0);
 
 //String rooms
-Sstring livingRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Жилая комната",&rusFont, 0);
-Sstring bathRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Ванная комната",&rusFont, 0);
+Sstring livingRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Жилая комната",&rFont, 0);
+Sstring bathRoomString (200, 50,  colors16bit::BLACK, colors16bit::GRAY, "Ванная комната",&rFont, 0);
 
 //String calendar
 
 Sstring hoursString (10, 197,  colors16bit::BLACK, colors16bit::GRAY, "00",&hNumber, 0);
 Sstring minutesString (82, 197,  colors16bit::BLACK, colors16bit::GRAY, "00",&hNumber, 0);
 Sstring secondsString (154, 197,  colors16bit::BLACK, colors16bit::GRAY, "00",&hNumber, 0);
-Sstring daysString (10, 230,  colors16bit::BLACK, colors16bit::GRAY, 12 ,&rusFont, 0);
-Sstring monthsString (50, 140,  colors16bit::BLACK, colors16bit::GRAY, 3,&rusFont, 0);
+Sstring daysString (10, 230,  colors16bit::BLACK, colors16bit::GRAY, 12 ,&rFont, 0);
+Sstring monthsString (50, 140,  colors16bit::BLACK, colors16bit::GRAY, 3,&rFont, 0);
 
 
 
@@ -318,6 +340,10 @@ void forward1 ();
 void makeTree ();
 void initTouchButton ();
 void initScreens ();
+void initData ();
+void parsPressureData (Sstring &, uint16_t &);
+void parsLevelData (Sstring &, uint16_t &);
+void parsTemperatureData (Sstring &, uint16_t &);
 
 
 int main()
@@ -329,26 +355,28 @@ int main()
 	Pin mosi (Gpio::Port::E, 1, Gpio::mux::Alt2);
 	Pin miso (Gpio::Port::E, 3, Gpio::mux::Alt2);
 
-	mNumber.font = midleNumbers::number;
-	mNumber.height = 36;
-	mNumber.width = 2;
+	mNumber.font = numbers::times36;
+	mNumber.height = 24;
+	mNumber.width = 16;
 
-	bNumber.font = bigNumbers::numbers;
-	bNumber.height = 35;
-	bNumber.width = 3;
+	bNumber.font = numbers::times40;
+	bNumber.height = 27;
+	bNumber.width = 17;
 
-	rusFont.font = midlleTimesNewRomanRus::rus14;
-	rusFont.height = 14;
-	rusFont.width = 2;
+	rFont.font = rusFont::times14;
+	rFont.height = 13;
+	rFont.width = 14;
 
-	hNumber.font = bigNumbers::huge;
-	rusFont.height = 45;
-	rusFont.width = 4;
+	hNumber.font = numbers::times48;
+	hNumber.height = 32;
+	hNumber.width = 21;
 
 	initScreens ();
 	initTouchButton ();
+	initData ();
+
 	makeTree ();
-	display.string(10, 50, colors16bit::BLACK, colors16bit::GRAY, "Привет", rusFont,0);
+	display.string(10, 50, colors16bit::BLACK, colors16bit::GRAY, "Привет", rFont,0);
 
 	//NVIC_EnableIRQ(PIT_IRQn);
 	//mainloop.start();
@@ -792,4 +820,73 @@ void readClock ()
 	secondsString.setElement(1, temp);
 	temp = calendar.getDay()&valueMask::day;
 	daysString.copy(days[temp][0]);
+}
+
+void initData ()
+{
+	//===Pressure===//
+	//decimal point
+	dryPressureValue.setElement(1, 11);
+	lowPressureValue.setElement(1, 11);
+	hiPressureValue.setElement(1, 11);
+	currentPressureValue.setElement(1, 11);
+	parsPressureData (dryPressureValue, dryPressureData);
+	parsPressureData (lowPressureValue, lowPressureData);
+	parsPressureData (hiPressureValue, hiPressureData);
+	parsPressureData (currentPressureValue, currentPressureData);
+
+	//===Level===//
+	parsLevelData (hiLevelValue, hiLevelData);
+	parsLevelData (lowLevelValue, lowLevelData);
+	parsLevelData (currentLevelValue, currentLevelData);
+
+	//===Hummidity===//
+	onHummidityValue.setElement(2, 11);
+	offHummidityValue.setElement(2, 11);
+	currentHummidityValue.setElement(2, 11);
+	parsTemperatureData (onHummidityValue, onHummidityData);
+	parsTemperatureData (offHummidityValue, offHummidityData);
+	parsTemperatureData (currentHummidityValue, currentHummidityData);
+
+	//===Floor temperature===//
+	offTemperatureValue.setElement(2, 11);
+	currentTemperatureValue.setElement(2, 11);
+	parsTemperatureData (offTemperatureValue, offTemperatureData);
+	parsTemperatureData (currentTemperatureValue, currentTemperatureData);
+
+	//===Room data===//
+	livingRoomTemperature.setElement(2, 11);
+	livingRoomHummidity.setElement(2, 11);
+	bathRoomTemperature.setElement(2, 11);
+	bathRoomHummidity.setElement(2, 11);
+	parsTemperatureData (livingRoomTemperature, currentTemperatureLiving);
+	parsTemperatureData (livingRoomHummidity, currentHummidityLiving);
+	parsTemperatureData (bathRoomTemperature,  currentTemperatureBath);
+	parsTemperatureData (bathRoomHummidity, currentHummidityBath);
+}
+
+void parsPressureData (Sstring & cont, uint16_t & val)
+{
+	buffer.setFont(Array_dec);
+	buffer.parsDec16(val, 2);
+	cont.setElement(0, *buffer.getElement(3));
+	cont.setElement(2, *buffer.getElement(4));
+}
+
+void parsLevelData (Sstring &cont, uint16_t &val)
+{
+	buffer.setFont(Array_dec);
+	buffer.parsDec16(val, 3);
+	cont.setElement(0, *buffer.getElement(2));
+	cont.setElement(1, *buffer.getElement(3));
+	cont.setElement(2, *buffer.getElement(4));
+}
+
+void parsTemperatureData (Sstring &cont, uint16_t &val)
+{
+	buffer.setFont(Array_dec);
+	buffer.parsDec16(val, 3);
+	cont.setElement(0, *buffer.getElement(2));
+	cont.setElement(2, *buffer.getElement(3));
+	cont.setElement(3, *buffer.getElement(4));
 }
