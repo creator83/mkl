@@ -10,3 +10,9 @@ void MonoPicture::draw () const
 {
 	driver->drawArr (x, y, color, fon, arr, l, width);
 }
+
+void MonoPicture::setPosition (uint16_t x_, uint16_t y_)
+{
+	x = x_;
+	y = y_;
+}

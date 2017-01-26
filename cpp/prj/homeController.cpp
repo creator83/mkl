@@ -144,12 +144,17 @@ Sstring monthsString (50, 140,  colors16bit::BLACK, colors16bit::GRAY, 3,&rFont,
 
 //fan button
 Horline fanOffButton (9, 76, colors16bit::RED, 90, 35);
-Sstring fanOffString (10, 110,  colors16bit::BLACK, colors16bit::RED, 4,&rFont, 0);
+Sstring fanOffString (10, 110,  colors16bit::BLACK, colors16bit::RED, "¬€ À",&rFont, 0);
 Horline fanOnButton (9, 76, colors16bit::GREEN, 90, 35);
-Sstring fanOnString (10, 110,  colors16bit::BLACK, colors16bit::GREEN, 4,&rFont, 0);
+Sstring fanOnString (10, 110,  colors16bit::BLACK, colors16bit::GREEN, "¬ À ",&rFont, 0);
 Horline fanAutoButton (9, 76, colors16bit::YELLOW, 90, 35);
-Sstring fanAutoString (10, 110,  colors16bit::BLACK, colors16bit::YELLOW, 4,&rFont, 0);
+Sstring fanAutoString (10, 110,  colors16bit::BLACK, colors16bit::YELLOW, "¿¬“Œ",&rFont, 0);
 
+//floor button
+Horline floorOffButton (115, 76, colors16bit::RED, 90, 35);
+Sstring floorOffString (120, 110,  colors16bit::BLACK, colors16bit::RED, "¬€ À" ,&rFont, 0);
+Horline floorOnButton (115, 76, colors16bit::GREEN, 90, 35);
+Sstring floorOnString (120, 110,  colors16bit::BLACK, colors16bit::GREEN, "¬ À ",&rFont, 0);
 
 
 Tbutton tMainScreen (fourArea);

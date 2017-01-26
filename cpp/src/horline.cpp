@@ -10,3 +10,9 @@ void Horline::draw () const
 {
 	driver->horLine (x, y, color, length, thick);
 }
+
+void Horline::setPosition (uint16_t x_, uint16_t y_)
+{
+	x = x_;
+	y = y_;
+}

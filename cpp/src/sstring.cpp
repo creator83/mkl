@@ -27,6 +27,11 @@ void Sstring::setElement (uint8_t n, char val)
 	*ptr = val;
 }
 
+void Sstring::setFont (Ssd1289::sFont *f)
+{
+	font_ = f;
+}
+
 void Sstring::copy (const char *s)
 {
 	uint8_t l=0;
@@ -46,4 +51,10 @@ Sstring::~Sstring ()
 void Sstring::draw () const
 {
 	driver->string(x, y, color, fon, str, *font_, interval);
+}
+
+void Sstring::setPosition (uint16_t x_, uint16_t y_)
+{
+	x = x_;
+	y = y_;
 }
