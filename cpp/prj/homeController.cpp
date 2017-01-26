@@ -142,6 +142,13 @@ Sstring secondsString (154, 197,  colors16bit::BLACK, colors16bit::GRAY, "00",&h
 Sstring daysString (10, 230,  colors16bit::BLACK, colors16bit::GRAY, 12 ,&rFont, 0);
 Sstring monthsString (50, 140,  colors16bit::BLACK, colors16bit::GRAY, 3,&rFont, 0);
 
+//fan button
+Horline fanOffButton (9, 76, colors16bit::RED, 90, 35);
+Sstring fanOffString (10, 110,  colors16bit::BLACK, colors16bit::RED, 4,&rFont, 0);
+Horline fanOnButton (9, 76, colors16bit::GREEN, 90, 35);
+Sstring fanOnString (10, 110,  colors16bit::BLACK, colors16bit::GREEN, 4,&rFont, 0);
+Horline fanAutoButton (9, 76, colors16bit::YELLOW, 90, 35);
+Sstring fanAutoString (10, 110,  colors16bit::BLACK, colors16bit::YELLOW, 4,&rFont, 0);
 
 
 
@@ -192,9 +199,23 @@ List pumpScreen;
 List floorScreen;
 List levelScreen;
 
+//sub screen pump screen
 List hiPressure;
 List lowPressure;
 List dryPressure;
+
+//sub screen level screen
+List hiLevel;
+List lowLevel;
+List alarm1;
+List alarm2;
+
+//sub screen floor screen
+List OnTemperature;
+
+//sub screen fan screen
+List onHummidity;
+List offHummidity;
 
 //romms screen
 List rooms;
@@ -207,6 +228,8 @@ List bathScreen;
 List rgbScreen;
 
 List settingValue;
+
+List fanControlButton;
 
 Tree menu (&mScreen, &tMainScreen);
 //Pit mainloop (Pit::ch1, 1, Pit::ms);
@@ -359,10 +382,12 @@ int main()
 	mNumber.font = numbers::times36;
 	mNumber.height = 24;
 	mNumber.width = 16;
+	mNumber.shift = 0;
 
 	bNumber.font = numbers::times40;
 	bNumber.height = 27;
 	bNumber.width = 17;
+	bNumber.shift = 0;
 
 	rFont.font = rusFont::times16;
 	rFont.height = 14;
@@ -372,6 +397,7 @@ int main()
 	hNumber.font = numbers::times48;
 	hNumber.height = 32;
 	hNumber.width = 21;
+	hNumber.shift = 0;
 
 	initScreens ();
 	initTouchButton ();
@@ -575,9 +601,11 @@ void makeTree ()
 	menu.getForward(0);
 	menu.addSon(&diningScreen, &tDiningScreens);
 	menu.addBrother(&livingScreen, &tLivingScreens);
-	//menu.addSon(&rgbScreen, &tRgbScreens);
-	//menu.getBack();
 	menu.addBrother(&bathScreen, &tBathScreens);
+
+	menu.getBack();
+	menu.getForward(1);
+	menu.addSon(&rgbScreen, &tRgbScreens);
 
 	//eqipment sub screens
 	menu.getRoot();
@@ -593,7 +621,26 @@ void makeTree ()
 	menu.addSon(&dryPressure, &tDryPressure);
 	menu.addBrother(&lowPressure, &tLowPressure);
 	menu.addBrother(&hiPressure, &tHiPressure);
-	//menu.getBack();
+
+	//level screens
+	menu.getBack();
+	menu.getForward(3);
+	menu.addSon (&hiLevel, &tOffLevel);
+	menu.addBrother (&lowLevel, &tOnLevel);
+	menu.addBrother (&alarm1, &tAlarm1);
+	menu.addBrother (&alarm2, &tAlarm2);
+
+	//floor screens
+	menu.getBack();
+	menu.getForward(2);
+	menu.addSon (&OnTemperature, &tOnTemperature);
+
+	//fan screens
+	menu.getBack();
+	menu.getForward(0);
+	menu.addSon (&onHummidity, &tOnHummidity);
+	menu.addBrother (&offHummidity, &tOffHummidity);
+
 	menu.getRoot();
 	menu.useCurrent();
 }
@@ -734,9 +781,19 @@ void initScreens ()
 
 		//clock
 		clock.setFunction(subEquipmentFon);
+		clock.addLast(&hoursString);
+		clock.addLast(&minutesString);
+		clock.addLast(&secondsString);
+		clock.addLast(&daysString);
+		clock.addLast(&monthsString);
+
 
 		//sub equipment screen
 		fanScreen.setFunction(subEquipmentFon);
+		fanScreen.addLast(&onHummidityValue);
+		fanScreen.addLast(&offHummidityValue);
+		fanScreen.addLast(&currentHummidityValue);
+
 		pumpScreen.setFunction(subEquipmentFon);
 		pumpScreen.addLast(&cPressure);
 		pumpScreen.addLast(&upPressure);
@@ -749,8 +806,15 @@ void initScreens ()
 		pumpScreen.addLast(&lowPressureValue);
 		pumpScreen.addLast(&hiPressureValue);
 		pumpScreen.addLast(&currentPressureValue);
+
 		floorScreen.setFunction(subEquipmentFon);
+		floorScreen.addLast(&offTemperatureValue);
+		floorScreen.addLast(&currentTemperatureValue);
+
 		levelScreen.setFunction(subEquipmentFon);
+		levelScreen.addLast(&hiLevelValue);
+		levelScreen.addLast(&lowLevelValue);
+		levelScreen.addLast(&currentLevelValue);
 
 		//pump setting screen
 		hiPressure.setFunction(settingValueFon);
@@ -767,9 +831,13 @@ void initScreens ()
 		livingScreen.setFunction(roomsFon);
 		livingScreen.addLast(&lightLiving);
 		livingScreen.addLast(&settingLiving);
+		livingScreen.addLast(&livingRoomTemperature);
+		livingScreen.addLast(&livingRoomHummidity);
 		bathScreen.setFunction(roomsFon);
 		bathScreen.addLast(&floorBath);
 		bathScreen.addLast(&fanBath);
+		bathScreen.addLast(&bathRoomTemperature);
+		bathScreen.addLast(&bathRoomHummidity);
 
 		rgbScreen.setFunction(rgbFon);
 		//rgbScreen.addLast(&rgbCircle);
