@@ -409,7 +409,7 @@ int main()
 	initData ();
 
 	makeTree ();
-	display.string(10, 50,  colors16bit::GRAY, colors16bit::BLACK,"œË‚ÂÚ", rFont,0);
+	display.string(10, 50,  colors16bit::GRAY, colors16bit::BLACK,"œ–»¬≈“", rFont,0);
 
 	//NVIC_EnableIRQ(PIT_IRQn);
 	//mainloop.start();
@@ -424,16 +424,16 @@ int main()
 
 void mainScreenFon ()
 {
-	display.fillScreen(colors16bit::SILVER);
+	display.fillScreen(colors16bit::BLACK);
 
-	display.verLine(160, 0, colors16bit::BLACK, 240, 2);
-	display.horLine(0, 120, colors16bit::BLACK, 320, 2);
+	display.verLine(160, 0, colors16bit::GOLD, 240, 2);
+	display.horLine(0, 120, colors16bit::GOLD, 320, 2);
 
 	//gradient
-	display.rectangle(5,5, colors16bit::BLACK,150, 110, 1);
-	display.rectangle(165,5, colors16bit::BLACK,150, 110, 1);
-	display.rectangle(5,125, colors16bit::BLACK,150, 110, 1);
-	display.rectangle(165,125, colors16bit::BLACK,150, 110, 1);
+	display.rectangle(5,5, colors16bit::GOLD,150, 110, 1);
+	display.rectangle(165,5, colors16bit::GOLD,150, 110, 1);
+	display.rectangle(5,125, colors16bit::GOLD,150, 110, 1);
+	display.rectangle(165,125, colors16bit::GOLD,150, 110, 1);
 	display.horLine(6, 6, colors16bit::GRAY, 149, 109);
 	display.horLine(166, 6, colors16bit::GRAY, 149, 109);
 	display.horLine(6, 126, colors16bit::GRAY, 149, 109);
@@ -620,31 +620,36 @@ void makeTree ()
 	menu.addBrother(&floorScreen, &tEqipmentScreens);
 	menu.addBrother(&levelScreen, &tEqipmentScreens);
 
+	//fan screens
+	menu.getRoot();
+	menu.getForward(1);
+	menu.getForward(0);
+	menu.addSon (&onHummidity, &tOnHummidity);
+	menu.addBrother (&offHummidity, &tOffHummidity);
+
 	//pump screens
+	menu.getBack();
 	menu.getBack();
 	menu.getForward(1);
 	menu.addSon(&dryPressure, &tDryPressure);
 	menu.addBrother(&lowPressure, &tLowPressure);
 	menu.addBrother(&hiPressure, &tHiPressure);
 
+	//floor screens
+	menu.getBack();
+	menu.getBack();
+	menu.getForward(2);
+	menu.addSon (&OnTemperature, &tOnTemperature);
+
+
 	//level screens
+	menu.getBack();
 	menu.getBack();
 	menu.getForward(3);
 	menu.addSon (&hiLevel, &tOffLevel);
 	menu.addBrother (&lowLevel, &tOnLevel);
 	menu.addBrother (&alarm1, &tAlarm1);
 	menu.addBrother (&alarm2, &tAlarm2);
-
-	//floor screens
-	menu.getBack();
-	menu.getForward(2);
-	menu.addSon (&OnTemperature, &tOnTemperature);
-
-	//fan screens
-	menu.getBack();
-	menu.getForward(0);
-	menu.addSon (&onHummidity, &tOnHummidity);
-	menu.addBrother (&offHummidity, &tOffHummidity);
 
 	menu.getRoot();
 	menu.useCurrent();
