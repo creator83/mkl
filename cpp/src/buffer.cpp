@@ -59,11 +59,8 @@ void Buffer::parsDec16 (const uint16_t & val, uint8_t n)
     for (arrVal[k+i]=0;temp>=divider[k+i]; ++arrVal[k+i]) temp-= divider[k+i];
     arr [k+i] = font [arrVal[k+i]];
   }
-  arrVal [4] = val%10;
-  for (uint8_t i=0;i<n;++i)
-  {
-	  arr [n-i-1] = font [arrVal [n-i-1]];
-  }
+  arr [4] = font [temp];
+
   //arr [4] = font [arrVal [4]];
 
   /*

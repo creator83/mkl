@@ -17,6 +17,8 @@
 #include "buffer.h"
 #include "nrf24l01.h"
 #include "tbutton.h"
+#include "i2c.h"
+#include "sht20.h"
 
 Tact frq;
 Spi spi1 (Spi::SPI_N::SPI_1);
@@ -24,7 +26,8 @@ Xpt2046 touch (spi1);
 Ssd1289::sFont bNum;
 Buffer value;
 Ssd1289 display;
-Tbutton mainScreen;
+Tgrid sense (touch, 3, 2);
+Tbutton mainScreen (sense);
 
 struct flags
 {
@@ -42,50 +45,45 @@ extern "C" {
 
 void PORTA_IRQHandler()
 {
-	touch.clearFlag();
-	flag.touch ^= 1;
-	if (flag.touch)
-	{
-		touch.getData();
-		value.parsDec16(touch.getX(), 4);
-		display.string(150, 200, colors16bit::BLACK, colors16bit::SILVER, value.getElement(1), bNum, 4, 4);
-		value.parsDec16(touch.getY(), 4);
-		display.string(150, 100, colors16bit::BLACK, colors16bit::SILVER, value.getElement(1), bNum, 4, 4);
-		mainScreen.calculateTouch(touch.getX(), touch.getY());
-		display.symbol(10,200, colors16bit::BLACK, colors16bit::SILVER, mainScreen.getResult(), bNum);
-	}
+
 }
 
 
 int main()
 {
-	mainScreen.setCount(3,2);
 	value.setFont(Array_dec);
 
 	Shape::driver = &display;
 	display.fillScreen(colors16bit::SILVER);
 
 	Ssd1289::sFont mTimes;
-	bNum.font = bigNumbers::numbers;
-	bNum.height = 55;
-	bNum.width = 3;
+	bNum.font = numbers::times36;
+	bNum.height = 24;
+	bNum.width = 16;
 	bNum.shift = 0;
-	mTimes.font = midlleTimesNewRomanRus::rus;
-	mTimes.width = 2;
-	mTimes.height = 17;
-	mTimes.shift = 0;
+	mTimes.font = rusFont::times20;
+	mTimes.width = 23;
+	mTimes.height = 21;
+	mTimes.shift = 192;
 
-	//display.symbol (50,50,  colors16bit::BLACK, colors16bit::GRAY);
+
 
 	spi1.setMode(Spi::Mode::software);
 	Pin sck (Gpio::Port::E, 2, Gpio::mux::Alt2);
 	Pin mosi (Gpio::Port::E, 1, Gpio::mux::Alt2);
 	Pin miso (Gpio::Port::E, 3, Gpio::mux::Alt2);
-
-
-
+	Pin sda (Gpio::Port::E, 18, Gpio::mux::Alt4);
+	Pin scl (Gpio::Port::E, 19, Gpio::mux::Alt4);
+	I2c i2c0 (I2c::nI2c::I2c0);
+	Sht20 sensor (&i2c0);
+	sensor.readTemperature();
+			//sensor.readHummidity();
+			value.parsDec16(sensor.getTemperature(), 3);
+			display.string (50,50, colors16bit::GRAY,  colors16bit::BLACK, value.getElement(2),bNum, 3,0);
 	while (1)
 	{
+
+		delay_ms(100);
 
 	}
 }

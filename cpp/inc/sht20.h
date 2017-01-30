@@ -46,6 +46,8 @@ public:
   void readUserR ();
   void writeUserR  (uint8_t);
   uint8_t & getUserRegister ();
+  uint16_t & getHummidity ();
+  uint16_t & getTemperature ();
   
 private:
   void convertHummdity ();
