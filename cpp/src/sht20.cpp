@@ -9,29 +9,28 @@ Sht20::Sht20 (I2c *d)
 
 void Sht20::readTemperature ()
 {
-	I2C0->C2 &= ~I2C_C2_SBRC_MASK;
 	driver->start ();
 	while (!driver->flagBusy());
 	//Записываем в регистр данных адрес ведомого устройства
 	driver->setAddress (selfAddress, I2c::directionBit::write);
-	driver->waitAck();
+	if (driver->waitAck() == 0 ) return;
 	driver->putData (sht20commands::tMesurementHold);
-	driver->waitAck();
+	if (driver->waitAck() == 0 ) return;
 	driver->restart();
 	I2C0->C2 |= I2C_C2_SBRC_MASK;
 	driver->setAddress (selfAddress, I2c::directionBit::read);
-	driver->waitAck();
+	if (driver->waitAck() == 0 ) return;
 	driver->setMode (I2c::mode::receiver);
 	driver->generateAck();
+	I2C0->C2 &= ~I2C_C2_SBRC_MASK;
 	temperatureCode = driver->getData();
 	driver->waitAck();
 	temperatureCode <<= 8;
 	temperatureCode |= driver->getData();
 	driver->waitAck();
 	driver->generateNack ();
-	checksum = driver->getData();
-	driver->waitAck();
 	driver->stop ();
+	checksum = driver->getData();
 	while (driver->flagBusy());
 	temperatureCode &= ~0x0003;
 
@@ -39,7 +38,6 @@ void Sht20::readTemperature ()
 
 void Sht20::readHummidity  ()
 {
-	I2C0->C2 &= ~I2C_C2_SBRC_MASK;
 	driver->start ();
 	while (!driver->flagBusy());
 	//Записываем в регистр данных адрес ведомого устройства
@@ -53,18 +51,17 @@ void Sht20::readHummidity  ()
 	driver->waitAck();
 	driver->setMode (I2c::mode::receiver);
 	driver->generateAck();
+	I2C0->C2 &= ~I2C_C2_SBRC_MASK;
 	hummdityCode = driver->getData();
 	driver->waitAck();
 	hummdityCode <<= 8;
 	hummdityCode |= driver->getData();
 	driver->waitAck();
 	driver->generateNack ();
-	checksum = driver->getData();
-	driver->waitAck();
 	driver->stop ();
+	checksum = driver->getData();
 	while (driver->flagBusy());
 	hummdityCode &= ~0x0003;
-
 }
 
 void Sht20::setResolution (resolution r)
