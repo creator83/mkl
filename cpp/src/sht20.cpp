@@ -5,6 +5,7 @@
 Sht20::Sht20 (I2c *d)
 {
   driver = d;
+  delay_ms(16);
 }
 
 void Sht20::readTemperature ()
@@ -23,6 +24,8 @@ void Sht20::readTemperature ()
 	driver->setMode (I2c::mode::receiver);
 	driver->generateAck();
 	I2C0->C2 &= ~I2C_C2_SBRC_MASK;
+	uint8_t dummy = driver->getData();
+	driver->waitAck();
 	temperatureCode = driver->getData();
 	driver->waitAck();
 	temperatureCode <<= 8;
@@ -33,7 +36,6 @@ void Sht20::readTemperature ()
 	checksum = driver->getData();
 	while (driver->flagBusy());
 	temperatureCode &= ~0x0003;
-
 }
 
 void Sht20::readHummidity  ()
