@@ -7,7 +7,10 @@ I2c::I2c (nI2c n)
 	numberI2c = static_cast <uint8_t> (n);
 	SIM->SCGC4 |= 1 << (SIM_SCGC4_I2C0_SHIFT + numberI2c);
 	uint8_t dummy = getData();
-	i2cAdr [numberI2c]->F = 0x1F;
+	//400kHz
+	i2cAdr [numberI2c]->F = 0x13;
+	//100kHz
+	//i2cAdr [numberI2c]->F = 0x1F;
 	i2cAdr [numberI2c]->C2 &= ~ (I2C_C2_HDRS_MASK|I2C_C2_ADEXT_MASK);
 	i2cAdr [numberI2c]->C1 =  I2C_C1_IICEN_MASK;
 }

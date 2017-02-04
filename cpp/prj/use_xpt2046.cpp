@@ -76,14 +76,16 @@ int main()
 	Pin scl (Gpio::Port::E, 19, Gpio::mux::Alt4);
 	I2c i2c0 (I2c::nI2c::I2c0);
 	Sht20 sensor (&i2c0);
-	sensor.readTemperature();
-			//sensor.readHummidity();
-			value.parsDec16(sensor.getTemperature(), 3);
-			display.string (50,50, colors16bit::GRAY,  colors16bit::BLACK, value.getElement(2),bNum, 3,0);
+
 	while (1)
 	{
-
-		delay_ms(100);
+		sensor.readTemperature();
+		sensor.readHummidity();
+		value.parsDec16(sensor.getTemperature(), 3);
+		display.string (50,50, colors16bit::GRAY,  colors16bit::BLACK, value.getElement(2),bNum, 3,0);
+		value.parsDec16(sensor.getHummidity(), 3);
+		display.string (50,150, colors16bit::GRAY,  colors16bit::BLACK, value.getElement(2),bNum, 3,0);
+		delay_ms(300);
 
 	}
 }
