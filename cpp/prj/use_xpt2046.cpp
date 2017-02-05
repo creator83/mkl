@@ -19,6 +19,7 @@
 #include "tbutton.h"
 #include "i2c.h"
 #include "sht20.h"
+#include "ds3231.h"
 
 Tact frq;
 Spi spi1 (Spi::SPI_N::SPI_1);
@@ -75,10 +76,13 @@ int main()
 	Pin sda (Gpio::Port::E, 18, Gpio::mux::Alt4);
 	Pin scl (Gpio::Port::E, 19, Gpio::mux::Alt4);
 	I2c i2c0 (I2c::nI2c::I2c0);
+	Ds3231 clock (i2c0);
 	Sht20 sensor (&i2c0);
 
 	while (1)
 	{
+		//clock.readCalendar();
+		//clock.read(0x01);
 		sensor.readTemperature();
 		sensor.readHummidity();
 		value.parsDec16(sensor.getTemperature(), 3);

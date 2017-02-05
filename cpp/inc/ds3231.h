@@ -58,7 +58,7 @@ namespace valueMask
   const uint8_t Dyear    = 0xF0;
 }
 
-const uint8_t selfAddress = 0xD0;
+
 const uint8_t stateOff    = 0x80;
 const uint8_t stateOn     = 0x00;
 
@@ -71,6 +71,7 @@ private:
   Pin sda, sdl;
   uint8_t bcdData [7];
   uint8_t decData [7];
+  uint8_t selfAddress = 0xD0;
 public:
   Ds3231(I2c &);
   void write (uint8_t reg, uint8_t val);

@@ -8,9 +8,9 @@ I2c::I2c (nI2c n)
 	SIM->SCGC4 |= 1 << (SIM_SCGC4_I2C0_SHIFT + numberI2c);
 	uint8_t dummy = getData();
 	//400kHz
-	i2cAdr [numberI2c]->F = 0x13;
+	//i2cAdr [numberI2c]->F = 0x13;
 	//100kHz
-	//i2cAdr [numberI2c]->F = 0x1F;
+	i2cAdr [numberI2c]->F = 0x1F;
 	i2cAdr [numberI2c]->C2 &= ~ (I2C_C2_HDRS_MASK|I2C_C2_ADEXT_MASK);
 	i2cAdr [numberI2c]->C1 =  I2C_C1_IICEN_MASK;
 }
@@ -145,10 +145,12 @@ uint8_t I2c::rByte (uint8_t addr, uint8_t reg)
 	setAddress (addr, directionBit::read);
 	waitAck();
 	setMode (mode::receiver);
-	generateNack ();
-	uint8_t result = getData();
+	uint8_t dummy = getData();
 	waitAck();
+	generateNack ();
 	stop ();
+	uint8_t result = getData();
+	while (flagBusy());
 	return result;
 
 }

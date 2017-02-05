@@ -22,24 +22,28 @@ void Ds3231::readCalendar ()
 	uint8_t * ptr = bcdData;
 	driver->start ();
 	while (!driver->flagBusy());
-	driver->setAddress (selfAddress, I2c::directionBit::write);
-	driver->waitAck();
+	driver->setAddress (this->selfAddress, I2c::directionBit::write);
+	if (driver->waitAck() == 0 ) return;
 	driver->putData(0x00);
-	driver->waitAck();
+	if (driver->waitAck() == 0 ) return;
 	driver->restart();
 	driver->setAddress (selfAddress, I2c::directionBit::read);
-	driver->waitAck();
+	if (driver->waitAck() == 0 ) return;
 	driver->setMode (I2c::mode::receiver);
 	driver->generateAck();
-	for (uint8_t i=0;i<6;++i)
+	uint8_t dummy = driver->getData();
+	driver->waitAck();
+	for (uint8_t i=0;i<5;++i)
 	{
 		*ptr++ = driver->getData();
 		driver->waitAck();
 	}
 	driver->generateNack ();
-	*ptr = driver->getData();
+	*ptr++ = driver->getData();
 	driver->waitAck();
 	driver->stop ();
+	*ptr = driver->getData();
+	while (driver->flagBusy());
 }
 
 void Ds3231::writeCalendar ()
