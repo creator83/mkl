@@ -78,8 +78,8 @@ int main()
 	I2c i2c0 (I2c::nI2c::I2c0);
 	Ds3231 clock (i2c0);
 	Sht20 sensor (&i2c0);
-	//__WFI();
-	//asm ("wfi");
+	__WFI();
+	//asm ("wfe");
 
 	while (1)
 	{
