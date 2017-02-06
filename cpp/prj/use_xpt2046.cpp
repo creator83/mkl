@@ -78,20 +78,22 @@ int main()
 	I2c i2c0 (I2c::nI2c::I2c0);
 	Ds3231 clock (i2c0);
 	Sht20 sensor (&i2c0);
-	__WFI();
+	//__WFI();
 	//asm ("wfe");
 
 	while (1)
 	{
+		sda.togle();
+		delay_ms(1000);
 		//clock.readCalendar();
 		//clock.read(0x01);
-		sensor.readTemperature();
+		/*sensor.readTemperature();
 		sensor.readHummidity();
 		value.parsDec16(sensor.getTemperature(), 3);
 		display.string (50,50, colors16bit::GRAY,  colors16bit::BLACK, value.getElement(2),bNum, 3,0);
 		value.parsDec16(sensor.getHummidity(), 3);
 		display.string (50,150, colors16bit::GRAY,  colors16bit::BLACK, value.getElement(2),bNum, 3,0);
-		delay_ms(300);
+		delay_ms(300);*/
 
 	}
 }
