@@ -22,7 +22,7 @@ int main()
 	Pin clk (Gpio::Port::E, 17, Gpio::mux::Alt2);
 	Pin mosi (Gpio::Port::E, 18, Gpio::mux::Alt2);
 	Pin miso (Gpio::Port::E, 19, Gpio::mux::Alt2);
-	Ili9341 display (spi0, Gpio::Port::E, 20);
+	Ili9341 display (spi0, Gpio::Port::E, 20, Gpio::Port::E, 21);
 	/*Dma dma0 (Dma::dmaChannel::ch0);
 	dma0.enableDmaMux(Dma::dmaMux::spi0Tx);
 	display.setDma(dma0);*/

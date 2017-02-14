@@ -1,12 +1,15 @@
 #include "ili9341.h"
 
-Ili9341::Ili9341(Spi &d, Gpio::Port po, uint8_t p)
-:dc (po, p)
+#define init2
+
+
+Ili9341::Ili9341(Spi &d, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rstpi)
+:dc (po, p), rst (rstpo, rstpi)
 {
 	driver = &d;
 	driver->setCpol(Spi::Cpol::pos);
 	driver->setCpha(Spi::Cpha::first);
-	driver->setDivision(Spi::Division::div32);
+	driver->setDivision(Spi::Division::div512);
 	driver->setFrameSize(Spi::Size::bit8);
 	driver->setMode(Spi::Mode::hardware);
 	driver->start();
@@ -101,8 +104,16 @@ void Ili9341::command (uint8_t com)
 
 void Ili9341::init ()
 {
+	rst.set();
+	delay_ms(10);
+	rst.clear();
+	delay_ms(20);
+	rst.set();
+	delay_ms(200);
+
 	command (ili9341Commands::softwareReset);
 	delay_ms(1000);
+#ifdef init1
 	command(0xCB);
 	  data(0x39);
 	  data(0x2C);
@@ -192,9 +203,8 @@ void Ili9341::init ()
 
 	  command(0x29);    //Display on
 	  command(0x2c);
- /*
-
-	//
+#endif
+#ifdef init2
 	command (ili9341Commands::powerControl1);
 	data(0x25);
 
@@ -230,7 +240,8 @@ void Ili9341::init ()
 	command (ili9341Commands::sleepOut);
 	delay_ms(120);
 
-	command (ili9341Commands::displayOn);*/
+	command (ili9341Commands::displayOn);
+#endif
 
 }
 

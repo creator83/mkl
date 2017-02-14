@@ -75,10 +75,11 @@ protected:
 private:
 	Spi * driver;
 	Dma * dma;
-	Pin dc;
+	Pin dc, rst;
 //functions
 public:
-	Ili9341(Spi &, Gpio::Port po, uint8_t p);
+	Ili9341(Spi &, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rstpi);
+
 	void setDma (Dma &);
 	void pixel (uint16_t x , uint16_t y, const uint16_t color);
 	void fillScreen (uint16_t color);
