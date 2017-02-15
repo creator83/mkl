@@ -83,6 +83,7 @@ public:
 	void setDma (Dma &);
 	void pixel (uint16_t x , uint16_t y, const uint16_t color);
 	void fillScreen (uint16_t color);
+
 	void symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, sFont & s);
 	//void symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, uint8_t ch, sFont & s);
 	void string (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const char *str, sFont &f, uint8_t interval);
@@ -105,6 +106,7 @@ private:
 	void init ();
 	void setPage (uint16_t x1, uint16_t x2);
 	void setColoumn (uint16_t y1, uint16_t y2);
+	void setPosition (uint16_t x, uint16_t y);
 	void pixel (const uint16_t color);
 
 }; //ssd1289

@@ -26,13 +26,14 @@ int main()
 	/*Dma dma0 (Dma::dmaChannel::ch0);
 	dma0.enableDmaMux(Dma::dmaMux::spi0Tx);
 	display.setDma(dma0);*/
-	display.fillScreen(colors16bit::RED);
+	display.fillScreen(colors16bit::BLACK);
+	delay_ms(500);
 	while (1)
 	{
 		display.fillScreen(colors16bit::RED);
-		//delay_ms(500);
+		delay_ms(500);
 		display.fillScreen(colors16bit::GREEN);
-		//delay_ms(500);
+		delay_ms(500);
 
 	}
 }
