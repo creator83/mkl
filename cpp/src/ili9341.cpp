@@ -1,6 +1,6 @@
 #include "ili9341.h"
 
-#define init1
+#define init2
 
 
 Ili9341::Ili9341(Spi &d, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rstpi)
@@ -12,6 +12,7 @@ Ili9341::Ili9341(Spi &d, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rst
 	driver->setDivision(Spi::Division::div128);
 	driver->setFrameSize(Spi::Size::bit8);
 	driver->setMode(Spi::Mode::hardware);
+	//PTE->PSOR |= 1 << 16;
 	driver->start();
 	init ();
 	//driver->setDivision(Spi::Division::div256);
@@ -47,6 +48,7 @@ void Ili9341::fillScreen (uint16_t color)
 		command(ili9341Commands::memoryWrite);
 		driver->setFrameSize(Spi::Size::bit16);
 		dc.set();
+		while (!dc.state());
 		for (uint32_t n = 0; n < 8000; n++) {
 			while (!driver->flagSptef());
 			driver->putDataDh(color>>8);
@@ -79,17 +81,25 @@ void Ili9341::setCursor (uint16_t x1 , uint16_t y1, uint16_t x2, uint16_t y2)
 void Ili9341::data (uint8_t dta)
 {
 	dc.set();
+	while (!dc.state());
+	//FGPIOE->PSOR |= 1 << 20;
+	//PTE->PCOR |= 1 << 16;
+	//asm ("NOP");
 	while (!driver->flagSptef());
 	driver->putDataDl(dta);
+	//PTE->PSOR |= 1 << 16;
 }
 
 
 void Ili9341::data16 (uint16_t dta)
 {
 	dc.set();
+	//PTE->PCOR |= 1 << 16;
+	while (!dc.state());
 	while (!driver->flagSptef());
 	driver->putDataDh(dta >> 8);
 	driver->putDataDl(dta);
+	//PTE->PSOR |= 1 << 16;
 }
 
 void Ili9341::dataDma (uint16_t * buf, uint32_t n)
@@ -106,8 +116,12 @@ void Ili9341::dataDma (uint16_t * buf, uint32_t n)
 void Ili9341::command (uint8_t com)
 {
 	dc.clear();
+	//PTE->PCOR |= 1 << 16;
+	//asm ("NOP");
+	while (dc.state());
 	while (!driver->flagSptef());
 	driver->putDataDl(com);
+	//PTE->PSOR |= 1 << 16;
 }
 
 void Ili9341::init ()
@@ -211,8 +225,8 @@ void Ili9341::init ()
 	  command(0x2c);
 #endif
 #ifdef init2
-	command (ili9341Commands::softwareReset);
-	delay_ms(1000);
+	//command (ili9341Commands::softwareReset);
+	//delay_ms(1000);
 	command (ili9341Commands::powerControl1);
 	data(0x25);
 
@@ -238,7 +252,7 @@ void Ili9341::init ()
 	data(0x18);
 
 	command (ili9341Commands::pixelFormatSet);
-	data(0x05);
+	data(0x55);
 
 	command (ili9341Commands::displayFunctionControl);
 	data(0x0A);
