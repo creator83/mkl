@@ -39,19 +39,20 @@ void Ili9341::fillScreen (uint16_t color)
 	/*unsigned int n, i, j;
 		i = color >> 8;
 		j = color & 0xFF;*/
-		driver->setFrameSize(Spi::Size::bit8);
-		setColoumn(50, 200);
-		setPage (50, 200);
+
+		setColoumn(10, 100);
+		setPage (10, 100);
 
 
 		command(ili9341Commands::memoryWrite);
 		driver->setFrameSize(Spi::Size::bit16);
 		dc.set();
-		for (uint32_t n = 0; n < 2000; n++) {
+		for (uint32_t n = 0; n < 8000; n++) {
 			while (!driver->flagSptef());
 			driver->putDataDh(color>>8);
 			driver->putDataDl(color);
 		}
+		driver->setFrameSize(Spi::Size::bit8);
 }
 
 void Ili9341::setCursor (uint16_t x , uint16_t y)
@@ -230,7 +231,7 @@ void Ili9341::init ()
 	data(0x28);
 
 	command (ili9341Commands::pixelFormatSet);
-	data(0x05);
+	data(0x55);
 
 	command (ili9341Commands::frameControl);
 	data(0x00);
