@@ -1,14 +1,15 @@
 #include "ili9341.h"
 
 Ili9341::Ili9341(Spi &d, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rstpi)
-:dc (po, p), rst (rstpo, rstpi)
+:dc (po, p), rst (rstpo, rstpi), cs(Gpio::Port::D, 0)
 {
 	driver = &d;
 	driver->setCpol(Spi::Cpol::neg);
 	driver->setCpha(Spi::Cpha::first);
 	driver->setDivision(Spi::Division::div128);
 	driver->setFrameSize(Spi::Size::bit8);
-	driver->setMode(Spi::Mode::hardware);
+	driver->setMode(Spi::Mode::software);
+	cs.set ();
 	driver->start();
 	init ();
 }
@@ -75,20 +76,23 @@ void Ili9341::setCursor (uint16_t x1 , uint16_t y1, uint16_t x2, uint16_t y2)
 void Ili9341::data (uint8_t dta)
 {
 	dc.set();
-	while (!dc.state());
-	//asm ("NOP");
+	cs.clear ();
 	while (!driver->flagSptef());
 	driver->putDataDl(dta);
+	while (!driver->flagSprf());
+	cs.set ();
 }
 
 
 void Ili9341::data16 (uint16_t dta)
 {
 	dc.set();
-	while (!dc.state());
+	cs.clear ();
 	while (!driver->flagSptef());
 	driver->putDataDh(dta >> 8);
 	driver->putDataDl(dta);
+	while (!driver->flagSprf());
+	cs.set ();
 }
 
 void Ili9341::dataDma (uint16_t * buf, uint32_t n)
@@ -105,10 +109,11 @@ void Ili9341::dataDma (uint16_t * buf, uint32_t n)
 void Ili9341::command (uint8_t com)
 {
 	dc.clear();
-	//asm ("NOP");
-	while (dc.state());
+	cs.clear ();
 	while (!driver->flagSptef());
 	driver->putDataDl(com);
+	while (!driver->flagSprf());
+	cs.set ();
 }
 
 void Ili9341::init ()

@@ -84,6 +84,7 @@ void Ili9341::data (uint8_t dta)
 	//asm ("NOP");
 	while (!driver->flagSptef());
 	driver->putDataDl(dta);
+	while (!driver->flagSprf());
 	//PTE->PSOR |= 1 << 16;
 }
 
@@ -118,6 +119,7 @@ void Ili9341::command (uint8_t com)
 	while (dc.state());
 	while (!driver->flagSptef());
 	driver->putDataDl(com);
+	while (!driver->flagSprf());
 	//PTE->PSOR |= 1 << 16;
 }
 

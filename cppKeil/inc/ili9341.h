@@ -75,7 +75,7 @@ protected:
 private:
 	Spi * driver;
 	Dma * dma;
-	Pin dc, rst;
+	Pin dc, rst, cs;
 //functions
 public:
 	Ili9341(Spi &, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rstpi);
