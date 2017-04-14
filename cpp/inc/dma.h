@@ -1,4 +1,4 @@
-#include "MKL26Z4.h"                  // Device header
+#include "MKL17Z4.h"                  // Device header
 
 #ifndef DMA_H
 #define DMA_H
@@ -69,7 +69,7 @@ public:
 	void setChannel (dmaChannel ch);
 	void setSource (uint32_t  ptr);
 	void setDestination (uint32_t ptr);
-	void setLength (uint16_t length);
+	void setLength (uint32_t length);
 	void setSizes (size m, size p);
 	void setSsize (size);
 	void setDsize (size);
