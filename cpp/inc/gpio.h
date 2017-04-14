@@ -1,4 +1,4 @@
-#include "device.h"           // Device header
+#include "device.h"             // Device header
 
 
 #ifndef GPIO_H
@@ -26,6 +26,13 @@ private:
 public:
   Gpio ();
   Gpio(Port p );
+  void setPort (Port p);
+
+  //function for port
+  void settingPort (uint32_t val, mux mx = GPIO, mode m = Output);
+  void settingPortDirection (uint32_t val, mode m);
+  void setValPort (uint32_t value);
+  void clearValPort (uint32_t value);
 };
 
 #endif

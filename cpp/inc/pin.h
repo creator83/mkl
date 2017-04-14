@@ -1,4 +1,4 @@
-#include "device.h"                 // Device header
+#include "MKL17Z4.h"                 // Device header
 #include "gpio.h"
 
 #ifndef PIN_H

@@ -1,4 +1,4 @@
 #include "shape.h"
 
 
-Ssd1289 * Shape::driver = nullptr;
+Tftdriver * Shape::driver = nullptr;

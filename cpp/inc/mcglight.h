@@ -1,4 +1,4 @@
-#include "MKL17Z4.h"               // Device header
+#include "device.h"                // Device header
 
 #ifndef TACT_H
 #define TACT_H
@@ -20,9 +20,9 @@ public:
 public:
   Tact ();
   Tact (mode m, uint8_t frq);
-  static uint16_t & getFrqCpu (){return cpuClock;};
+  static uint16_t & get_frq_cpu (){return cpuClock;};
   static uint16_t & getFrqBus (){return busClock;};
-  static uint16_t & getFrqMcgir (){return mcgirClock;};
+  static uint16_t & get_frq_mcgir (){return mcgirClock;};
   void get_LIRC_8 (divider div_1=div1, divider div_2=div1);
 
   void get_LIRC_2 (divider div_1=div1, divider div_2=div1);
