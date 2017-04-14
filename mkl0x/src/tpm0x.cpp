@@ -1,73 +1,98 @@
 #include "Tpm0x.h"
 
-Tpm_MemMapPtr Tpm::Tpm_ptr[2]={Tpm0_BASE_PTR, Tpm1_BASE_PTR};
-Tpm::setF Tpm::setMode [6] = {};
+TPM_MemMapPtr Tpm::tpmPtr[2]={TPM0_BASE_PTR, TPM1_BASE_PTR};
+
+Tpm::setF Tpm::fMode [6] = {};
 
 
-Tpm::Tpm(N_Tpm n_, channel ch, division d)
+Tpm::Tpm (nTpm n_, channel ch, division d)
 {
-	numTpm = n_;
-	nCh = ch;
+	numTpm = static_cast <uint8_t>(n_);
+	nCh = static_cast <uint8_t>(ch);
 
-	SIM->SCGC6 |= (SIM_SCGC6_Tpm0_MASK << num_Tpm);
-	SIM->SOPT2 |= SIM_SOPT2_TpmSRC(3);
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) &= ~Tpm_SC_PS_MASK;
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) |= Tpm_SC_PS(d);
+	SIM->SCGC6 |= (SIM_SCGC6_TPM0_MASK << numTpm);
+	SIM->SOPT2 |= SIM_SOPT2_TPMSRC(3);
+	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_PS_MASK;
+	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_PS(d);
 
 }
 
-void Tpm::Set_MOD (uint16_t val)
+void Tpm::setModulo (uint16_t val)
 {
-	Tpm_MOD_REG(Tpm_ptr [num_Tpm]) = val;
+	TPM_MOD_REG(tpmPtr [numTpm]) = val;
 }
 
-void Tpm::Set_CNV (uint16_t val)
+void Tpm::setCnt (uint16_t val)
 {
-	Tpm_CnV_REG(Tpm_ptr [num_Tpm],n_ch) = val;
+	TPM_CnV_REG(tpmPtr [numTpm],nCh) = val;
 }
 
 void Tpm::start ()
 {
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) |= Tpm_SC_CMOD(1);
+	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_CMOD(1);
 }
 
 void Tpm::stop ()
 {
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) &= ~Tpm_SC_CMOD_MASK;
+	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_CMOD_MASK;
 }
 
 void Tpm::clearFlag ()
 {
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) |= Tpm_SC_TOF_MASK;
+	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_TOF_MASK;
 }
 
-void Tpm::init_output_togle(toggle_mode t_mode)
+void Tpm::setMode (mode m, togPulseMode n)
 {
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) &= ~Tpm_SC_CPWMS_MASK;
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) &= ~(Tpm_CnSC_ELSA_MASK|Tpm_CnSC_ELSB_MASK|Tpm_CnSC_MSA_MASK|Tpm_CnSC_MSB_MASK);
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) |= Tpm_CnSC_MSA_MASK|(t_mode << Tpm_CnSC_ELSA_SHIFT);
+	(this->*(Tpm::fMode[static_cast <uint8_t>(m)]))(n);
 }
 
-void Tpm::init_output_pulse(pulse_mode p_mode)
+void Tpm::initOutputTogle(togPulseMode t_mode)
 {
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) &= ~Tpm_SC_CPWMS_MASK;
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) &= ~(Tpm_CnSC_ELSA_MASK|Tpm_CnSC_ELSB_MASK|Tpm_CnSC_MSA_MASK|Tpm_CnSC_MSB_MASK);
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) |= Tpm_CnSC_MSA_MASK|Tpm_CnSC_MSB_MASK|(p_mode << Tpm_CnSC_ELSA_SHIFT) ;
+	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_CPWMS_MASK;
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) |= TPM_CnSC_MSA_MASK|(static_cast <uint8_t>(t_mode) << TPM_CnSC_ELSA_SHIFT);
 }
 
-void Tpm::init_edge_pwm(e_pwm_mode e_mode)
+void Tpm::initOutputPulse(togPulseMode p_mode)
 {
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) &= ~Tpm_SC_CPWMS_MASK;
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) &= ~(Tpm_CnSC_ELSA_MASK|Tpm_CnSC_ELSB_MASK|Tpm_CnSC_MSA_MASK|Tpm_CnSC_MSB_MASK);
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) |= Tpm_CnSC_MSB_MASK|(e_mode << Tpm_CnSC_ELSA_SHIFT) ;
-
+	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_CPWMS_MASK;
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) |= TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK|(static_cast <uint8_t>(p_mode) << TPM_CnSC_ELSA_SHIFT );
 }
 
-void Tpm::init_center_pwm(e_pwm_mode e_mode)
+void Tpm::initEdgePwm(togPulseMode e_mode)
 {
-	Tpm_SC_REG(Tpm_ptr [num_Tpm]) |= Tpm_SC_CPWMS_MASK;
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) &= ~(Tpm_CnSC_ELSA_MASK|Tpm_CnSC_ELSB_MASK|Tpm_CnSC_MSA_MASK|Tpm_CnSC_MSB_MASK);
-	Tpm_CnSC_REG(Tpm_ptr [num_Tpm],n_ch) |= Tpm_CnSC_MSB_MASK|(e_mode << Tpm_CnSC_ELSA_SHIFT) ;
+	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_CPWMS_MASK;
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) |= TPM_CnSC_MSB_MASK|(static_cast <uint8_t>(e_mode) << TPM_CnSC_ELSA_SHIFT) ;
+
 }
 
+void Tpm::initCenterPwm(togPulseMode e_mode)
+{
+	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_CPWMS_MASK;
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
+	TPM_CnSC_REG(tpmPtr [numTpm],nCh) |= TPM_CnSC_MSB_MASK|(static_cast <uint8_t>(e_mode) << TPM_CnSC_ELSA_SHIFT) ;
 
+}
+
+void Tpm::setKhz (uint16_t val)
+{
+
+}
+
+void Tpm::setHz (uint16_t val)
+{
+
+}
+
+void Tpm::setMs (uint16_t val)
+{
+
+}
+
+void Tpm::setUs (uint16_t val)
+{
+
+}

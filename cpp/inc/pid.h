@@ -1,49 +1,45 @@
-#include "MKL17Z4.h"
-
+#include "device.h"
 
 
 #ifndef PID_H
 #define PID_H
 
+// Maximum value of variables
+const int16_t MAX_INT = 32767;
+const uint16_t MAX_UINT = 0xFFFF;
+const int32_t MAX_LONG = 2147483647;
+const int32_t MAX_I_TERM = MAX_LONG/2;
 
-#define SCALING_FACTOR  128
 
-/*! \brief PID Status
- *
- * Setpoints and data used by the PID control algorithm
- */
-typedef struct PID_DATA{
-  //! Last process value, used to find derivative of process value.
+class Pid 
+{
+private:
+	//varibles
+	uint16_t p, i, d;
+	//! Last process value, used to find derivative of process value.
   int16_t lastProcessValue;
   //! Summation of errors, used for integrate calculations
   int32_t sumError;
-  //! The Proportional tuning constant, multiplied with SCALING_FACTOR
-  int16_t P_Factor;
-  //! The Integral tuning constant, multiplied with SCALING_FACTOR
-  int16_t I_Factor;
-  //! The Derivative tuning constant, multiplied with SCALING_FACTOR
-  int16_t D_Factor;
   //! Maximum allowed error, avoid overflow
   int16_t maxError;
   //! Maximum allowed sumerror, avoid overflow
-  int32_t maxSumError;
-} pidData_t;
+  int32_t maxSumError, ret;
+  uint16_t setPoint;
+  uint16_t pidLimit;
+	//functions
+public:
+  Pid (double P, double I, double D, uint16_t setPoint_);
+  uint16_t compute (uint16_t processValue);
 
-/*! \brief Maximum values
- *
- * Needed to avoid sign/overflow problems
- */
-// Maximum value of variables
-#define MAX_INT         32767
-#define MAX_LONG        2147483647
-#define MAX_I_TERM      (MAX_LONG / 2)
-
-// Boolean values
-#define FALSE           0
-#define TRUE            1
-
-void pid_Init(int16_t p_factor, int16_t i_factor, int16_t d_factor, struct PID_DATA *pid);
-int16_t pid_Controller(int16_t setPoint, int16_t processValue, struct PID_DATA *pid_st);
-void pid_Reset_Integrator(pidData_t *pid_st);
+  uint16_t & getP (){return p;}
+  uint16_t & getI (){return i;}
+  uint16_t & getD (){return d;}
+  void setP (uint16_t);
+  void setI (uint16_t);
+  void setD (uint16_t);
+  void setT (uint16_t);
+  void setPidLimit (uint16_t);
+  void reset ();
+};
 
 #endif

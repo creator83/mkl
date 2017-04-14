@@ -20,26 +20,26 @@ public:
 private:
 	using setF = void (Tpm::*) (togPulseMode);
 	uint8_t nCh;
-	static TPM_MemMapPtr tpm_ptr[2];
+	static TPM_MemMapPtr tpmPtr[2];
 	uint8_t numTpm;
-	static setF setMode [6];
+	static setF fMode [6];
 public:
-	tpm(nTpm n_, channel ch, division d);
+	Tpm(nTpm n_, channel ch, division d);
 	void start ();
 	void stop ();
 	void clearFlag ();
-	void setMode (mode);
+	void setMode (mode, togPulseMode);
 	void setModulo (uint16_t val);
 	void setCnt (uint16_t val);
 private:
-	void initOutputTogle(toggle_mode t_mode);
-	void init_output_pulse(pulse_mode p_mode);
-	void init_edge_pwm(e_pwm_mode e_mode);
-	void init_center_pwm(e_pwm_mode e_mode);
-	void khz_set (uint16_t val);
-	void hz_set (uint16_t val);
-	void ms_set (uint16_t val);
-	void us_set (uint16_t val);
+	void initOutputTogle(togPulseMode);
+	void initOutputPulse(togPulseMode);
+	void initEdgePwm(togPulseMode);
+	void initCenterPwm(togPulseMode);
+	void setKhz (uint16_t val);
+	void setHz (uint16_t val);
+	void setMs (uint16_t val);
+	void setUs (uint16_t val);
 };
 
 #endif /* PIT_H */
