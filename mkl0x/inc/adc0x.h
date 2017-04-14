@@ -5,7 +5,7 @@
 #ifndef ADC0X_H
 #define ADC0X_H
 
-class adc
+class Adc
 {
 public:
 	enum channel {SE0, SE1, SE2, SE3, SE4, SE5, SE6, SE7, SE8, SE9, SE10, SE11, SE12, SE13};
@@ -21,7 +21,8 @@ private:
 		unsigned error :1;
 	}flags;
 public:
-	adc(channel ch_, resolution r_);
+	Adc(channel ch_, resolution r_);
+	bool calibrate ();
 	uint16_t convert ();
 };
 
