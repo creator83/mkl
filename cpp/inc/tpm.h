@@ -1,6 +1,5 @@
-#include "MKL17Z4.h"
-#include "tact.h"
-#include "gpio.h"
+#include "device.h"
+#include "pin.h"
 
 
 #ifndef TPM_H

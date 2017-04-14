@@ -24,6 +24,7 @@ private:
 public:
   Gpio ();
   Gpio(Port p );
+  Gpio(uint8_t p );
   void setPort (Port p);
 };
 

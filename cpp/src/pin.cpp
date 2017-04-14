@@ -7,6 +7,13 @@ Pin::Pin (Gpio::Port prt, uint8_t p , mux mx)
 	PORT_PCR_REG(PortBase[Gpio::prt],pin_) = (uint8_t)mx << PORT_PCR_MUX_SHIFT;
 }
 
+Pin::Pin (uint8_t prt, uint8_t p , mux mx)
+:Gpio(prt)
+{
+	pin_ = p;
+	PORT_PCR_REG(PortBase[Gpio::prt],pin_) = (uint8_t)mx << PORT_PCR_MUX_SHIFT;
+}
+
 Pin::Pin (Port prt, uint8_t p )
 :Gpio(prt)
 {
@@ -24,6 +31,16 @@ Pin::Pin (Port prt, uint8_t p , PP m)
 	PORT_PCR_REG(PortBase[Gpio::prt],pin_) |= PORT_PCR_PE_MASK;
 	PORT_PCR_REG(PortBase[Gpio::prt],pin_) &= ~PORT_PCR_PS_MASK;
 	PORT_PCR_REG(PortBase[Gpio::prt],pin_) |= (uint8_t)m << PORT_PCR_PS_SHIFT;
+}
+
+void Pin::setPort (Port)
+{
+
+}
+
+void Pin::setPin (uint8_t)
+{
+
 }
 
 void Pin::direction (mode m)
