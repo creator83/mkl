@@ -1,5 +1,5 @@
-#include "MKL17Z4.h"                // Device header
-#include "gpio.h"
+#include "device.h"               // Device header
+#include "gpio0x.h"
 
 #ifndef PORT_H
 #define PORT_H
