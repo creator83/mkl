@@ -12,7 +12,7 @@ Intrpt::Intrpt (Gpio::Port p, uint8_t pi_, mode m, Gpio::PP f)
 	}
 	else if (pin_.getPort()== PORTC_BASE_PTR||PORTD_BASE_PTR)
 	{
-		NVIC_EnableIRQ(PORTC_PORTD_IRQn);
+		NVIC_EnableIRQ(PORTCD_IRQn);
 	}
 }
 

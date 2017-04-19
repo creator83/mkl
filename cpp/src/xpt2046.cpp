@@ -2,8 +2,8 @@
 
 
 
-Xpt2046::Xpt2046 (Spi &d)
-:cs(xpt2046Def::csPort, xpt2046Def::csPin), irq (xpt2046Def::irqPort, xpt2046Def::irqPin, Intrpt::mode::fallingEdge),
+Xpt2046::Xpt2046 (Spi &d, Gpio::Port cs_, uint16_t csp, Gpio::Port irq_, uint16_t irqp)
+:cs(cs_, csp), irq (irq_, irqp, Intrpt::mode::fallingEdge),
  x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300)
 {
 	driver = &d;

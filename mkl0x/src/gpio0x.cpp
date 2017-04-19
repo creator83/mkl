@@ -18,7 +18,7 @@ Gpio::Gpio (Port p)
 
 Gpio::Gpio(uint8_t p )
 {
-  prt = static_cast <uint8_t> (p);
+  prt = p;
   //takt port
   SIM->SCGC5 |= (0x200 << prt);
 }

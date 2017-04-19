@@ -1,4 +1,4 @@
-#include "MKL26Z4.h"
+#include "device.h"
 #include "pin.h"
 #include "spi.h"
 #include "intrpt.h"
@@ -9,16 +9,6 @@
 
 const uint8_t channelY = 0x90;
 const uint8_t channelX = 0xD0;
-
-namespace xpt2046Def
-{
-  //CS
-  const Gpio::Port csPort = Gpio::E;
-  const uint8_t csPin = 4;
-  //IRQ
-  const Gpio::Port irqPort = Gpio::A;
-  const uint8_t irqPin = 1;
-}
 
 
 class Xpt2046
@@ -33,7 +23,7 @@ public:
 
 public:
 
-  Xpt2046 (Spi &);
+  Xpt2046 (Spi &, Gpio::Port cs_, uint16_t csp, Gpio::Port irq_, uint16_t irqp);
   void getData ();
   uint16_t & getX ();
   uint16_t & getY ();

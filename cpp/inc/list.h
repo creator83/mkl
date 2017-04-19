@@ -1,4 +1,4 @@
-#include "MKL26Z4.h"
+#include "device.h"
 #include "shape.h"
 #include "data.h"
 

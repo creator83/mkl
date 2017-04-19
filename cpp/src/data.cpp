@@ -3,17 +3,16 @@
 const uint8_t Data::point [8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 
-Data::Data (uint16_t d, uint8_t n, Ssd1289::sFont * f)
+Data::Data (uint16_t d, uint8_t n, Font * f)
 :value (d)
 {
 	font_= f;
 	nElements = n+2;
 	data = new uint8_t [nElements];
 	data [nElements-2] = '.';
-
 }
 
-Data::Data (uint16_t x_, uint16_t y_, uint16_t color_,uint16_t fon_, uint16_t d, uint8_t n, Ssd1289::sFont * f)
+Data::Data (uint16_t x_, uint16_t y_, uint16_t color_,uint16_t fon_, uint16_t d, uint8_t n, Font * f)
 :value (d), x (x_), y (y_), color(color_), fon(fon_)
 {
 	font_ = f;

@@ -1,9 +1,9 @@
 #include "device.h"                  // Device header
-#include "gpio.h"
+#include "gpio0x.h"
 
 
-#ifndef PIN_H
-#define PIN_H
+#ifndef PIN0X_H
+#define PIN0X_H
 
 class Pin: protected Gpio
 {

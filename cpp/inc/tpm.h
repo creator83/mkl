@@ -1,49 +1,45 @@
 #include "device.h"
-#include "pin.h"
 
 
 #ifndef TPM_H
 #define TPM_H
 
 
-class tpm
+class Tpm
 {
   //variables
 public:
-	enum channel {ch0, ch1, ch2, ch3, ch4, ch5};
-	enum Port {A, B, C, D, E};
-	enum alt_mode {Alt0 , Alt1 , Alt2 , Alt3, Alt4 , Alt5 , Alt6};
-	enum N_TPM {TPM_0, TPM_1,TPM_2};
-	enum mode_clock {TPM_disable, TPM_inc, TPM_ext};
-	enum MODE {Input, Output_toggle, Output_pulse, Edge_Pwm, Center_Pwm, Software_compare};
-	enum division {div1, div2, div4, div8, div16, div32, div64, div128};
-	enum toggle_mode {toggle=1, clear, set};
-	enum pulse_mode {output_high=1, output_low};
-	enum e_pwm_mode {low_pulse=1, high_pulse};
+	enum class channel {ch0, ch1, ch2, ch3, ch4, ch5};
+	enum class nTpm {TPM_0, TPM_1};
+	enum class modeClock {TPM_disable, TPM_inc, TPM_ext};
+	enum class mode {input, outToggle, outPulse, edgePwm, centerPwm, softwareCompare};
+	enum class division {div1, div2, div4, div8, div16, div32, div64, div128};
+	enum class togPulseMode {toggle=1, clear=2, set=3, outputHigh=1, outputLow=2, lowPulse=1, highPulse=2};
 
 	//enum mode {khz, hz, ms, us};
 private:
-	uint8_t n_ch;
-	static TPM_MemMapPtr tpm_ptr[3];
-	uint8_t num_tpm;
-	gpio pin;
-
+	using setF = void (Tpm::*) (togPulseMode);
+	uint8_t nCh;
+	static TPM_MemMapPtr tpmPtr[2];
+	uint8_t numTpm;
+	static setF fMode [6];
 public:
-	tpm(N_TPM n_, channel ch, division d);
-	void clear_flag ();
+	Tpm(nTpm n_, channel ch, division d);
 	void start ();
 	void stop ();
-	void init_output_togle(Port p_, alt_mode alt_, uint8_t pin_, toggle_mode t_mode);
-	void init_output_pulse(Port p_, alt_mode alt_, uint8_t pin_, pulse_mode p_mode);
-	void init_edge_pwm(Port p_, alt_mode alt_, uint8_t pin_, e_pwm_mode e_mode);
-	void init_center_pwm(Port p_, alt_mode alt_, uint8_t pin_, e_pwm_mode e_mode);
-	void Set_MOD (uint16_t val);
-	void Set_CNV (uint16_t val);
+	void clearFlag ();
+	void setMode (mode, togPulseMode);
+	void setModulo (uint16_t val);
+	void setCnt (uint16_t val);
 private:
-	void khz_set (uint16_t val);
-	void hz_set (uint16_t val);
-	void ms_set (uint16_t val);
-	void us_set (uint16_t val);
+	void initOutputTogle(togPulseMode);
+	void initOutputPulse(togPulseMode);
+	void initEdgePwm(togPulseMode);
+	void initCenterPwm(togPulseMode);
+	void setKhz (uint16_t val);
+	void setHz (uint16_t val);
+	void setMs (uint16_t val);
+	void setUs (uint16_t val);
 };
 
 #endif /* PIT_H */

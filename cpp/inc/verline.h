@@ -1,4 +1,4 @@
-#include "MKL26Z4.h"               // Device header
+#include "device.h"               // Device header
 #include "shape.h"
 #include "colors16bit.h"
 
@@ -8,11 +8,12 @@
 class Verline : public Shape
 {
 private:
-	uint16_t x, y, color, length;
+	uint16_t x, y, length;
 	uint8_t thick;
+	uint16_t * color;
 public:
 
-	Verline (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t length_, uint8_t thick_);
+	Verline (uint16_t x_, uint16_t y_, uint16_t * color_, uint16_t length_, uint8_t thick_);
 	void draw () const override;
 	void setPosition (uint16_t x_, uint16_t y_) override;
 };

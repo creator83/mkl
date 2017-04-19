@@ -24,10 +24,11 @@ private:
 public:
   Gpio ();
   Gpio(Port p );
+  Gpio(uint8_t p );
   void setPort (Port p);
 
   //function for port
-  void settingPort (uint32_t val, mux mx = GPIO, mode m = Output);
+  void settingPort (uint32_t val, mux mx = mux::GPIO, mode m = mode::Output);
   void settingPortDirection (uint32_t val, mode m);
   void setValPort (uint32_t value);
   void clearValPort (uint32_t value);

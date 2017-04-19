@@ -1,6 +1,6 @@
 #include "sstring.h"
 
-Sstring::Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, char *str_, Ssd1289::sFont * f, uint8_t interval_)
+Sstring::Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, char *str_, Font * f, uint8_t interval_)
 :x(x_), y(y_), color (color_), fon (fon_), interval (interval_)
 {
 	font_ = f;
@@ -12,7 +12,7 @@ Sstring::Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, char
 	nChar = l+1;
 }
 
-Sstring::Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, uint8_t n, Ssd1289::sFont *f, uint8_t interval_)
+Sstring::Sstring (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t fon_, uint8_t n, Font *f, uint8_t interval_)
 :x(x_), y(y_), color (color_), fon (fon_), interval (interval_)
 {
 	font_ = f;
@@ -27,7 +27,7 @@ void Sstring::setElement (uint8_t n, char val)
 	*ptr = val;
 }
 
-void Sstring::setFont (Ssd1289::sFont *f)
+void Sstring::setFont (Font *f)
 {
 	font_ = f;
 }

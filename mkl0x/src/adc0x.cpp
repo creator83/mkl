@@ -34,65 +34,48 @@ Adc::Adc(channel ch_, resolution r_)
 	ADC0->CFG1|= ADC_CFG1_ADLSMP_MASK|ADC_CFG1_MODE(r_);
 }
 
-void Adc::calibrate ()
+bool Adc::calibrate ()
 {
 	unsigned short cal_var;
 
 
     SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;  // enable ADC0 clock
 
-	ADC_SC2_REG(adcmap) &=  ~ADC_SC2_ADTRG_MASK ; // Enable Software Conversion Trigger for Calibration Process
-	ADC_SC3_REG(adcmap) &= ( ~ADC_SC3_ADCO_MASK & ~ADC_SC3_AVGS_MASK ); // set single conversion, clear avgs bitfield for next writing
+	ADC0->SC2 &=  ~ADC_SC2_ADTRG_MASK ; // Enable Software Conversion Trigger for Calibration Process
+	ADC0->SC3 &= ( ~ADC_SC3_ADCO_MASK & ~ADC_SC3_AVGS_MASK ); // set single conversion, clear avgs bitfield for next writing
 
 	//For best calibration results
-	ADC_SC3_REG(adcmap) |= ( ADC_SC3_AVGE_MASK | ADC_SC3_AVGS(3) );  // Turn averaging ON and set at max value ( 32 )
+	ADC0->SC3 |= ( ADC_SC3_AVGE_MASK | ADC_SC3_AVGS(3) );  // Turn averaging ON and set at max value ( 32 )
 
-	ADC_SC3_REG(adcmap) |= ADC_SC3_CAL_MASK ;      // Start CAL
+	ADC0->SC3 |= ADC_SC3_CAL_MASK ;      // Start CAL
 
 	//ADC1_SC1A
-	while ( (ADC_SC1_REG(adcmap,0) & ADC_SC1_COCO_MASK ) != ADC_SC1_COCO_MASK ); // Wait calibration end
+	while ( (ADC0->SC1[0] & ADC_SC1_COCO_MASK ) != ADC_SC1_COCO_MASK ); // Wait calibration end
 
 	 //COCO=1 calibration complete
-	if ((ADC_SC3_REG(adcmap)& ADC_SC3_CALF_MASK) == ADC_SC3_CALF_MASK )
+	if ((ADC0->SC3& ADC_SC3_CALF_MASK) == ADC_SC3_CALF_MASK )
 	{
 	   return true;    // Check for Calibration fail error and return
 	}
 	  // Calculate plus-side calibration
 	  cal_var = 0x00;
 
-	  cal_var =  ADC_CLP0_REG(adcmap);
-	  cal_var += ADC_CLP1_REG(adcmap);
-	  cal_var += ADC_CLP2_REG(adcmap);
-	  cal_var += ADC_CLP3_REG(adcmap);
-	  cal_var += ADC_CLP4_REG(adcmap);
-	  cal_var += ADC_CLPS_REG(adcmap);
+	  cal_var =  ADC0->CLP0;
+	  cal_var += ADC0->CLP1;
+	  cal_var += ADC0->CLP2;
+	  cal_var += ADC0->CLP3;
+	  cal_var += ADC0->CLP4;
+	  cal_var += ADC0->CLPS;
 
 	  cal_var = cal_var/2;
 	  cal_var |= 0x8000; // Set MSB
 
-	  ADC_PG_REG(adcmap) = ADC_PG_PG(cal_var);
 
-	/*
-	  // Calculate minus-side calibration
-	  cal_var = 0x00;
+	  ADC0->PG = ADC_PG_PG(cal_var);
 
-	  cal_var =  ADC_CLM0_REG(adcmap);
-	  cal_var += ADC_CLM1_REG(adcmap);
-	  cal_var += ADC_CLM2_REG(adcmap);
-	  cal_var += ADC_CLM3_REG(adcmap);
-	  cal_var += ADC_CLM4_REG(adcmap);
-	  cal_var += ADC_CLMS_REG(adcmap);
+	  ADC0->SC3 &= ~ADC_SC3_CAL_MASK ; /* Clear CAL bit */
 
-	  cal_var = cal_var/2;
-
-	  cal_var |= 0x8000; // Set MSB
-
-	  ADC_MG_REG(adcmap) = ADC_MG_MG(cal_var);
-	*/
-
-	  ADC_SC3_REG(adcmap) &= ~ADC_SC3_CAL_MASK ; /* Clear CAL bit */
-
-	  return(0);
+	  return false;
 }
 
 uint16_t Adc::convert ()

@@ -8,11 +8,12 @@
 class Horline : public Shape
 {
 private:
-	uint16_t x, y, color, length;
+	uint16_t x, y, length;
 	uint8_t thick;
+	uint16_t * colorPtr;
 public:
 
-	Horline (uint16_t x_, uint16_t y_, uint16_t color_, uint16_t length_, uint8_t thick_);
+	Horline (uint16_t x_, uint16_t y_, uint16_t * color_, uint16_t length_, uint8_t thick_);
 	void draw () const override;
 	void setPosition (uint16_t, uint16_t) override;
 };
