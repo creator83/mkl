@@ -10,6 +10,9 @@
 #include "coffeebut.h"
 #include "shape.h"
 #include "cpic.h"
+#include "pixel.h"
+#include "horline.h"
+#include "lcdflash.h"
 
 Tact frq;
 Spi spiLcd (Spi::SPI_N::SPI_1);
@@ -35,15 +38,19 @@ uint16_t c [5] = {colors16bit::BLACK, colors16bit::RED, colors16bit::BLUE, color
 uint16_t buffer [8400];
 uint16_t monk2 [50];
 const uint16_t background = 0x0abb;
-
-
-//ColorPicture buttonLight (0, 165, imgButtons::light16, 100, 70);
-//Shape * mainScreen[] = {&buttonLight};
+uint16_t background1 = 0x0abb;
+Horline h1 (100, 100, &background1, 50, 20);
+Pixel point1 (0, 10, background);
+ColorPicture buttonLight (0, 165, imgButtons::light16, 100, 70);
+Shape * mainScreen[] = {&h1, &point1, &buttonLight};
 
 int main ()
 {
-	/*Tftdriver * lcd = &display;
-	Shape::driver = lcd;*/
+	Shape::displayDriver = &display;
+	for (uint8_t i=0;i<3;++i) {
+		mainScreen[i]->draw();
+	}
+
 	//Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
 	//touchSpi.transmite(0xfe);
 	Pin light (Gpio::Port::C, 3);
@@ -58,6 +65,7 @@ int main ()
 	Dma dma0 (Dma::dmaChannel::ch0);
 	display.setDma(dma0);
 	Flash memory (spimem, Gpio::Port::C, 4);
+	Lcdflash dis2 (display, memory);
 	memory.setDma( dma2, dma1, pit1);
 	/*memory.writeEnable ();
 	memory.readStatus ();*/

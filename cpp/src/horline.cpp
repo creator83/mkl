@@ -7,7 +7,7 @@ Horline::Horline(uint16_t x_, uint16_t y_, uint16_t * color_, uint16_t length_, 
 }
 void Horline::draw () const
 {
-	driver->horLine (x, y, colorPtr, length, thick);
+	displayDriver->horLine (x, y, colorPtr, length, thick);
 }
 
 void Horline::setPosition (uint16_t x_, uint16_t y_)

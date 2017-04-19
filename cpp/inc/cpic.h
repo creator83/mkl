@@ -17,6 +17,9 @@ public:
 
 	void draw () const override;
 
+	void setPosition (uint16_t, uint16_t) override;
+
+
 };
 
 #endif

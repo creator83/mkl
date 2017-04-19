@@ -50,7 +50,7 @@ Sstring::~Sstring ()
 
 void Sstring::draw () const
 {
-	driver->string(x, y, color, fon, str, *font_, interval);
+	displayDriver->string(x, y, color, fon, str, *font_, interval);
 }
 
 void Sstring::setPosition (uint16_t x_, uint16_t y_)

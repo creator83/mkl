@@ -8,7 +8,7 @@ Verline::Verline (uint16_t x_, uint16_t y_, uint16_t * color_, uint16_t length_,
 
 void Verline::draw () const
 {
-	driver->verLine(x, y, color, length, thick);
+	displayDriver->verLine(x, y, color, length, thick);
 }
 
 void Verline::setPosition (uint16_t x_, uint16_t y_)

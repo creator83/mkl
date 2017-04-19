@@ -8,5 +8,11 @@ ColorPicture::ColorPicture (uint16_t x_, uint16_t y_, const uint16_t * pic, uint
 
 void ColorPicture::draw () const
 {
-	driver->drawPic (x, y, arr, length, width);
+	displayDriver->drawPic (x, y, arr, length, width);
+}
+
+void ColorPicture::setPosition (uint16_t x_, uint16_t y_)
+{
+	x = x_;
+	y = y_;
 }

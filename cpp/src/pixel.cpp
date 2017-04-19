@@ -10,3 +10,9 @@ void Pixel::draw () const
 {
 	displayDriver->pixel(x,y,color);
 }
+
+void Pixel::setPosition (uint16_t x_, uint16_t y_)
+{
+	x = x_;
+	y = y_;
+}

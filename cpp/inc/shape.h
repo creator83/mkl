@@ -9,7 +9,7 @@ class Shape
 {
 public:
 
-	Tftdriver * displayDriver;
+	static Tftdriver * displayDriver;
 public:
 	virtual void draw () const = 0;
 	virtual void setPosition (uint16_t x, uint16_t y)  = 0;

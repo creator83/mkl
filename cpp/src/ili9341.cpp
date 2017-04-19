@@ -13,6 +13,11 @@ Ili9341::Ili9341(Spi &d, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rst
 	init ();
 	spiDriver->setDivision(Spi::Division::div2);
 }
+/*
+Ili9341::~Ili9341()
+{
+
+}*/
 
 void Ili9341::setDma (Dma &d)
 {
@@ -208,7 +213,7 @@ void Ili9341::setPosition (uint16_t x, uint16_t y)
 	command (ili9341Commands::memoryWrite);
 }
 
-void Ili9341::pixel (const uint16_t color)
+void Ili9341::pixel (uint16_t x , uint16_t y, const uint16_t color)
 {
 	command (ili9341Commands::memoryWrite);
 	spiDriver->setFrameSize(Spi::Size::bit16);

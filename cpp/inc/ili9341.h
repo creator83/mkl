@@ -70,23 +70,24 @@ private:
 //functions
 public:
 	Ili9341(Spi &, Gpio::Port po, uint8_t p, Gpio::Port rstpo, uint8_t rstpi);
+	//~Ili9341();
 	void setDma (Dma &);
 	void pixel (uint16_t x , uint16_t y, const uint16_t color) override;
 	void fillScreen (uint16_t color);
 	void fillScreenDma (const uint16_t * color);
-	void symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, Font & s) ;
-	void string (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const char *str, Font &f, int8_t interval) ;
+	void symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t ch, Font & s) override;
+	void string (uint16_t x, uint16_t y, const uint16_t color, const uint16_t fon, const char *str, Font &f, int8_t interval) override;
 	void setCursor (uint16_t x , uint16_t y);
 	void setArea (uint16_t x1 , uint16_t y1, uint16_t x2, uint16_t y2);
-	void drawArr (uint16_t x , uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t *arr, uint16_t l, uint16_t width) ;
-	void drawPic (uint16_t x , uint16_t y, const uint16_t *arr, uint16_t length, uint16_t height);
+	void drawArr (uint16_t x , uint16_t y, const uint16_t color, const uint16_t fon, const uint8_t *arr, uint16_t l, uint16_t width) override;
+	void drawPic (uint16_t x , uint16_t y, const uint16_t *arr, uint16_t length, uint16_t height) override;
 	void drawPic1 (uint16_t x , uint16_t y, uint16_t length, uint16_t height);
 	void drawPic8 (uint16_t x , uint16_t y, const uint8_t *arr, uint16_t length, uint16_t height) ;
-	void horLine (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t thick);
-	void verLine (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t thick);
+	void horLine (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t thick) override;
+	void verLine (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t thick) override;
 	void line (uint16_t x, uint16_t y, uint16_t color, uint16_t length, uint8_t thick);
-	void rectangle (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t height, uint8_t thick) ;
-	void rectangle (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t height) ;
+	void rectangle (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t height, uint8_t thick) override;
+	void rectangle (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t height) override;
 	void gradientVer (uint16_t x, uint16_t y, const uint16_t * color, uint16_t length, uint8_t height);
 protected:
 private:

@@ -1,4 +1,4 @@
 #include "shape.h"
 
 
-//Tftdriver * Shape::displayDriver = nullptr;
+Tftdriver * Shape::displayDriver = nullptr;
