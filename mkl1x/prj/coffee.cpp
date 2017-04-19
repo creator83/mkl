@@ -65,7 +65,7 @@ int main ()
 	Dma dma0 (Dma::dmaChannel::ch0);
 	display.setDma(dma0);
 	Flash memory (spimem, Gpio::Port::C, 4);
-	Lcdflash dis2 (display, memory);
+	//Lcdflash dis2 (display, memory);
 	memory.setDma( dma2, dma1, pit1);
 	/*memory.writeEnable ();
 	memory.readStatus ();*/
