@@ -9,6 +9,6 @@ Rectangle::Rectangle (uint16_t x_, uint16_t y_, uint16_t * color_, uint16_t leng
 
 void Rectangle::draw() const
 {
-	driver->rectangle(x, y, color, length, width, thick);
+	displayDriver->rectangle(x, y, color, length, width, thick);
 }
 

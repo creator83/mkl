@@ -1,4 +1,4 @@
-#include "MKL17Z4.h"
+#include "device.h"
 
 #ifndef FLEXIO_H_
 #define FLEXIO_H_

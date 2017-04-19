@@ -19,7 +19,6 @@ Spi spiLcd (Spi::SPI_N::SPI_1);
 Spi spimem (Spi::SPI_N::SPI_0);
 Dma dma1 (Dma::dmaChannel::ch1);
 Dma dma2 (Dma::dmaChannel::ch2);
-Pit pit1 (Pit::ch1, 1);
 //pins for lcd
 	Pin cs (Gpio::Port::D, 4, Gpio::mux::Alt2);
 	Pin sck (Gpio::Port::D, 5, Gpio::mux::Alt2);
@@ -46,11 +45,11 @@ Shape * mainScreen[] = {&h1, &point1, &buttonLight};
 
 int main ()
 {
-	Shape::displayDriver = &display;
+	/*Shape::displayDriver = &display;
 	for (uint8_t i=0;i<3;++i) {
 		mainScreen[i]->draw();
 	}
-
+*/
 	//Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
 	//touchSpi.transmite(0xfe);
 	Pin light (Gpio::Port::C, 3);
@@ -66,7 +65,7 @@ int main ()
 	display.setDma(dma0);
 	Flash memory (spimem, Gpio::Port::C, 4);
 	//Lcdflash dis2 (display, memory);
-	memory.setDma( dma2, dma1, pit1);
+	memory.setDma( dma2, dma1);
 	/*memory.writeEnable ();
 	memory.readStatus ();*/
 	//memory.read (dest, 0, 10);
@@ -75,8 +74,12 @@ int main ()
 		for (uint16_t i=0;i<600;++i, add+=128)
 		{
 			memory.writePage16 (&picture::monkeys[add], add, 128);
+		}
+	uint32_t add=0;
+	for (uint16_t i, j=0;i<66;++i, add+=128, j+=128)
+		{
+			memory.writePage16 (&imgButtons::tools[j], add, 128);
 		}*/
-
 	//memory.read (monk1, 0, 40);
 	//memory.read16 (monk1, 0, 12800);
 	//memory.txDum (20);
@@ -86,15 +89,15 @@ int main ()
 	display.drawPic(213,0, imgButtons::button1, 105, 80);
 	display.drawPic(213,80, imgButtons::tools, 105, 80);
 	display.drawPic(213,160, imgButtons::button1, 105, 80);
-	//display.drawPic(0, 0, 320, 240);
-	for (uint32_t i,j=0;i<154000;i+=12800, j+=20)
+	/*for (uint32_t i,j=0;i<154000;i+=12800, j+=20)
 	{
 		memory.txToDma ((uint32_t)buffer, i, 12800);
 		display.drawPic(0,j, buffer, 320, 20);
-	}
+	}*/
 
 	//spiLcd.setFrameSize(Spi::Size::bit8);
-	memory.txToDma ((uint32_t)monk2, 0, 100);
+	memory.txToDma ((uint32_t)buffer, 0, 16800);
+	display.drawPic(0,0, buffer, 105, 80);
 	/*uint32_t add=0;
 	for (uint16_t i=0;i<600;++i, add+=256)
 	{

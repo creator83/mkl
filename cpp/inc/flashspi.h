@@ -70,7 +70,7 @@ public:
   void powerDown ();
   void powerUp ();
   void getCapacity ();
-  void setDma (Dma &tx, Dma &dum, Pit &);
+  void setDma (Dma &tx, Dma &dum);
 
 
 };
