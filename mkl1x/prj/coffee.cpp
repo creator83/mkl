@@ -79,8 +79,8 @@ List pidScreen;
 
 Pin csFxIo (Gpio::Port::E, 16, Gpio::mux::Alt6);
 Pin sckFxIo (Gpio::Port::E, 17, Gpio::mux::Alt6);
-Pin mosiFxIo (Gpio::Port::A, 18, Gpio::mux::Alt6);
-Pin misoFxIo (Gpio::Port::A, 19, Gpio::mux::Alt6);
+Pin mosiFxIo (Gpio::Port::E, 18, Gpio::mux::Alt6);
+Pin misoFxIo (Gpio::Port::E, 19, Gpio::mux::Alt6);
 
 uint16_t buffer [8400];
 
