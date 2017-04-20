@@ -4,68 +4,104 @@
 #include "font.h"
 #include "mfont.h"
 #include "flashspi.h"
-//#include "rgb.h"
+#include "tree.h"
+#include "list.h"
 #include "flexio.h"
 #include "pin.h"
-#include "coffeebut.h"
+//#include "coffeebut.h"
 #include "shape.h"
 #include "cpic.h"
 #include "pixel.h"
 #include "horline.h"
 #include "lcdflash.h"
+#include "xpt2046.h"
+#include "tbutton.h"
+#include "tgrid.h"
+
+enum class butAddress {cup=0x0025, light=0x0036, tools=0x0048, clock=0x0074, switchOn=0x0123, switchOff=0x0423,setboil=0x5463, steam=0x6325};
 
 Tact frq;
 Spi spiLcd (Spi::SPI_N::SPI_1);
 Spi spimem (Spi::SPI_N::SPI_0);
 Dma dma1 (Dma::dmaChannel::ch1);
 Dma dma2 (Dma::dmaChannel::ch2);
+Dma dma0 (Dma::dmaChannel::ch0);
+
 //pins for lcd
-	Pin cs (Gpio::Port::D, 4, Gpio::mux::Alt2);
-	Pin sck (Gpio::Port::D, 5, Gpio::mux::Alt2);
-	Pin mosi (Gpio::Port::D, 6, Gpio::mux::Alt2);
-	Ili9341 display (spiLcd, Gpio::Port::D, 7, Gpio::Port::E, 0);
+Pin cs (Gpio::Port::D, 4, Gpio::mux::Alt2);
+Pin sck (Gpio::Port::D, 5, Gpio::mux::Alt2);
+Pin mosi (Gpio::Port::D, 6, Gpio::mux::Alt2);
+Ili9341 display (spiLcd, Gpio::Port::D, 7, Gpio::Port::E, 0);
+Xpt2046 touch (spimem, Gpio::Port::C, 3, Gpio::Port::C, 8);
+
+Pin light (Gpio::Port::C, 3);
+
+//pins for memory
+Pin sckF (Gpio::Port::C, 5, Gpio::mux::Alt2);
+Pin mosiF (Gpio::Port::C, 6, Gpio::mux::Alt2);
+Pin misoF (Gpio::Port::C, 7, Gpio::mux::Alt2);
+
+Flash memory (spimem, Gpio::Port::C, 4);
+
+Lcdflash dis2 (display, memory);
+
+//===Graphic part===//
+//main screen
+List mScreen;
+Tgrid nineArea (touch,3,3);
+Tbutton tMainScreen (nineArea);
+Tree menu (&mScreen, &tMainScreen);
+//buttons
+
+
+
+ColorPicture mScreenCup (3,160, static_cast <uint32_t>(butAddress::cup), 105, 80);
+ColorPicture mScreenTool (108,160, static_cast <uint32_t>(butAddress::tools), 105, 80);
+ColorPicture mScreenLight (213,160, static_cast <uint32_t>(butAddress::light), 105, 80);
+
+//tools screen
+List toolScreen;
+
+
+//boil screen
+
+List boilScreen;
+Tbutton tboilScreen (nineArea);
+ColorPicture boilScreenOn (3,160, static_cast <uint32_t>(butAddress::switchOn), 105, 80);
+ColorPicture boilScreenSet (108,160, static_cast <uint32_t>(butAddress::setboil), 105, 80);
+ColorPicture boilScreenSteam (213,160, static_cast <uint32_t>(butAddress::steam), 105, 80);
+
+//clock screen
+List clockScreen;
+
+//pid screen
+List pidScreen;
 
 Pin csFxIo (Gpio::Port::E, 16, Gpio::mux::Alt6);
 Pin sckFxIo (Gpio::Port::E, 17, Gpio::mux::Alt6);
 Pin mosiFxIo (Gpio::Port::A, 18, Gpio::mux::Alt6);
 Pin misoFxIo (Gpio::Port::A, 19, Gpio::mux::Alt6);
 
-uint16_t c [5] = {colors16bit::BLACK, colors16bit::RED, colors16bit::BLUE, colors16bit::GREEN, colors16bit::YELLOW};
-
-//uint8_t dest2 [25600];
-//uint16_t monk [12800];
 uint16_t buffer [8400];
-uint16_t monk2 [50];
-const uint16_t background = 0x0abb;
-uint16_t background1 = 0x0abb;
-Horline h1 (100, 100, &background1, 50, 20);
-Pixel point1 (0, 10, background);
-ColorPicture buttonLight (0, 165, imgButtons::light16, 100, 70);
-Shape * mainScreen[] = {&h1, &point1, &buttonLight};
+
+
+//Shape * mainScreen[] = {&h1, &point1, &buttonLight};
+
+void fon ();
+void makeTree ();
+void initScreens ();
+
 
 int main ()
 {
-	/*Shape::displayDriver = &display;
-	for (uint8_t i=0;i<3;++i) {
-		mainScreen[i]->draw();
-	}
-*/
-	//Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
-	//touchSpi.transmite(0xfe);
-	Pin light (Gpio::Port::C, 3);
+
+	Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
+	touchSpi.transmite(0xfe);
 	light.set();
-
-	//pins for memory
-	Pin sckF (Gpio::Port::C, 5, Gpio::mux::Alt2);
-	Pin mosiF (Gpio::Port::C, 6, Gpio::mux::Alt2);
-	Pin misoF (Gpio::Port::C, 7, Gpio::mux::Alt2);
-
-
-	Dma dma0 (Dma::dmaChannel::ch0);
 	display.setDma(dma0);
-	Flash memory (spimem, Gpio::Port::C, 4);
-	//Lcdflash dis2 (display, memory);
 	memory.setDma( dma2, dma1);
+	initScreens ();
+	makeTree ();
 	/*memory.writeEnable ();
 	memory.readStatus ();*/
 	//memory.read (dest, 0, 10);
@@ -83,12 +119,12 @@ int main ()
 	//memory.read (monk1, 0, 40);
 	//memory.read16 (monk1, 0, 12800);
 	//memory.txDum (20);
-	display.fillScreenDma(&colors16bit::BLACK);
-	display.drawPic(3,160, imgButtons::button1, 105, 80);
+
+/*	display.drawPic(3,160, imgButtons::button1, 105, 80);
 	display.drawPic(108,160, imgButtons::button1, 105, 80);
 	display.drawPic(213,0, imgButtons::button1, 105, 80);
 	display.drawPic(213,80, imgButtons::tools, 105, 80);
-	display.drawPic(213,160, imgButtons::button1, 105, 80);
+	display.drawPic(213,160, imgButtons::button1, 105, 80);*/
 	/*for (uint32_t i,j=0;i<154000;i+=12800, j+=20)
 	{
 		memory.txToDma ((uint32_t)buffer, i, 12800);
@@ -129,14 +165,36 @@ int main ()
 	display.drawPic(0,0, monk1, 320, 40);*/
 	while (1)
 	{
-		/*for (uint8_t i=0;i<5;++i){
-			display.fillScreenDma(&c[i]);
-			delay_ms(500);
-		}
-		delay_ms(2000);
-		for (uint8_t i=0;i<5;++i){
-			display.fillScreen(c[i]);
-			delay_ms(500);
-		}*/
+
 	}
+}
+
+void makeTree ()
+{
+	menu.addSon(&boilScreen, &tboilScreen);
+}
+
+void initScreens ()
+{
+	//===main screen===//
+	mScreen.addLast(&mScreenCup);
+	mScreen.addLast(&mScreenTool);
+	mScreen.addLast(&mScreenLight);
+	mScreen.setFunction(fon);
+
+	//===boil screen===//
+	boilScreen.addLast(&boilScreenOn);
+	boilScreen.addLast(&boilScreenSet);
+	boilScreen.addLast(&boilScreenSteam);
+	boilScreen.setFunction(fon);
+
+	//===clock screen===//
+
+	//===pid screen===//
+
+}
+
+void fon ()
+{
+	display.fillScreenDma(&colors16bit::BLACK);
 }

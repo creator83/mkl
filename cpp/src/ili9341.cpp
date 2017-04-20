@@ -108,6 +108,18 @@ void Ili9341::dataDma (const uint16_t * buf, uint32_t n)
 	driver->disableDma(Spi::dma::transmit);
 }
 
+void Ili9341::dataDma (uint32_t address, uint32_t n)
+{
+	dma->setSource(address);
+	dma->setLength(n);
+	DMA0->DMA[dma->getChannel()].DCR |= DMA_DCR_ERQ_MASK;
+	driver->enableDma(Spi::dma::transmit);
+	while (!dma->flagDone());
+	DMA0->DMA[dma->getChannel()].DCR &= ~ DMA_DCR_ERQ_MASK;
+	dma->clearFlags();
+	driver->disableDma(Spi::dma::transmit);
+}
+
 void Ili9341::dataDma8 (const uint8_t * buf, uint32_t n)
 {
 	dma->setDsize(Dma::size::bit8);
@@ -299,12 +311,15 @@ void Ili9341::drawPic (uint16_t x , uint16_t y, const uint16_t *arr, uint16_t le
 	driver->setFrameSize(Spi::Size::bit8);
 }
 
-void Ili9341::drawPic (uint16_t x , uint16_t y, uint16_t length, uint16_t height)
+void Ili9341::drawPic (uint16_t x , uint16_t y, uint32_t address, uint16_t length, uint16_t height)
 {
-	setArea(x, y, x+length, y+height);
+	setArea(x, y, x+length-1, y+height-1);
 	command(ili9341Commands::memoryWrite);
 	driver->setFrameSize(Spi::Size::bit16);
 	dc.set();
+	dma->setIncSource(true);
+	dataDma (address, (height)*(length)*2+2);
+	driver->setFrameSize(Spi::Size::bit8);
 }
 
 void Ili9341::drawPic8 (uint16_t x , uint16_t y, const uint8_t *arr, uint16_t length, uint16_t height)

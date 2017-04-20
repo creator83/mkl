@@ -118,6 +118,22 @@ uint8_t Spi::getDataDl ()
 {
 	return SPI_DL_REG(spiAdr[n_spi]);
 }
+
+uint8_t Spi::exhange (uint8_t data)
+{
+
+}
+
+uint8_t Spi::exhange8 (uint8_t data)
+{
+
+}
+
+uint16_t Spi::exhange16 (uint8_t data)
+{
+
+}
+
 bool Spi::flagSptef ()
 {
 	return SPI_S_REG(spiAdr[n_spi]) & SPI_S_SPTEF_MASK;

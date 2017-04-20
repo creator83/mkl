@@ -4,62 +4,69 @@
 
 Xpt2046::Xpt2046 (Spi &d, Gpio::Port cs_, uint16_t csp, Gpio::Port irq_, uint16_t irqp)
 :cs(cs_, csp), irq (irq_, irqp, Intrpt::mode::fallingEdge),
- x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300)
+ x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300), ptrF(0)
 {
-	driver = &d;
+	spiDriver = &d;
 	NVIC_EnableIRQ(PORTA_IRQn);
-	driver->setCpol(Spi::Cpol::neg);
-	driver->setCpha(Spi::Cpha::first);
-	driver->setDivision(Spi::Division::div32);
-	driver->setFrameSize(Spi::Size::bit8);
+	spiDriver->setCpol(Spi::Cpol::neg);
+	spiDriver->setCpha(Spi::Cpha::first);
+	spiDriver->setDivision(Spi::Division::div32);
+	spiDriver->setFrameSize(Spi::Size::bit8);
 	cs.set ();
-	driver->start();
+	spiDriver->start();
 	cs.clear();
-	while (!driver->flagSptef());
-	driver->putDataDl(0x80);
-	while (!driver->flagSprf());
-	uint8_t dummy = driver->getDataDl();
-	driver->putDataDl(0x00);
-	while (!driver->flagSprf());
-	dummy = driver->getDataDl();
-	while (!driver->flagSptef());
-	driver->putDataDl(0x00);
-	while (!driver->flagSprf());
-	dummy = driver->getDataDl();
+	while (!spiDriver->flagSptef());
+	spiDriver->putDataDl(0x80);
+	while (!spiDriver->flagSprf());
+	uint8_t dummy = spiDriver->getDataDl();
+	spiDriver->putDataDl(0x00);
+	while (!spiDriver->flagSprf());
+	dummy = spiDriver->getDataDl();
+	while (!spiDriver->flagSptef());
+	spiDriver->putDataDl(0x00);
+	while (!spiDriver->flagSprf());
+	dummy = spiDriver->getDataDl();
 	cs.set();
+}
+
+Xpt2046::Xpt2046 (Flexio &d, Gpio::Port cs_, uint16_t csp, Gpio::Port irq_, uint16_t irqp)
+:cs(cs_, csp), irq (irq_, irqp, Intrpt::mode::fallingEdge),
+ x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300), ptrF(1)
+{
+	fDriver = &d;
 }
 
 void Xpt2046::getData ()
 {
 	uint16_t tempX, tempY;
 	cs.clear();
-	while (!driver->flagSptef());
-	driver->putDataDl (channelX);
-	while (!driver->flagSprf());
-	uint8_t dummy = driver->getDataDl();
-	while (!driver->flagSptef());
-	driver->putDataDl (0);
-	while (!driver->flagSprf());
-	tempX = driver->getDataDl();
+	while (!spiDriver->flagSptef());
+	spiDriver->putDataDl (channelX);
+	while (!spiDriver->flagSprf());
+	uint8_t dummy = spiDriver->getDataDl();
+	while (!spiDriver->flagSptef());
+	spiDriver->putDataDl (0);
+	while (!spiDriver->flagSprf());
+	tempX = spiDriver->getDataDl();
 	tempX <<= 8;
-	while (!driver->flagSptef());
-	driver->putDataDl (0);
-	while (!driver->flagSprf());
-	tempX |= driver->getDataDl();
+	while (!spiDriver->flagSptef());
+	spiDriver->putDataDl (0);
+	while (!spiDriver->flagSprf());
+	tempX |= spiDriver->getDataDl();
 	tempX >>=3;
 	delay_us(100);
-	driver->putDataDl (channelY);
-	while (!driver->flagSprf());
-	dummy = driver->getDataDl();
-	while (!driver->flagSptef());
-	driver->putDataDl (0);
-	while (!driver->flagSprf());
-	tempY = driver->getDataDl();
+	spiDriver->putDataDl (channelY);
+	while (!spiDriver->flagSprf());
+	dummy = spiDriver->getDataDl();
+	while (!spiDriver->flagSptef());
+	spiDriver->putDataDl (0);
+	while (!spiDriver->flagSprf());
+	tempY = spiDriver->getDataDl();
 	tempY <<= 8;
-	while (!driver->flagSptef());
-	driver->putDataDl (0);
-	while (!driver->flagSprf());
-	tempY |= driver->getDataDl();
+	while (!spiDriver->flagSptef());
+	spiDriver->putDataDl (0);
+	while (!spiDriver->flagSprf());
+	tempY |= spiDriver->getDataDl();
 	tempY >>=3;
 	cs.set();
 	y = tempX-Xmin;

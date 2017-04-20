@@ -72,6 +72,9 @@ public:
   void putDataDl (uint8_t data);
   uint8_t getDataDh ();
   uint8_t getDataDl ();
+  uint8_t exhange (uint8_t data);
+  uint8_t exhange8 (uint8_t data);
+  uint16_t exhange16 (uint8_t data);
   bool flagSptef ();
   bool flagSprf ();
   SPI_MemMapPtr & getSpiPtr ();
