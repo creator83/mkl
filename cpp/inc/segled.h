@@ -1,5 +1,5 @@
 #include "device.h"                // Device header
-#include "pin.h"
+#include "pin0x.h"
 
 
 #ifndef SEGLED_H
