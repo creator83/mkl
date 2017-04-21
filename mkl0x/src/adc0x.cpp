@@ -20,6 +20,16 @@ Adc::Adc(channel ch_, resolution r_, Pin &d)
 	ADC0->CFG1|= ADC_CFG1_ADLSMP_MASK|ADC_CFG1_MODE(r_);
 }
 
+void Adc::interruptEnable ()
+{
+
+}
+
+void Adc::interruptDisable ()
+{
+
+}
+
 bool Adc::calibrate ()
 {
 	unsigned short cal_var;

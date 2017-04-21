@@ -16,6 +16,9 @@ private:
 	uint8_t res;
 public:
 	Adc(channel ch_, resolution r_, Pin &);
+	void interruptEnable ();
+	void interruptDisable ();
+
 	bool calibrate ();
 	uint16_t convert ();
 };
