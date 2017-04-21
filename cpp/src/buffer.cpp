@@ -4,26 +4,31 @@
 
 const uint16_t Buffer::divider [sizeDivider] = {10000, 1000, 100, 10};
 
-Buffer::Buffer()
-{	
-  arr[size-1] = 0;
+Buffer::Buffer(char n_)
+{
+	size = n_;
+	arrPtr = arr = new char [size+1];
+	*(arr+size) = 0;
 }
 
-
-
+Buffer::~Buffer()
+{
+	delete[] arrPtr;
+}
 
 uint8_t Buffer::getArraySize ()
 {
-  return n;
+	return size;
 }
 
 
 void Buffer::parsDec16 (const uint16_t & val)
 {
-        uint8_t arrVal[5] = {0};
+    uint8_t arrVal[5] = {0};
 	uint16_t temp = val;
-        uint8_t * tempPtr = arrVal;
+    uint8_t * tempPtr = arrVal;
 	count = 5;
+
 	for (arrVal[0]=0;temp>=10000;++arrVal[0]) temp -= 10000;
 	
 	for (arrVal[1]=0;temp>=1000;++arrVal[1])temp-=1000;
@@ -34,19 +39,26 @@ void Buffer::parsDec16 (const uint16_t & val)
 	
 	arrVal[4] = temp%10;
         
-        while (!*tempPtr++)
-        {
-          --count;
-        }
-        if (count<1)count = 1;
-        for (uint8_t i=size-1-count, j=5-count;j<5;++i,++j)
-        {
-          arr [i] = font [arrVal[j]];
-        }
-        if (arrVal [2] ==0) arr [2] = font [10];
+    while (!*tempPtr++)
+    {
+    	--count;
+    }
+    if (count<1)count = 1;
+    arr = arrPtr;
+    for (uint8_t i=0; i<size; ++i)
+    {
+    	*arr++ = font [arrVal[i]];
+    }
+     /*
+    for (uint8_t i=size-1-count, j=5-count;j<5;++i,++j)
+    {
+    	arr [i] = font [arrVal[j]];
+    }*/
+
+    if (arrVal [2] ==0) arr [2] = font [10];
         
         //arr [3] = ArraySegDpChar [arrVal[3]];
-	real = &arr [(size-1)-count];
+    real = &arr [(size-1)-count];
 }
 
 void Buffer::parsDec16 (const uint16_t & val, uint8_t n)
@@ -60,18 +72,6 @@ void Buffer::parsDec16 (const uint16_t & val, uint8_t n)
     arr [k+i] = font [arrVal[k+i]];
   }
   arr [4] = font [temp];
-
-  //arr [4] = font [arrVal [4]];
-
-  /*
-  if (val < 10000) arr [0]= font [10];
-  if (val < 1000) arr [1]= font [10];
-  if (val < 100) arr [2] = font [10];
-  if (val < 10) 
-  {
-    arr [2] = font [10];
-    arr [3] = font [10];
-  }*/
 }
 
 void Buffer::parsFloat (const uint16_t & val)
@@ -114,7 +114,7 @@ void Buffer::parsHex32 (uint32_t value)
 
 char * Buffer::getArray ()
 {
-  return arr;
+  return arrPtr;
 }
 
 char * Buffer::getContent ()
@@ -124,13 +124,14 @@ char * Buffer::getContent ()
 
 char * Buffer::getElement (uint8_t n)
 {
+	arr = arrPtr;
 	return &arr[n];
 }
 
 
 bool Buffer::setElement (uint8_t el, uint8_t val)
 {
-	if (el>(n-1)) return false;
+	if (el>(size-1)) return false;
 	else
 	{
 		arr [el] = val;

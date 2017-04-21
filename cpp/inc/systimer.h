@@ -1,5 +1,5 @@
 #include "device.h"                // Device header
-#include "tact.h"
+#include "mcg0x.h"
 
 #ifndef SYSTIMER_H
 #define SYSTIMER_H

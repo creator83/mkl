@@ -1,25 +1,11 @@
 #include "adc0x.h"
 
-const uint8_t Adc::pin_def [14][2] = {
-{A, 12},
-{B, 5},
-{A, 9},
-{A, 8},
-{B, 2},
-{B, 1},
-{B, 0},
-{A, 7},
-{B, 11},
-{B, 9},
-{B, 8},
-{A, 0},
-{B, 13}
-};
 
-Adc::Adc(channel ch_, resolution r_)
-:pin ((pin_def [n_channel][0]), (pin_def [n_channel][1]), Gpio::mux::Analog)
+
+Adc::Adc(channel ch_, resolution r_, Pin &d)
 {
-	n_channel = ch_;
+	pinDriver = &d;
+	n_channel = static_cast <uint8_t>(ch_);
 	//tact ADC0
 	SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;
 	//Set busclock
