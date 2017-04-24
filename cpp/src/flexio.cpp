@@ -41,7 +41,7 @@ bool Flexio::statusFlag (uint8_t s) {
 void Flexio::setSpi(nBuffer b) {
 	sBuffer = static_cast <uint8_t>(b);
 	//settings mosi
-	FLEXIO->SHIFTCFG[sBuffer] = 0;
+	FLEXIO->SHIFTCFG[sBuffer] &= ~(FLEXIO_SHIFTCFG_SSTART_MASK|FLEXIO_SHIFTCFG_SSTOP_MASK|FLEXIO_SHIFTCFG_INSRC_MASK);
 	FLEXIO->SHIFTCTL [sBuffer] = FLEXIO_SHIFTCTL_PINSEL(0)|FLEXIO_SHIFTCTL_TIMPOL_MASK|FLEXIO_SHIFTCTL_PINCFG_MASK|FLEXIO_SHIFTCTL_SMOD(2);
 
 	//settings miso

@@ -95,8 +95,8 @@ void initScreens ();
 int main ()
 {
 
-	Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
-	touchSpi.transmite(0xfe);
+	//Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
+	//touchSpi.transmite(0xfe);
 	light.set();
 	display.setDma(dma0);
 	memory.setDma( dma2, dma1);
