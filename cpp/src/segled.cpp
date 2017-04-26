@@ -72,3 +72,24 @@ void Segled::frame (char * val, uint8_t d)
   setSegments (val);
   setDigit (d);
 }
+
+void Segled::value (char * val, uint8_t n)
+{
+  clearSegments();
+  clearDigits ();
+  static uint8_t i;
+  if (i<n)
+  {
+	  setSegments (val);
+	  setDigit (i);
+	  ++i;
+  }
+  else
+  {
+	  i=0;
+	  setSegments (val);
+	  setDigit (i);
+	  ++i;
+  }
+
+}

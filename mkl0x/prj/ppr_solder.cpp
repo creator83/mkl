@@ -56,6 +56,11 @@ void SysTick_Handler ()
 		uint16_t pid;
 	}counter{0};
 	counter.pid++;
+
+	//indicate current temperature
+	buffer.parsDec16(currTemp);
+	indicator.value(buffer.getContent(), buffer.getCount());
+
 	encoder.scan();
 	if (counter.pid>interval.pid)
 	{

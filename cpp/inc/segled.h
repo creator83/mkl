@@ -73,6 +73,8 @@ public:
   void clearDigits ();
         
   void frame (char * val, uint8_t d);
+
+  void value (char * val, uint8_t n);
         
 private:
 	

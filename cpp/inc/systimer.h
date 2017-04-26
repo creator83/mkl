@@ -1,6 +1,6 @@
 #include "device.h"                // Device header
-//#include "mcg0x.h"
-#include "mcglight.h"
+#include "mcg0x.h"
+//#include "mcglight.h"
 
 #ifndef SYSTIMER_H
 #define SYSTIMER_H
