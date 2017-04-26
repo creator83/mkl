@@ -53,7 +53,6 @@ void ADC0_IRQHandler ()
 
 	currTemp = result/200;
 	triac1.setModulo(regulator.compute(currTemp));
-
 }
 
 void SysTick_Handler ()
