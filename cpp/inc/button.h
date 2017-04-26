@@ -1,5 +1,5 @@
-#include "MKE04Z1284.h"              // Device header
-#include "pin.h"
+#include "device.h"             // Device header
+#include "pin0x.h"
 
 
 #ifndef BUTTON_H

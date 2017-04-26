@@ -8,6 +8,7 @@
 #include "systimer.h"
 #include "senc.h"
 #include "lptmr.h"
+#include "button.h"
 
 Tact frq (Tact::mode::fei);
 //pid value
@@ -34,12 +35,28 @@ Segled indicator (4);
 Pid regulator (p, i, d, setTemp.value);
 Buffer buffer (3);
 Systimer mainloop (Systimer::mode::ms, 1);
-Senc encoder (Gpio::Port::A, 2, Gpio::Port::A, 3);
+
 
 Pin adcPin (Gpio::Port::A, 2, Gpio::mux::Analog);
 Adc thermocouple (Adc::mode::hardwareTrg, Adc::channel::SE1, Adc::resolution::bit12, adcPin);
 Lptmr adcTrigger (Lptmr::division::div8);
-Tpm triac1 (Tpm::nTpm::TPM_0, Tpm::channel::ch0, Tpm::division::div8);
+
+//Pwm channels
+Pin triac1Pin (Gpio::Port::B, 6, Gpio::mux::Alt2);
+Pin triac2Pin (Gpio::Port::B, 7, Gpio::mux::Alt2);
+Pin beeperPin (Gpio::Port::B, 10, Gpio::mux::Alt2);
+Tpm triac1 (Tpm::nTpm::TPM_1, Tpm::channel::ch0, Tpm::division::div8);
+Tpm triac2 (Tpm::nTpm::TPM_1, Tpm::channel::ch1, Tpm::division::div8);
+Tpm beeper (Tpm::nTpm::TPM_0, Tpm::channel::ch1, Tpm::division::div8);
+
+
+//Buttons & Encoder
+Senc encoder (Gpio::Port::A, 3, Gpio::Port::A, 4);
+Button buttonEnc (Gpio::Port::A, 5);
+Button button (Gpio::Port::A, 6);
+
+
+
 
 extern "C"
 {
@@ -68,6 +85,8 @@ void SysTick_Handler ()
 	indicator.value(buffer.getContent(), buffer.getCount());
 
 	encoder.scan();
+	button.scanButton();
+	buttonEnc.scanButton();
 }
 
 void initData ();
@@ -89,6 +108,13 @@ int main()
 	//10ms
 	adcTrigger.setComp(30000);
 	adcTrigger.start();
+
+	//settings buttons
+	button.setShortLimit(10);
+	buttonEnc.setShortLimit(10);
+
+	button.setLongLimit(1000);
+	buttonEnc.setLongLimit(1000);
 
 
 	while (1)
