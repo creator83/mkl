@@ -14,9 +14,13 @@ public:
 	enum class samples {smpls4, smpls8, smpls16, smpls32};
 	enum class hwTriger {external, cmp0=1, tpm0=8, tpm1=9, lptmr0=14};
 private:
+
 	Pin * pinDriver;
-	uint8_t n_channel;
+	uint8_t n_channel, nMode;
 	uint8_t res;
+	bool intrpt;
+	static uint32_t resReg [2];
+	static uint32_t setReg [2];
 public:
 	//constructor software
 	Adc(channel ch_, resolution r_, Pin &);
@@ -25,7 +29,8 @@ public:
 	void interruptEnable ();
 	void interruptDisable ();
 	void setHwAVG (samples);
-
+	void setHwTrg (hwTriger);
+	void setADC ();
 	uint16_t getResult ();
 	bool calibrate ();
 	uint16_t convert ();

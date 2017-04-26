@@ -7,6 +7,7 @@
 #include "buffer.h"
 #include "systimer.h"
 #include "senc.h"
+#include "lptmr.h"
 
 Tact frq (Tact::mode::fei);
 //pid value
@@ -36,7 +37,9 @@ Systimer mainloop (Systimer::mode::ms, 1);
 Senc encoder (Gpio::Port::A, 2, Gpio::Port::A, 3);
 
 Pin adcPin (Gpio::Port::A, 2, Gpio::mux::Analog);
-Adc thermocouple (Adc::channel::SE1, Adc::resolution::bit12, adcPin);
+Adc thermocouple (Adc::mode::hardwareTrg, Adc::channel::SE1, Adc::resolution::bit12, adcPin);
+Lptmr adcTrigger (Lptmr::division::div8);
+Tpm triac1 (Tpm::nTpm::TPM_0, Tpm::channel::ch0, Tpm::division::div8);
 
 extern "C"
 {
@@ -46,26 +49,26 @@ extern "C"
 
 void ADC0_IRQHandler ()
 {
-	//currTemp = thermocouple
+	uint16_t result = thermocouple.getResult();
+
+	currTemp = result/200;
+	triac1.setModulo(regulator.compute(currTemp));
+
 }
 
 void SysTick_Handler ()
 {
-	static struct
+	/*static struct
 	{
 		uint16_t pid;
 	}counter{0};
-	counter.pid++;
+*/
 
 	//indicate current temperature
 	buffer.parsDec16(currTemp);
 	indicator.value(buffer.getContent(), buffer.getCount());
 
 	encoder.scan();
-	if (counter.pid>interval.pid)
-	{
-		regulator.compute(currTemp);
-	}
 }
 
 void initData ();
@@ -74,9 +77,19 @@ int main()
 {
 	initData();
 	thermocouple.calibrate();
-	Tpm triac1 (Tpm::nTpm::TPM_0, Tpm::channel::ch0, Tpm::division::div8);
+
 	triac1.setMode(Tpm::mode::edgePwm, Tpm::togPulseMode::highPulse);
+	triac1.start();
 	buffer.parsDec16 (1284);
+
+	thermocouple.setHwTrg(Adc::hwTriger::lptmr0);
+	thermocouple.setHwAVG(Adc::samples::smpls32);
+	thermocouple.interruptEnable();
+	thermocouple.setADC();
+
+	//10ms
+	adcTrigger.setComp(30000);
+	adcTrigger.start();
 
 
 	while (1)

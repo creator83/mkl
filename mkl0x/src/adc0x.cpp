@@ -1,13 +1,16 @@
 #include "adc0x.h"
 
-
+uint32_t Adc::resReg [2] = {ADC0->R[0], ADC0->R[1]};
+uint32_t Adc::setReg [2] = {ADC0->SC1[0], ADC0->SC1[1]};
 
 Adc::Adc(channel ch_, resolution r_, Pin &d)
+:nMode(0)
 {
 	pinDriver = &d;
 	n_channel = static_cast <uint8_t>(ch_);
 	//tact ADC0
 	SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;
+
 	//Set busclock
 	ADC0->CFG1 &= ~ADC_CFG1_ADICLK_MASK;
 	//Set divider - 8
@@ -19,6 +22,7 @@ Adc::Adc(channel ch_, resolution r_, Pin &d)
 }
 
 Adc::Adc(mode m,channel ch_, resolution r_, Pin &d)
+:nMode(1)
 {
 	pinDriver = &d;
 	n_channel = static_cast <uint8_t>(ch_);
@@ -31,18 +35,18 @@ Adc::Adc(mode m,channel ch_, resolution r_, Pin &d)
 	calibrate ();
 
 	ADC0->SC2 |= ADC_SC2_ADTRG_MASK;
-
-
 }
 
 void Adc::interruptEnable ()
 {
-
+	intrpt = true;
+	NVIC_EnableIRQ(ADC0_IRQn);
 }
 
 void Adc::interruptDisable ()
 {
-
+	intrpt = false;
+	NVIC_DisableIRQ(ADC0_IRQn);
 }
 
 void Adc::setHwAVG (samples s)
@@ -51,9 +55,21 @@ void Adc::setHwAVG (samples s)
 
 }
 
+void Adc::setHwTrg (hwTriger t)
+{
+	SIM->SOPT7 &= ~SIM_SOPT7_ADC0TRGSEL_MASK;
+	SIM->SOPT7 |= SIM_SOPT7_ADC0TRGSEL (static_cast<uint8_t>(t));
+}
+
+void Adc::setADC ()
+{
+	setReg[nMode] = ADC_SC1_ADCH(n_channel)|intrpt << ADC_SC1_AIEN_SHIFT;
+
+}
+
 uint16_t Adc::getResult ()
 {
-	return ADC0->R[0];
+	return resReg[nMode];
 }
 
 bool Adc::calibrate ()
@@ -103,10 +119,8 @@ bool Adc::calibrate ()
 uint16_t Adc::convert ()
 {
 	//Select 4 channel and start conversation
-	ADC0->SC1[0] = ADC_SC1_ADCH(n_channel);
-	while (!(ADC0->SC1[0]&ADC_SC1_COCO_MASK));
-	return ADC0->R[0];
+	setReg[nMode] = ADC_SC1_ADCH(n_channel);
+	while (!(setReg[nMode]&ADC_SC1_COCO_MASK));
+	return resReg[nMode];
 }
-
-
 
