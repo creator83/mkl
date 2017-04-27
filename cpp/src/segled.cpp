@@ -73,6 +73,21 @@ void Segled::frame (char * val, uint8_t d)
   setDigit (d);
 }
 
+void Segled::blink (char * val, uint16_t period)
+{
+	static uint16_t counter=0;
+	counter++;
+	static bool flag;
+
+	if (counter>period)
+	{
+		flag ^= 1;
+	}
+	if (flag)
+	{
+	}
+}
+
 void Segled::value (char * val, uint8_t n)
 {
   clearSegments();

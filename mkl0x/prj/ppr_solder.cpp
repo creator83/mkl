@@ -28,9 +28,15 @@ struct data
 
 struct
 {
-	uint16_t pid;
-}interval{0};
+	uint16_t blink;
+}interval{500};
 
+struct
+{
+	unsigned triacs : 3;
+	unsigned blink  : 1;
+
+}flag{0};
 Segled indicator (4);
 Pid regulator (p, i, d, setTemp.value);
 Buffer buffer (3);
@@ -48,6 +54,8 @@ Pin beeperPin (Gpio::Port::B, 10, Gpio::mux::Alt2);
 Tpm triac1 (Tpm::nTpm::TPM_1, Tpm::channel::ch0, Tpm::division::div8);
 Tpm triac2 (Tpm::nTpm::TPM_1, Tpm::channel::ch1, Tpm::division::div8);
 Tpm beeper (Tpm::nTpm::TPM_0, Tpm::channel::ch1, Tpm::division::div8);
+
+Tpm * triacs [2] = {&triac1, &triac2};
 
 
 //Buttons & Encoder
@@ -69,17 +77,25 @@ void ADC0_IRQHandler ()
 	uint16_t result = thermocouple.getResult();
 
 	currTemp = result/200;
-	triac1.setModulo(regulator.compute(currTemp));
+	uint16_t pidResult = regulator.compute(currTemp);
+	for (uint8_t i=0;i<2;++i)
+	{
+		if (flag.triacs&(1 << i))
+		{
+			triacs[i]->setModulo(pidResult);
+		}
+	}
 }
 
 void SysTick_Handler ()
 {
-	/*static struct
+	static struct
 	{
-		uint16_t pid;
+		uint16_t blink;
 	}counter{0};
-*/
 
+	if (!flag.blink)
+	{
 	//indicate current temperature
 	buffer.parsDec16(currTemp);
 	indicator.value(buffer.getContent(), buffer.getCount());
@@ -87,7 +103,19 @@ void SysTick_Handler ()
 	encoder.scan();
 	button.scanButton();
 	buttonEnc.scanButton();
+	buttonEnc.scanAction();
+	}
+	else
+	{
+		counter.blink++;
+		if (counter.blink>interval.blink)
+		{}
+	}
 }
+
+void buttonEncShort ();
+void buttonEncLong ();
+
 
 void initData ();
 
@@ -105,6 +133,7 @@ int main()
 	thermocouple.interruptEnable();
 	thermocouple.setADC();
 
+
 	//10ms
 	adcTrigger.setComp(30000);
 	adcTrigger.start();
@@ -112,6 +141,9 @@ int main()
 	//settings buttons
 	button.setShortLimit(10);
 	buttonEnc.setShortLimit(10);
+	buttonEnc.setshortPressAction(buttonEncShort);
+	buttonEnc.setlongPressAction(buttonEncLong);
+
 
 	button.setLongLimit(1000);
 	buttonEnc.setLongLimit(1000);
@@ -132,3 +164,40 @@ void initData ()
 	beepVal.value = 60;
 }
 
+void buttonEncShort ()
+{
+	flag.triacs++;
+	if (flag.triacs>3) {
+		flag.triacs = 0;
+	}/*
+	switch (flag.triacs)
+	{
+	case 0:
+	{
+		triac1.setModulo(0);
+		triac2.setModulo(0);
+	}
+	break;
+	case 1:
+	{
+		triac2.setModulo(0);
+	}
+	break;
+	case 2:
+	{
+		triac1.setModulo(0);
+	}
+	}*/
+	for (uint8_t i=0;i<2;++i)
+	{
+		if (!(flag.triacs&(1 << i)))
+		{
+			triacs[i]->setModulo(0);
+		}
+	}
+}
+
+void buttonEncLong ()
+{
+	flag.blink ^= 1;
+}
