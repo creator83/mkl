@@ -1,5 +1,5 @@
 #include "device.h"                 // Device header
-#include "pin0x.h"
+#include "pin.h"
 
 
 #ifndef ADC0X_H
@@ -36,4 +36,4 @@ public:
 	uint16_t convert ();
 };
 
-#endif /* LIB_ADC_H_ */
+#endif

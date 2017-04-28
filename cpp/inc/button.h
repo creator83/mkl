@@ -1,5 +1,5 @@
 #include "device.h"             // Device header
-#include "pin0x.h"
+#include "pin.h"
 
 
 #ifndef BUTTON_H

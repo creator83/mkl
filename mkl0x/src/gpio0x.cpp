@@ -1,4 +1,4 @@
-#include "gpio0x.h"
+#include "device.h"
 
 GPIO_MemMapPtr Gpio::GpioBase [2] = {GPIOA_BASE_PTR , GPIOB_BASE_PTR};
 PORT_MemMapPtr Gpio::PortBase [2] = {PORTA_BASE_PTR, PORTB_BASE_PTR};

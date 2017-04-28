@@ -3,6 +3,7 @@
 #include "adc0x.h"
 #include "segled.h"
 #include "tpm0x.h"
+#include "pwm.h"
 #include "pid.h"
 #include "buffer.h"
 #include "systimer.h"
@@ -51,11 +52,14 @@ Lptmr adcTrigger (Lptmr::division::div8);
 Pin triac1Pin (Gpio::Port::B, 6, Gpio::mux::Alt2);
 Pin triac2Pin (Gpio::Port::B, 7, Gpio::mux::Alt2);
 Pin beeperPin (Gpio::Port::B, 10, Gpio::mux::Alt2);
-Tpm triac1 (Tpm::nTpm::TPM_1, Tpm::channel::ch0, Tpm::division::div8);
-Tpm triac2 (Tpm::nTpm::TPM_1, Tpm::channel::ch1, Tpm::division::div8);
-Tpm beeper (Tpm::nTpm::TPM_0, Tpm::channel::ch1, Tpm::division::div8);
+Tpm tpm1 (Tpm::nTpm::TPM_1, Tpm::division::div8);
+Tpm tpm0 (Tpm::nTpm::TPM_0, Tpm::division::div8);
+Pwm triac1 (tpm1, triac1Pin, Tpm::channel::ch0, Pwm::mode::EdgePwm, Pwm::pulseMode::highPulse);
+Pwm triac2 (tpm1, triac2Pin, Tpm::channel::ch1, Pwm::mode::EdgePwm, Pwm::pulseMode::highPulse);
+Pwm beeper (tpm0, beeperPin, Tpm::channel::ch1, Pwm::mode::EdgePwm, Pwm::pulseMode::highPulse);
 
-Tpm * triacs [2] = {&triac1, &triac2};
+
+Pwm * triacs [2] = {&triac1, &triac2};
 
 
 //Buttons & Encoder
@@ -82,7 +86,7 @@ void ADC0_IRQHandler ()
 	{
 		if (flag.triacs&(1 << i))
 		{
-			triacs[i]->setModulo(pidResult);
+			triacs[i]->setValue(pidResult);
 		}
 	}
 }
@@ -124,8 +128,7 @@ int main()
 	initData();
 	thermocouple.calibrate();
 
-	triac1.setMode(Tpm::mode::edgePwm, Tpm::togPulseMode::highPulse);
-	triac1.start();
+
 	buffer.parsDec16 (1284);
 
 	thermocouple.setHwTrg(Adc::hwTriger::lptmr0);
@@ -192,7 +195,7 @@ void buttonEncShort ()
 	{
 		if (!(flag.triacs&(1 << i)))
 		{
-			triacs[i]->setModulo(0);
+			triacs[i]->setValue(0);
 		}
 	}
 }

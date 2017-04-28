@@ -25,17 +25,19 @@ private:
 	static setF fMode [6];
 public:
 	Tpm(nTpm n_, channel ch, division d);
+	Tpm(nTpm n_, division d);
 	void start ();
 	void stop ();
 	void clearFlag ();
-	void setMode (mode, togPulseMode);
+	//void setMode (mode, togPulseMode);
 	void setModulo (uint16_t val);
 	void setCnt (uint16_t val);
+	TPM_MemMapPtr getPtrTimer (){return tpmPtr[numTpm];}
 private:
-	void initOutputTogle(togPulseMode);
+	/*void initOutputTogle(togPulseMode);
 	void initOutputPulse(togPulseMode);
 	void initEdgePwm(togPulseMode);
-	void initCenterPwm(togPulseMode);
+	void initCenterPwm(togPulseMode);*/
 	void setKhz (uint16_t val);
 	void setHz (uint16_t val);
 	void setMs (uint16_t val);

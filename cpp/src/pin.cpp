@@ -38,11 +38,6 @@ void Pin::setPort (Port)
 
 }
 
-void Pin::setPin (uint8_t)
-{
-
-}
-
 void Pin::direction (mode m)
 {
 	GPIO_PDDR_REG(GpioBase[prt]) &= ~(1 << pin_);

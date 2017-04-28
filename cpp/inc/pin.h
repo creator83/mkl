@@ -1,5 +1,5 @@
 #include "device.h"                  // Device header
-#include "gpio.h"
+
 
 
 #ifndef PIN_H
@@ -20,7 +20,6 @@ public:
 	Pin (Port prt, uint8_t p);
 	Pin (Port prt, uint8_t p , PP m);
 	void setPort (Port);
-	void setPin (uint8_t);
 	void direction (mode m);
 	void setIn (PP pp_);
 	void setOut ();
