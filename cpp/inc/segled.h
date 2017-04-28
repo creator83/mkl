@@ -73,7 +73,7 @@ public:
   void clearDigits ();
         
   void frame (char * val, uint8_t d);
-  void blink (char * val, uint16_t period);
+  void blink (char * val, uint8_t d, uint16_t period);
 
   void value (char * val, uint8_t n);
         

@@ -1,5 +1,5 @@
 #include "device.h"                  // Device header
-
+#include "gpio.h"
 
 
 #ifndef PIN_H

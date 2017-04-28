@@ -1,5 +1,6 @@
 #include "device.h"
-#include "mcg0x.h"
+//#include "mcg0x.h"
+#include "mcglight.h"
 
 #ifndef SYSTIMER_H
 #define SYSTIMER_H

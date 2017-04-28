@@ -1,4 +1,4 @@
-#include "MKL17Z4.h"
+#include "device.h"
 #include "pin.h"
 #include "spi.h"
 #include "delay.h"

@@ -1,21 +1,10 @@
-#include "MKL26Z4.h"
+#include "device.h"
 #include "pin.h"
 #include "i2c.h"
 #include "delay.h"
 
 #ifndef DS3231_H
 #define DS3231_H
-
-namespace Ds3231def
-{
-	const Gpio::Port sdaPort = Gpio::Port::E;
-	const uint8_t sdaPin = 25;
-	const Gpio::mux sdaMux = Gpio::mux::Alt5;
-
-	const Gpio::Port sdlPort = Gpio::Port::E;
-	const uint8_t sdlPin = 24;
-	const Gpio::mux sdlMux = Gpio::mux::Alt5;
-}
 
 namespace Ds3231reg
 {
@@ -68,12 +57,12 @@ public:
 	enum class convertMode {bcdToDec, decToBcd};
 private:
   I2c * driver;
-  Pin sda, sdl;
+  Pin * sda, *scl;
   uint8_t bcdData [7];
   uint8_t decData [7];
   uint8_t selfAddress = 0xD0;
 public:
-  Ds3231(I2c &);
+  Ds3231(I2c &, Pin &sda_, Pin & scl_);
   void write (uint8_t reg, uint8_t val);
   uint8_t read (uint8_t reg);
   void readCalendar ();

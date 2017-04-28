@@ -8,6 +8,8 @@
 #include "list.h"
 #include "flexio.h"
 #include "pin.h"
+#include "pid.h"
+#include "data.h"
 //#include "coffeebut.h"
 #include "shape.h"
 #include "cpic.h"
@@ -17,6 +19,8 @@
 #include "xpt2046.h"
 #include "tbutton.h"
 #include "tgrid.h"
+#include "adc.h"
+#include "ds3231.h"
 
 enum class butAddress {cup=0x0025, light=0x0036, tools=0x0048, clock=0x0074, switchOn=0x0123, switchOff=0x0423,setboil=0x5463, steam=0x6325};
 
@@ -33,6 +37,10 @@ Pin sck (Gpio::Port::D, 5, Gpio::mux::Alt2);
 Pin mosi (Gpio::Port::D, 6, Gpio::mux::Alt2);
 Ili9341 display (spiLcd, Gpio::Port::D, 7, Gpio::Port::E, 0);
 Xpt2046 touch (spimem, Gpio::Port::C, 3, Gpio::Port::C, 8);
+Pin sdaPin (Gpio::Port::D, 6, Gpio::mux::Alt2);
+Pin sclPin (Gpio::Port::D, 6, Gpio::mux::Alt2);
+I2c i2cDriver (I2c::nI2c::I2c0);
+Ds3231 clock (i2cDriver, sdaPin, sclPin);
 
 Pin light (Gpio::Port::C, 3);
 
@@ -51,6 +59,9 @@ List mScreen;
 Tgrid nineArea (touch,3,3);
 Tbutton tMainScreen (nineArea);
 Tree menu (&mScreen, &tMainScreen);
+/*Data hours (20, 100, );
+Data minutes (20, 100, );
+Data seconds (20, 100, );*/
 //buttons
 
 
@@ -71,16 +82,27 @@ ColorPicture boilScreenOn (3,160, static_cast <uint32_t>(butAddress::switchOn), 
 ColorPicture boilScreenSet (108,160, static_cast <uint32_t>(butAddress::setboil), 105, 80);
 ColorPicture boilScreenSteam (213,160, static_cast <uint32_t>(butAddress::steam), 105, 80);
 
+/*
+ * Data currTemp
+ * Data setTemp
+ */
+
 //clock screen
 List clockScreen;
 
+
 //pid screen
 List pidScreen;
+/*Data p
+Data i
+Data d*/
 
 Pin csFxIo (Gpio::Port::E, 16, Gpio::mux::Alt6);
 Pin sckFxIo (Gpio::Port::E, 17, Gpio::mux::Alt6);
 Pin mosiFxIo (Gpio::Port::E, 18, Gpio::mux::Alt6);
 Pin misoFxIo (Gpio::Port::E, 19, Gpio::mux::Alt6);
+
+Pid regulator (2, 3, 4, 95);
 
 uint16_t buffer [8400];
 
@@ -90,11 +112,11 @@ uint16_t buffer [8400];
 void fon ();
 void makeTree ();
 void initScreens ();
-
+void setClock (Ds3231 &);
 
 int main ()
 {
-
+	setClock (clock);
 	//Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
 	//touchSpi.transmite(0xfe);
 	light.set();
@@ -197,4 +219,15 @@ void initScreens ()
 void fon ()
 {
 	display.fillScreenDma(&colors16bit::BLACK);
+}
+
+void setClock (Ds3231 &d)
+{
+	d.setDate(28);
+	d.setDay(2);
+	d.setHours(14);
+	d.setMinutes(25);
+	d.setMonth(2);
+	d.setSeconds(0);
+	d.setYear(17);
 }

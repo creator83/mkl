@@ -22,6 +22,13 @@ Data::Data (uint16_t x_, uint16_t y_, uint16_t color_,uint16_t fon_, uint16_t d,
 	convert ();
 }
 
+Data::Data (uint16_t x_, uint16_t y_, uint16_t color_,uint16_t fon_, uint8_t n, Font *f)
+:x (x_), y (y_), color(color_), fon(fon_)
+{
+	font_ = f;
+	nElements = n+1;
+	data = new uint8_t [nElements];
+}
 void Data::convert ()
 {
 	uint16_t temp = value;

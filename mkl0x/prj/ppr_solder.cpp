@@ -30,13 +30,15 @@ struct data
 struct
 {
 	uint16_t blink;
+	uint16_t beep;
 }interval{500};
 
 struct
 {
 	unsigned triacs : 3;
-	unsigned blink  : 1;
-
+	unsigned setTemp  : 1;
+	unsigned setBeeper  : 1;
+	unsigned startBeeper  : 1;
 }flag{0};
 Segled indicator (4);
 Pid regulator (p, i, d, setTemp.value);
@@ -95,31 +97,56 @@ void SysTick_Handler ()
 {
 	static struct
 	{
-		uint16_t blink;
+		uint16_t beep;
 	}counter{0};
 
-	if (!flag.blink)
+	if (flag.setTemp)
+	{
+		encoder.scan();
+		setTemp.value = encoder.getValue();
+		buffer.parsDec16(setTemp.value);
+		indicator.blink(buffer.getContent(), buffer.getCount(), interval.blink);
+		buttonEnc.scanButton();
+		buttonEnc.scanAction();
+	}
+	else if (flag.setBeeper)
+	{
+		encoder.scan();
+		beepVal.value = encoder.getValue();
+		interval.beep = beepVal.value;
+		buffer.parsDec16(beepVal.value);
+		indicator.blink(buffer.getContent(), buffer.getCount(), interval.blink);
+		button.scanButton();
+		button.scanAction();
+	}
+	else if (flag.startBeeper)
+	{
+		counter.beep++;
+		if (counter.beep>100)
+		{
+			counter.beep = 0;
+			interval.beep--;
+		}
+		buffer.parsDec16(interval.beep);
+		indicator.value(buffer.getContent(), buffer.getCount());
+	}
+	else
 	{
 	//indicate current temperature
 	buffer.parsDec16(currTemp);
 	indicator.value(buffer.getContent(), buffer.getCount());
-
-	encoder.scan();
 	button.scanButton();
+	button.scanAction();
 	buttonEnc.scanButton();
 	buttonEnc.scanAction();
-	}
-	else
-	{
-		counter.blink++;
-		if (counter.blink>interval.blink)
-		{}
 	}
 }
 
 void buttonEncShort ();
 void buttonEncLong ();
 
+void buttonShort ();
+void buttonLong ();
 
 void initData ();
 
@@ -146,7 +173,8 @@ int main()
 	buttonEnc.setShortLimit(10);
 	buttonEnc.setshortPressAction(buttonEncShort);
 	buttonEnc.setlongPressAction(buttonEncLong);
-
+	button.setshortPressAction(buttonShort);
+	button.setlongPressAction(buttonLong);
 
 	button.setLongLimit(1000);
 	buttonEnc.setLongLimit(1000);
@@ -202,5 +230,27 @@ void buttonEncShort ()
 
 void buttonEncLong ()
 {
-	flag.blink ^= 1;
+	if (!flag.setBeeper)
+	{
+		flag.setTemp ^= 1;
+	}
+
+}
+
+void buttonShort ()
+{
+	if (!flag.setTemp)
+	{
+		flag.startBeeper ^= 1;
+	}
+	if (flag.startBeeper) beeper.setValue(0x00FF);
+	else beeper.setValue(0);
+}
+
+void buttonLong ()
+{
+	if (!flag.setTemp)
+	{
+		flag.setBeeper ^= 1;
+	}
 }

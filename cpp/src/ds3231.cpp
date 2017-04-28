@@ -1,9 +1,9 @@
 #include "Ds3231.h"
 
-Ds3231::Ds3231 (I2c &d)
-:sda(Ds3231def::sdaPort, Ds3231def::sdaPin, Ds3231def::sdaMux),
- sdl (Ds3231def::sdlPort, Ds3231def::sdlPin, Ds3231def::sdlMux)
+Ds3231::Ds3231(I2c &d, Pin &sda_, Pin & scl_)
 {
+	sda = &sda_;
+	scl = &scl_;
 	driver = &d;
 }
 
