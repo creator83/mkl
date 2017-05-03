@@ -1,5 +1,12 @@
 #include "list.h"
 
+List::List(ListButton * b)
+:buttons(b)
+{
+	count = 0;
+	first = last = nullptr;
+}
+
 List::~List()
 {
 	Item * current = nullptr;

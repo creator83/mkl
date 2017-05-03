@@ -24,8 +24,8 @@ uint32_t Flexio::getData () {
 uint32_t Flexio::transmite (uint32_t data) {
 	putData(data);
 	//while (!statusFlag(sBuffer));
-	while (!statusFlag(sBuffer+1));
-	return getData();
+	/*while (!statusFlag(sBuffer+1));
+	return getData();*/
 }
 
 uint32_t Flexio::receive () {
@@ -37,7 +37,7 @@ uint32_t Flexio::exchange (uint32_t data) {
 }
 
 bool Flexio::statusFlag (uint8_t s) {
-	return FLEXIO->SHIFTSTAT&FLEXIO_SHIFTSTAT_SSF(s);
+	return FLEXIO->SHIFTSTAT&(s << FLEXIO_SHIFTSTAT_SSF_SHIFT);
 }
 
 void Flexio::setSpi(nBuffer b) {
@@ -51,7 +51,7 @@ void Flexio::setSpi(nBuffer b) {
 	FLEXIO->SHIFTCTL [sBuffer+1] = FLEXIO_SHIFTCTL_PINSEL(1)| FLEXIO_SHIFTCTL_SMOD(1);
 
 	//settings baudrate
-	FLEXIO->TIMCMP[sBuffer] = 0x0F1F;
+	FLEXIO->TIMCMP[sBuffer] = 0x0F3F;
 	FLEXIO->TIMCFG[sBuffer] = FLEXIO_TIMCFG_TIMOUT(1)|FLEXIO_TIMCFG_TIMDIS(2)|FLEXIO_TIMCFG_TIMENA(2)|FLEXIO_TIMCFG_TSTOP(2)|FLEXIO_TIMCFG_TSTART_MASK;
 
 	//settings sck

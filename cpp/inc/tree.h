@@ -11,11 +11,11 @@ public:
 struct Item
 {
 	List * object;
-	Tbutton * buttons;
+	//Tbutton * buttons;
 	Item * parent;
 	Item * brother;
 	Item * son;
-	Item (List *o, Tbutton * but, Item * p = nullptr, Item * b = nullptr, Item * s = nullptr);
+	Item (List *o, Item * p = nullptr, Item * b = nullptr, Item * s = nullptr);
 };
 private:
 	//uint16_t count;
@@ -24,11 +24,11 @@ public:
 	Item * currentItem;
 
 public:
-	Tree(List *o, Tbutton * but);
+	Tree(List *o);
 	~Tree();
-	void addItem (List *, Tbutton * but, Item *);
-	void addSon (List *o, Tbutton * but);
-	void addBrother (List *o, Tbutton * but);
+	void addItem (List *, Item *);
+	void addSon (List *o);
+	void addBrother (List *o);
 	void setCurrent (List *);
 
 	void treeAction ();

@@ -1,6 +1,7 @@
 #include "device.h"
 #include "shape.h"
 #include "data.h"
+#include "listbutton.h"
 
 
 #ifndef LIST_H
@@ -16,10 +17,11 @@ struct Item
 
 	Item * first;
 	Item * last;
+	ListButton * buttons;
 	void (*function)();
 	uint16_t count;
 public:
-	List(){count = 0; first = last = nullptr;}
+	List(ListButton *);
 	~List();
 	Shape* head () const {return first->object;}
 	Shape* tail () const {return last->object;}

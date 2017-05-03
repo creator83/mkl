@@ -18,6 +18,7 @@
 #include "lcdflash.h"
 #include "xpt2046.h"
 #include "tbutton.h"
+#include "listbutton.h"
 #include "tgrid.h"
 #include "adc.h"
 #include "ds3231.h"
@@ -53,31 +54,63 @@ Flash memory (spimem, Gpio::Port::C, 4);
 
 Lcdflash dis2 (display, memory);
 
+Tgrid nineArea (touch,3,3);
+Tgrid sixArea (touch,2,3);
+Tgrid setArea (touch,6,4);
+
 //===Graphic part===//
 //main screen
-List mScreen;
-Tgrid nineArea (touch,3,3);
-Tbutton tMainScreen (nineArea);
-Tree menu (&mScreen, &tMainScreen);
+
+
+ListButton tMainScreen (nineArea);
+List mScreen (&tMainScreen);
+Tree menu (&mScreen);
 /*Data hours (20, 100, );
 Data minutes (20, 100, );
 Data seconds (20, 100, );*/
 //buttons
-
-
 
 ColorPicture mScreenCup (3,160, static_cast <uint32_t>(butAddress::cup), 105, 80);
 ColorPicture mScreenTool (108,160, static_cast <uint32_t>(butAddress::tools), 105, 80);
 ColorPicture mScreenLight (213,160, static_cast <uint32_t>(butAddress::light), 105, 80);
 
 //tools screen
-List toolScreen;
+ListButton tToolScreen (sixArea);
+List toolScreen (&tToolScreen);
 
+ListButton tTemperatureScreen (sixArea);
+List temperatureScreen (&tTemperatureScreen);
+
+ListButton tPidScreen (sixArea);
+List pidScreen (&tPidScreen);
+
+ListButton tBoilPidScreen (setArea);
+List boilPidScreen (&tBoilPidScreen);
+
+ListButton tSteamPidScreen (setArea);
+List steamPidScreen (&tSteamPidScreen);
+
+
+ListButton tServiceScreen (setArea);
+List serviceScreen (&tServiceScreen);
+
+//clock screen
+ListButton tClockScreen (setArea);
+List clockScreen (&tClockScreen);
+
+ListButton tSetAlarm1 (setArea);
+List setAlarm1 (&tSetAlarm1);
+
+ListButton tSetAlarm2 (setArea);
+List setAlarm2 (&tSetAlarm2);
+
+ListButton tSetAlarm3 (setArea);
+List setAlarm3 (&tSetAlarm3);
 
 //boil screen
+ListButton tBoilScreen (setArea);
+List boilScreen (&tBoilScreen);
 
-List boilScreen;
-Tbutton tboilScreen (nineArea);
 ColorPicture boilScreenOn (3,160, static_cast <uint32_t>(butAddress::switchOn), 105, 80);
 ColorPicture boilScreenSet (108,160, static_cast <uint32_t>(butAddress::setboil), 105, 80);
 ColorPicture boilScreenSteam (213,160, static_cast <uint32_t>(butAddress::steam), 105, 80);
@@ -87,12 +120,11 @@ ColorPicture boilScreenSteam (213,160, static_cast <uint32_t>(butAddress::steam)
  * Data setTemp
  */
 
-//clock screen
-List clockScreen;
+ListButton tSteamScreen (setArea);
+List steamScreen (&tSteamScreen);
 
 
-//pid screen
-List pidScreen;
+
 /*Data p
 Data i
 Data d*/
@@ -193,7 +225,24 @@ int main ()
 
 void makeTree ()
 {
-	menu.addSon(&boilScreen, &tboilScreen);
+	menu.addSon(&boilScreen);
+	menu.addBrother(&toolScreen);
+
+	menu.addSon(&temperatureScreen);
+	menu.addBrother (&pidScreen);
+	menu.addSon (&boilPidScreen);
+	menu.addBrother (&steamPidScreen);
+	menu.getBack();
+	menu.addBrother (&serviceScreen);
+	menu.addBrother (&clockScreen);
+	menu.addSon (&setAlarm1);
+	menu.addBrother (&setAlarm2);
+	menu.addBrother (&setAlarm3);
+
+	menu.getRoot();
+	menu.getForward(0);
+	menu.addSon(&steamScreen);
+
 }
 
 void initScreens ()

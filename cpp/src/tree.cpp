@@ -2,16 +2,16 @@
 
 
 
-Tree::Item::Item(List *o, Tbutton * but, Item * p , Item * b , Item * s)
-:object (o), buttons (but), parent (p), brother (b), son (s)
+Tree::Item::Item(List *o, Item * p , Item * b , Item * s)
+:object (o), parent (p), brother (b), son (s)
 {
 }
 
 
-Tree::Tree(List *o, Tbutton * but)
+Tree::Tree(List *o)
 //:count (0)
 {
-	Item * newItem = new Item (o, but);
+	Item * newItem = new Item (o);
 	root = newItem;
 	currentItem = newItem;
 }
@@ -43,18 +43,18 @@ void Tree::addItem (List *o, Tbutton * but, Item *p)
 	}
 }*/
 
-void Tree::addSon (List *o, Tbutton * but)
+void Tree::addSon (List *o)
 {
-	Item * newItem = new Item (o, but);
+	Item * newItem = new Item (o);
 	currentItem->son = newItem;
 	newItem->parent = currentItem;
 	currentItem = newItem;
 	//++count;
 }
 
-void Tree::addBrother (List *o, Tbutton * but)
+void Tree::addBrother (List *o)
 {
-	Item * newItem = new Item (o, but);
+	Item * newItem = new Item (o);
 	currentItem->brother = newItem;
 	newItem->parent = currentItem->parent;
 	currentItem = newItem;
@@ -118,7 +118,7 @@ void Tree::setCurrent (List *o)
 
 void Tree::treeAction ()
 {
-	currentItem->buttons->calculateTouch();
+	//currentItem->buttons->calculateTouch();
 }
 
 void Tree::getBack ()
@@ -160,7 +160,8 @@ void getForward (Tree &t)
 		return;
 	}
 	Tree::Item * temp = t.currentItem->son;
-	uint16_t val = t.currentItem->buttons->getResult();
+	uint16_t val;
+	//uint16_t val = t.currentItem->buttons->getResult();
 	for (uint16_t i=0;i<val;++i)
 	{
 		temp = temp->brother;
