@@ -1,7 +1,7 @@
 #include "gpio.h"
 
-GPIO_MemMapPtr Gpio::GpioBase [5] = {GPIOA_BASE_PTR , GPIOB_BASE_PTR , GPIOC_BASE_PTR, GPIOD_BASE_PTR, GPIOE_BASE_PTR};
-PORT_MemMapPtr Gpio::PortBase [5] = {PORTA_BASE_PTR, PORTB_BASE_PTR, PORTC_BASE_PTR, PORTD_BASE_PTR, PORTE_BASE_PTR};
+GPIO_Type * Gpio::GpioBase [5] = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE};
+PORT_Type * Gpio::PortBase [5] = {PORTA, PORTB, PORTC, PORTD, PORTE};
 
 
 Gpio::Gpio ()
@@ -17,6 +17,12 @@ Gpio::Gpio (Port p)
 }
 
 
+Gpio::Gpio (uint8_t p)
+{
+  prt = p;
+  //takt port
+  SIM->SCGC5 |= (0x200 << prt);
+}
 
 
 

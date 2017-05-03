@@ -1,37 +1,37 @@
-#include "pin.h"
+#include "pin0x.h"
 
-Pin::Pin (Gpio::Port prt, uint8_t p , mux mx)
-:Gpio(prt)
+Pin::Pin (Gpio::Port prt_, uint8_t p , mux mx)
+:Gpio(prt_)
 {
 	pin_ = p;
 	PortBase[Gpio::prt]->PCR[pin_]= (uint8_t)mx << PORT_PCR_MUX_SHIFT;
 
 }
 
-Pin::Pin (uint8_t prt, uint8_t p , mux mx)
-:Gpio(prt)
+Pin::Pin (uint8_t prt_, uint8_t p , mux mx)
+:Gpio(prt_)
 {
 	pin_ = p;
-	PortBase[Gpio::prt]->PCR[pin_]= (uint8_t)mx << PORT_PCR_MUX_SHIFT;
+	PortBase[Gpio::prt]->PCR [pin_]= (uint8_t)mx << PORT_PCR_MUX_SHIFT;
 }
 
-Pin::Pin (Port prt, uint8_t p )
-:Gpio(prt)
+Pin::Pin (Port prt_, uint8_t p )
+:Gpio(prt_)
 {
 	pin_ = p;
-	PortBase[Gpio::prt]->PCR[pin_] = (uint8_t)Gpio::mux::GPIO << PORT_PCR_MUX_SHIFT;
+	PortBase[Gpio::prt]->PCR [pin_]= static_cast<uint8_t>(Gpio::mux::GPIO) << PORT_PCR_MUX_SHIFT;
 	GpioBase[Gpio::prt]->PDDR |= 1 << pin_;
 }
 
-Pin::Pin (Port prt, uint8_t p , PP m)
-:Gpio(prt)
+Pin::Pin (Port prt_, uint8_t p , PP m)
+:Gpio(prt_)
 {
 	pin_ = p;
 	PortBase[Gpio::prt]->PCR[pin_] = (uint8_t)Gpio::mux::GPIO << PORT_PCR_MUX_SHIFT;
 	GpioBase[Gpio::prt]->PDDR &= ~(1 << pin_);
 	PortBase[Gpio::prt]->PCR[pin_] |= PORT_PCR_PE_MASK;
-	PortBase[Gpio::prt]->PCR[pin_] &= ~PORT_PCR_PS_MASK;
-	PortBase[Gpio::prt]->PCR[pin_] |= (uint8_t)m << PORT_PCR_PS_SHIFT;
+	/*PortBase[Gpio::prt]->PCR[pin_] &= ~PORT_PCR_PS_MASK;
+	PortBase[Gpio::prt]->PCR[pin_] |= (uint8_t)m << PORT_PCR_PS_SHIFT;*/
 }
 
 void Pin::setPort (Port)
@@ -49,8 +49,8 @@ void Pin::setIn (PP pp_)
 {
 	GpioBase[Gpio::prt]->PDDR &= ~(1 << pin_);
 	PortBase[Gpio::prt]->PCR[pin_] |= 1 << PORT_PCR_PE_MASK;
-	PortBase[Gpio::prt]->PCR[pin_] &= ~ (1 << PORT_PCR_PS_MASK);
-	PortBase[Gpio::prt]->PCR[pin_] |= (uint8_t)pp_ << PORT_PCR_PS_MASK;
+	/*PortBase[Gpio::prt]->PCR[pin_] &= ~ (1 << PORT_PCR_PS_MASK);
+	PortBase[Gpio::prt]->PCR[pin_] |= (uint8_t)pp_ << PORT_PCR_PS_MASK;*/
 }
 
 void Pin::setOut ()
@@ -85,7 +85,7 @@ bool Pin::state ()
 	return (GpioBase[Gpio::prt]->PDIR&(1 << pin_));
 }
 
-PORT_Type * Pin::getPort ()
+PORT_MemMapPtr & Pin::getPort ()
 {
 	return PortBase[prt];
 }

@@ -1,4 +1,4 @@
-
+#include "device.h"
 
 #ifndef GPIO_H
 #define GPIO_H
@@ -14,8 +14,10 @@ public:
   enum class state {Off, On};
 
 protected:
-  static PORT_MemMapPtr PortBase [2];
-  static GPIO_MemMapPtr GpioBase [2];
+  /*static PORT_MemMapPtr PortBase [2];
+  static GPIO_MemMapPtr GpioBase [2];*/
+  static PORT_Type * PortBase [2];
+  static GPIO_Type * GpioBase [2];
   uint8_t prt;
 private:
 
@@ -25,6 +27,7 @@ public:
   Gpio(Port p );
   Gpio(uint8_t p );
   void setPort (Port p);
+  uint8_t gPort ();
 };
 
 #endif

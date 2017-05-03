@@ -24,8 +24,8 @@ uint32_t Flexio::getData () {
 uint32_t Flexio::transmite (uint32_t data) {
 	putData(data);
 	//while (!statusFlag(sBuffer));
-	while (!statusFlag(sBuffer+1));
-	return getData();
+	/*while (!statusFlag(sBuffer+1));
+	return getData();*/
 }
 
 uint32_t Flexio::receive () {

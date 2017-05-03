@@ -78,7 +78,7 @@ bool Adc::calibrate ()
 	unsigned short cal_var;
 
 
-    SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;  // enable ADC0 clock
+    SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;  // enable ADC0 clock
 
 	ADC0->SC2 &=  ~ADC_SC2_ADTRG_MASK ; // Enable Software Conversion Trigger for Calibration Process
 	ADC0->SC3 &= ( ~ADC_SC3_ADCO_MASK & ~ADC_SC3_AVGS_MASK ); // set single conversion, clear avgs bitfield for next writing

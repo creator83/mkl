@@ -1,8 +1,10 @@
-#include "device.h"
+#include "gpio0x.h"
 
-GPIO_MemMapPtr Gpio::GpioBase [2] = {GPIOA_BASE_PTR , GPIOB_BASE_PTR};
-PORT_MemMapPtr Gpio::PortBase [2] = {PORTA_BASE_PTR, PORTB_BASE_PTR};
-
+/*
+GPIO_MemMapPtr Gpio::GpioBase [2] = {GPIOA, GPIOB};
+PORT_MemMapPtr Gpio::PortBase [2] = {PORTA, PORTB};*/
+PORT_Type * Gpio::PortBase [2] = {PORTA, PORTB};
+GPIO_Type * Gpio::GpioBase [2] = {GPIOA, GPIOB};
 
 Gpio::Gpio ()
 {
@@ -23,5 +25,8 @@ Gpio::Gpio(uint8_t p )
   SIM->SCGC5 |= (0x200 << prt);
 }
 
-
+uint8_t Gpio::gPort ()
+{
+	return prt;
+}
 

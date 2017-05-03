@@ -21,7 +21,7 @@ protected:
 
 
 private:
-	static I2C_MemMapPtr i2cAdr [2];
+	static I2C_Type * i2cAdr [2];
 	uint8_t numberI2c;
 //functions
 public:

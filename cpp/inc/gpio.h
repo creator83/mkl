@@ -15,8 +15,8 @@ public:
   enum class state {Off, On};
 
 protected:
-  static PORT_MemMapPtr PortBase [5];
-  static GPIO_MemMapPtr GpioBase [5];
+  static PORT_Type * PortBase [5];
+  static GPIO_Type * GpioBase [5];
   uint8_t prt;
 private:
 

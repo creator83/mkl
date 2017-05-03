@@ -9,9 +9,10 @@ Port::Port (Gpio::Port prt, uint32_t value)
 		uint16_t half[2];
 	}val;
 	val.full = value_;
-	PORT_GPCLR_REG(PortBase[Gpio::prt]) = (val.half[0]<<16| (uint8_t)Gpio::mode::Output << PORT_PCR_MUX_SHIFT);
-	PORT_GPCHR_REG(PortBase[Gpio::prt]) = (val.half[1]<<16| (uint8_t)Gpio::mode::Output << PORT_PCR_MUX_SHIFT);
-	GPIO_PDDR_REG(GpioBase [Gpio::prt]) |= value;
+	PortBase[Gpio::prt]->GPCLR = (val.half[0]<<16| (uint8_t)Gpio::mode::Output << PORT_PCR_MUX_SHIFT);
+	PortBase[Gpio::prt]->GPCHR = (val.half[1]<<16| (uint8_t)Gpio::mode::Output << PORT_PCR_MUX_SHIFT);
+	GpioBase[Gpio::prt]->PDDR |= value;
+
 }
 
 Port::Port (Gpio::Port prt, mux mx, uint32_t value)
@@ -23,18 +24,18 @@ Port::Port (Gpio::Port prt, mux mx, uint32_t value)
 		uint16_t half[2];
 	}val;
 	val.full = value;
-	PORT_GPCLR_REG(PortBase[Gpio::prt]) = (val.half[0]<<16| (uint8_t)mx << PORT_PCR_MUX_SHIFT);
-	PORT_GPCHR_REG(PortBase[Gpio::prt]) = (val.half[1]<<16| (uint8_t)mx << PORT_PCR_MUX_SHIFT);
+	PortBase[Gpio::prt]->GPCLR = (val.half[0]<<16| (uint8_t)mx << PORT_PCR_MUX_SHIFT);
+	PortBase[Gpio::prt]->GPCHR = (val.half[1]<<16| (uint8_t)mx << PORT_PCR_MUX_SHIFT);
 }
 
 void Port::set(uint32_t value)
 {
-	GPIO_PSOR_REG(GpioBase[prt])  |= value;
+	GpioBase[Gpio::prt]->PSOR  |= value;
 }
 
 void Port::set()
 {
-	GPIO_PSOR_REG(GpioBase[prt])  |= value_;
+	GpioBase[Gpio::prt]->PSOR  |= value_;
 }
 
 void Port::set (uint32_t value, bool st)
@@ -44,15 +45,15 @@ void Port::set (uint32_t value, bool st)
 
 void Port::clear (uint32_t value)
 {
-	GPIO_PCOR_REG(GpioBase[prt])  |= value;
+	GpioBase[Gpio::prt]->PCOR  |= value;
 }
 
 void Port::clear ()
 {
-	GPIO_PCOR_REG(GpioBase[prt])  |= value_;
+	GpioBase[Gpio::prt]->PCOR  |= value_;
 }
 
 void Port::togle (uint32_t value)
 {
-	GPIO_PTOR_REG(GpioBase[prt])  |= value;
+	GpioBase[Gpio::prt]->PTOR  |= value;
 }

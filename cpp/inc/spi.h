@@ -50,7 +50,7 @@ private:
   static PotMemFn ptr_receive[2];
   static PotMemF ptr_transmite[2];
   static ptr_ex ptr_exchange[2];
-  static SPI_MemMapPtr spiAdr [2];
+  static SPI_Type * spiAdr [2];
   Dma * driverDma;
 
 //functions
@@ -77,7 +77,7 @@ public:
   uint16_t exhange16 (uint8_t data);
   bool flagSptef ();
   bool flagSprf ();
-  SPI_MemMapPtr & getSpiPtr ();
+  SPI_Type * getSpiPtr ();
 
 private:
 };

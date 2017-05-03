@@ -1,18 +1,12 @@
 #include "device.h" // Device header
 #include "mcg0x.h"
-#include "adc0x.h"
 #include "segled.h"
-#include "tpm0x.h"
-#include "pwm.h"
-#include "pid.h"
-#include "buffer.h"
-#include "systimer.h"
-#include "senc.h"
-#include "lptmr.h"
-#include "button.h"
-/*
-Tact frq (Tact::mode::fei);
-//pid value
+
+	Tact frq (Tact::mode::fei);
+
+
+
+/*//pid value
 
 const double p  = 2.0;
 const double i  = 0.3;
@@ -40,7 +34,7 @@ struct
 	unsigned setBeeper  : 1;
 	unsigned startBeeper  : 1;
 }flag{0};
-Segled indicator (4);
+
 Pid regulator (p, i, d, setTemp.value);
 Buffer buffer (3);
 Systimer mainloop (Systimer::mode::ms, 1);
@@ -152,7 +146,12 @@ void initData ();
 */
 int main()
 {
-/*	initData();
+
+	char j = 0xFF;
+	Segled indicator (4);
+	indicator.setSegments(&j);
+	indicator.setDigit(1);
+	/*	initData();
 	thermocouple.calibrate();
 
 
