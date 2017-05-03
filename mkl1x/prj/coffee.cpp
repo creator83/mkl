@@ -39,8 +39,8 @@ Ili9341 display (spiLcd, Gpio::Port::D, 7, Gpio::Port::E, 0);
 Xpt2046 touch (spimem, Gpio::Port::C, 3, Gpio::Port::C, 8);
 Pin sdaPin (Gpio::Port::D, 6, Gpio::mux::Alt2);
 Pin sclPin (Gpio::Port::D, 6, Gpio::mux::Alt2);
-I2c i2cDriver (I2c::nI2c::I2c0);
-Ds3231 clock (i2cDriver, sdaPin, sclPin);
+//I2c i2cDriver (I2c::nI2c::I2c0);
+//Ds3231 clock (i2cDriver, sdaPin, sclPin);
 
 Pin light (Gpio::Port::C, 3);
 
@@ -116,9 +116,9 @@ void setClock (Ds3231 &);
 
 int main ()
 {
-	setClock (clock);
-	//Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
-	//touchSpi.transmite(0xfe);
+	//setClock (clock);
+	Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
+	touchSpi.transmite(0xfe);
 	light.set();
 	display.setDma(dma0);
 	memory.setDma( dma2, dma1);

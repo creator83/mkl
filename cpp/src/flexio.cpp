@@ -2,7 +2,9 @@
 
 Flexio::Flexio(interface i, nBuffer b) {
 
+	SIM->SOPT2 |= SIM_SOPT2_FLEXIOSRC(0x01);
 	SIM->SCGC5 |= SIM_SCGC5_FLEXIO_MASK;
+
 	//setInterface (i, b);
 	setSpi(b);
 }

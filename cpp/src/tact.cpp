@@ -1,17 +1,17 @@
 #include "tact.h"
 
-uint16_t Tact::cpu_clock;
-uint16_t Tact::bus_clock;
-uint16_t Tact::mcgir_clock;
-uint16_t Tact::mcgpll_clock;
-uint16_t Tact::mcgfll_clock;
+uint16_t Tact::cpuClock;
+uint16_t Tact::busClock;
+uint16_t Tact::mcgirClock;
+uint16_t Tact::mcgpllClock;
+uint16_t Tact::mcgfllClock;
 
 Tact::Tact ()
 {
 	initFee ();
-	cpu_clock = 40960;
-	bus_clock = 20480;
-	mcgir_clock = 32;
+	cpuClock = 40960;
+	busClock = 20480;
+	mcgirClock = 32;
 }
 
 void Tact::initFee ()

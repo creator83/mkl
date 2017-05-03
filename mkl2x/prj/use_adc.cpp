@@ -1,4 +1,4 @@
-#include "MKL17Z4.h"                    // Device header
+#include "MKL26Z4.h"                    // Device header
 #include "gpio.h"
 #include "delay.h"
 #include "pit.h"

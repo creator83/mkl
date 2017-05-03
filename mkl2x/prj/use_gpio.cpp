@@ -1,4 +1,4 @@
-#include "MKL26Z4.h"                   // Device header
+#include "device.h"                   // Device header
 #include "gpio.h"
 #include "pin.h"
 #include "port.h"
