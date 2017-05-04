@@ -1,9 +1,24 @@
 #include "device.h" // Device header
 #include "mcg0x.h"
 #include "segled.h"
+#include "systimer0x.h"
 
-	Tact frq (Tact::mode::fei);
+//	Tact frq (Tact::mode::fei);
+	Segled indicator (4);
+/*
+extern "C"
+{
+	void SysTick_Handler(void);
+}*/
 
+void SysTick_Handler()
+{
+	static uint16_t i=0;
+	indicator.clearDigits();
+	indicator.setDigit(i);
+	++i;
+	if (i>=4)i=0;
+}
 
 
 /*//pid value
@@ -146,11 +161,14 @@ void initData ();
 */
 int main()
 {
-
+	//SysTick_Config(1000);
+	Systimer mainloop (Systimer::mode::ms, 100);
+	//NVIC_EnableIRQ(SysTick_IRQn);
 	char j = 0xFF;
-	Segled indicator (4);
+
 	indicator.setSegments(&j);
-	indicator.setDigit(1);
+
+
 	/*	initData();
 	thermocouple.calibrate();
 
@@ -178,11 +196,10 @@ int main()
 	button.setLongLimit(1000);
 	buttonEnc.setLongLimit(1000);
 */
-	uint16_t i;
+
 
 	while (1)
 	{
-		++i;
 	}
 }
 /*

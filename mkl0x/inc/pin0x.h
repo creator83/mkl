@@ -28,7 +28,7 @@ public:
 	void clear ();
 	void togle ();
 	bool state ();
-	PORT_MemMapPtr & getPort ();
+	PORT_Type * getPort ();
 	uint8_t & getPin ();
 };
 
