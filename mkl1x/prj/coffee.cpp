@@ -38,7 +38,6 @@ Pin cs (Gpio::Port::D, 4, Gpio::mux::Alt2);
 Pin sck (Gpio::Port::D, 5, Gpio::mux::Alt2);
 Pin mosi (Gpio::Port::D, 6, Gpio::mux::Alt2);
 Ili9341 display (spiLcd, Gpio::Port::D, 7, Gpio::Port::E, 0);
-Xpt2046 touch (spimem, Gpio::Port::C, 3, Gpio::Port::C, 8);
 Pin sdaPin (Gpio::Port::D, 6, Gpio::mux::Alt2);
 Pin sclPin (Gpio::Port::D, 6, Gpio::mux::Alt2);
 //I2c i2cDriver (I2c::nI2c::I2c0);
@@ -54,6 +53,13 @@ Pin misoF (Gpio::Port::C, 7, Gpio::mux::Alt2);
 Flash memory (spimem, Gpio::Port::C, 4);
 
 Lcdflash dis2 (display, memory);
+
+Pin csFxIo (Gpio::Port::E, 16);
+Pin sckFxIo (Gpio::Port::E, 17);
+Pin mosiFxIo (Gpio::Port::E, 18);
+Pin misoFxIo (Gpio::Port::E, 19, Gpio::PP::PullDown);
+Spis spiSoft (csFxIo, sckFxIo, mosiFxIo, misoFxIo);
+Xpt2046 touch (spiSoft, Gpio::Port::C, 8);
 
 Tgrid nineArea (touch,3,3);
 Tgrid sixArea (touch,2,3);
@@ -136,11 +142,6 @@ Pin sckFxIo (Gpio::Port::E, 17, Gpio::mux::Alt6);
 Pin mosiFxIo (Gpio::Port::E, 18, Gpio::mux::Alt6);
 Pin misoFxIo (Gpio::Port::E, 19, Gpio::mux::Alt6);*/
 
-Pin csFxIo (Gpio::Port::E, 16);
-Pin sckFxIo (Gpio::Port::E, 17);
-Pin mosiFxIo (Gpio::Port::E, 18);
-Pin misoFxIo (Gpio::Port::E, 19);
-
 
 Pid regulator (2, 3, 4, 95);
 
@@ -156,8 +157,8 @@ void setClock (Ds3231 &);
 
 int main ()
 {
-	Spis spiSoft (csFxIo, sckFxIo, mosiFxIo, misoFxIo);
-	spiSoft.transmite(0xFE);
+
+
 	//setClock (clock);
 	/*Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
 	touchSpi.transmite(0xfe);*/
@@ -243,7 +244,7 @@ int main ()
 	display.drawPic(0,0, monk1, 320, 40);*/
 	while (1)
 	{
-
+		touch.getData();
 	}
 }
 

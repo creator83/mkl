@@ -15,7 +15,11 @@ private:
 
 public:
 	Spis(Pin & cs_, Pin & sck_, Pin & mosi_, Pin & miso_);
+
 	void transmite (uint8_t);
+	uint8_t receive ();
+	void chipEnable ();
+	void chipDisable ();
 
 };
 

@@ -1,12 +1,13 @@
 #include "xpt2046.h"
 
+Xpt2046::modeF Xpt2046::func [3] = {&Xpt2046::getDataSpi, &Xpt2046::getDataSoft};
 
 
 Xpt2046::Xpt2046 (Spi &d, Gpio::Port cs_, uint16_t csp, Gpio::Port irq_, uint16_t irqp)
 :cs(cs_, csp), irq (irq_, irqp, Intrpt::mode::fallingEdge),
- x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300), ptrF(0)
+ x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300), ptrF(0),
+ spiDriver (&d)
 {
-	spiDriver = &d;
 	NVIC_EnableIRQ(PORTA_IRQn);
 	spiDriver->setCpol(Spi::Cpol::neg);
 	spiDriver->setCpha(Spi::Cpha::first);
@@ -29,14 +30,33 @@ Xpt2046::Xpt2046 (Spi &d, Gpio::Port cs_, uint16_t csp, Gpio::Port irq_, uint16_
 	cs.set();
 }
 
+Xpt2046::Xpt2046 (Spis &d, Gpio::Port irq_, uint16_t irqp)
+:irq (irq_, irqp, Intrpt::mode::fallingEdge),
+ x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300), ptrF(1),
+ softDriver (&d)
+{
+	softDriver->chipEnable();
+	softDriver->transmite(0x80);
+	uint8_t dummy = softDriver->receive();
+	softDriver->transmite(0x00);
+	dummy = softDriver->receive();
+	softDriver->transmite(0x00);
+	dummy = softDriver->receive();
+	cs.set();
+}
+
 Xpt2046::Xpt2046 (Flexio &d, Gpio::Port cs_, uint16_t csp, Gpio::Port irq_, uint16_t irqp)
 :cs(cs_, csp), irq (irq_, irqp, Intrpt::mode::fallingEdge),
- x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300), ptrF(1)
+ x(0), y(0), Xmin(300), Ymin(300), dX (3300), dY(3300), ptrF(2)
 {
 	fDriver = &d;
 }
 
 void Xpt2046::getData ()
+{
+	(this->*(Xpt2046::func[ptrF]))();
+}
+void Xpt2046::getDataSpi ()
 {
 	uint16_t tempX, tempY;
 	cs.clear();
@@ -69,6 +89,32 @@ void Xpt2046::getData ()
 	tempY |= spiDriver->getDataDl();
 	tempY >>=3;
 	cs.set();
+	y = tempX-Xmin;
+	x = 4096 - tempY-Ymin;
+}
+
+void Xpt2046::getDataSoft ()
+{
+	uint16_t tempX, tempY;
+	softDriver->chipEnable();
+	softDriver->transmite (channelX);
+	uint8_t dummy = softDriver->receive();
+	softDriver->transmite (0);
+	tempX = softDriver->receive();
+	tempX <<= 8;
+	softDriver->transmite (0);
+	tempX |= softDriver->receive();
+	tempX >>=3;
+	delay_us(100);
+	softDriver->transmite (channelY);
+	dummy = softDriver->receive();
+	softDriver->transmite (0);
+	tempY = softDriver->receive();
+	tempY <<= 8;
+	softDriver->transmite (0);
+	tempY |= softDriver->receive();
+	tempY >>=3;
+	softDriver->chipDisable();
 	y = tempX-Xmin;
 	x = 4096 - tempY-Ymin;
 }
