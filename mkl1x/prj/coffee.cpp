@@ -22,6 +22,7 @@
 #include "tgrid.h"
 #include "adc.h"
 #include "ds3231.h"
+#include "spisoft.h"
 
 enum class butAddress {cup=0x0025, light=0x0036, tools=0x0048, clock=0x0074, switchOn=0x0123, switchOff=0x0423,setboil=0x5463, steam=0x6325};
 
@@ -129,10 +130,17 @@ List steamScreen (&tSteamScreen);
 Data i
 Data d*/
 
+/*
 Pin csFxIo (Gpio::Port::E, 16, Gpio::mux::Alt6);
 Pin sckFxIo (Gpio::Port::E, 17, Gpio::mux::Alt6);
 Pin mosiFxIo (Gpio::Port::E, 18, Gpio::mux::Alt6);
-Pin misoFxIo (Gpio::Port::E, 19, Gpio::mux::Alt6);
+Pin misoFxIo (Gpio::Port::E, 19, Gpio::mux::Alt6);*/
+
+Pin csFxIo (Gpio::Port::E, 16);
+Pin sckFxIo (Gpio::Port::E, 17);
+Pin mosiFxIo (Gpio::Port::E, 18);
+Pin misoFxIo (Gpio::Port::E, 19);
+
 
 Pid regulator (2, 3, 4, 95);
 
@@ -148,9 +156,25 @@ void setClock (Ds3231 &);
 
 int main ()
 {
+	Spis spiSoft (csFxIo, sckFxIo, mosiFxIo, misoFxIo);
+	spiSoft.transmite(0xFE);
 	//setClock (clock);
-	Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
-	touchSpi.transmite(0xfe);
+	/*Flexio touchSpi (Flexio::interface::spi, Flexio::nBuffer::buffer0);
+	touchSpi.transmite(0xfe);*/
+	/*SIM->SOPT2 |= SIM_SOPT2_FLEXIOSRC(0x01);
+	SIM->SCGC5 |= SIM_SCGC5_FLEXIO_MASK;
+	FLEXIO->SHIFTCFG[0] = 0;
+	FLEXIO->SHIFTCTL[0] = 0x00830202;
+	FLEXIO->SHIFTCFG[1] = 0;
+	FLEXIO->SHIFTCTL[1] = 0x00000301;
+	FLEXIO->TIMCMP[0] = 0x00003F01;
+	FLEXIO->TIMCFG[0] = 0x01002222;
+	FLEXIO->TIMCTL[0] = 0x01C30101;
+	FLEXIO->TIMCMP[1] = 0x0000FFFF;
+	FLEXIO->TIMCFG[1] = 0x00001100;
+	FLEXIO->TIMCTL[1] = 0x00030083;
+	FLEXIO->SHIFTBUF[0] = 0xFE;*/
+
 	light.set();
 	display.setDma(dma0);
 	memory.setDma( dma2, dma1);

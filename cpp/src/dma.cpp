@@ -30,12 +30,12 @@ void Dma::setChannel (dmaChannel ch_)
 
 void Dma::setSource (uint32_t ptr)
 {
-	DMA_SAR(ch) = ptr;
+	DMA0->DMA[ch].SAR = ptr;
 }
 
 void Dma::setDestination (uint32_t  ptr)
 {
-	DMA_DAR(ch) = ptr;
+	DMA0->DMA[ch].DAR = ptr;
 }
 
 void Dma::setLength (uint32_t length)

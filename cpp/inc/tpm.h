@@ -20,7 +20,7 @@ public:
 private:
 	using setF = void (Tpm::*) (togPulseMode);
 	uint8_t nCh;
-	static TPM_MemMapPtr tpmPtr[2];
+	static TPM_Type * tpmPtr[2];
 	uint8_t numTpm;
 	static setF fMode [6];
 public:
@@ -31,6 +31,7 @@ public:
 	void setMode (mode, togPulseMode);
 	void setModulo (uint16_t val);
 	void setCnt (uint16_t val);
+	TPM_Type * getPtrTimer();
 private:
 	void initOutputTogle(togPulseMode);
 	void initOutputPulse(togPulseMode);

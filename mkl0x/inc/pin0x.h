@@ -1,5 +1,5 @@
 #include "device.h"                  // Device header
-#include "gpio.h"
+#include "gpio0x.h"
 
 
 #ifndef PIN_H
@@ -29,7 +29,6 @@ public:
 	void togle ();
 	bool state ();
 	PORT_Type * getPort ();
-
 	uint8_t & getPin ();
 };
 

@@ -1,19 +1,28 @@
 #include "device.h" // Device header
 #include "mcg0x.h"
-#include "adc0x.h"
 #include "segled.h"
-#include "tpm0x.h"
-#include "pwm.h"
-#include "pid.h"
-#include "buffer.h"
 #include "systimer0x.h"
-#include "senc.h"
-#include "lptmr.h"
-#include "button.h"
 
-Tact frq (Tact::mode::fei);
-//pid value
+//	Tact frq (Tact::mode::fei);
+	Segled indicator (4);
 /*
+extern "C"
+{
+	void SysTick_Handler(void);
+}*/
+
+void SysTick_Handler()
+{
+	static uint16_t i=0;
+	indicator.clearDigits();
+	indicator.setDigit(i);
+	++i;
+	if (i>=4)i=0;
+}
+
+
+/*//pid value
+
 const double p  = 2.0;
 const double i  = 0.3;
 const double d  = 0.5;
@@ -40,7 +49,7 @@ struct
 	unsigned setBeeper  : 1;
 	unsigned startBeeper  : 1;
 }flag{0};
-Segled indicator (4);
+
 Pid regulator (p, i, d, setTemp.value);
 Buffer buffer (3);
 Systimer mainloop (Systimer::mode::ms, 1);
@@ -152,7 +161,15 @@ void initData ();
 */
 int main()
 {
-/*	initData();
+	//SysTick_Config(1000);
+	Systimer mainloop (Systimer::mode::ms, 100);
+	//NVIC_EnableIRQ(SysTick_IRQn);
+	char j = 0xFF;
+
+	indicator.setSegments(&j);
+
+
+	/*	initData();
 	thermocouple.calibrate();
 
 
@@ -179,11 +196,10 @@ int main()
 	button.setLongLimit(1000);
 	buttonEnc.setLongLimit(1000);
 */
-	uint16_t i;
+
 
 	while (1)
 	{
-		++i;
 	}
 }
 /*
