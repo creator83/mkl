@@ -1,10 +1,10 @@
 #include "mcg0x.h"
 
-uint16_t Tact::cpuClock;
-uint16_t Tact::busClock;
-uint16_t Tact::mcgirClock;
-uint16_t Tact::mcgpllClock;
-uint16_t Tact::mcgfllClock;
+uint32_t Tact::cpuClock;
+uint32_t Tact::busClock;
+uint32_t Tact::mcgirClock;
+uint32_t Tact::mcgpllClock;
+uint32_t Tact::mcgfllClock;
 
 Tact::setF Tact::setMode [3] = {&Tact::initFei, &Tact::initFee};
 

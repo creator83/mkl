@@ -12,14 +12,20 @@
 #include "button.h"
 
 Tact frq (Tact::mode::fei);
+
+char heatState [3] = {0, 0x06, 0x36};
+char buf [4] = {0};
+Buffer buffer (buf, 3);
+
 //pid value
 /*
 const double p  = 2.0;
 const double i  = 0.3;
-const double d  = 0.5;
+const double d  = 0.5;*/
 uint16_t currTemp;
 uint16_t pidVal;
-
+Segled indicator (4);
+/*
 struct data
 {
   uint16_t value;
@@ -39,17 +45,15 @@ struct
 	unsigned setTemp  : 1;
 	unsigned setBeeper  : 1;
 	unsigned startBeeper  : 1;
-}flag{0};
-Segled indicator (4);
-Pid regulator (p, i, d, setTemp.value);
-Buffer buffer (3);
-Systimer mainloop (Systimer::mode::ms, 1);
+}flag{0};*/
+
+//Pid regulator (p, i, d, 260);
 
 
-Pin adcPin (Gpio::Port::A, 2, Gpio::mux::Analog);
-Adc thermocouple (Adc::mode::hardwareTrg, Adc::channel::SE1, Adc::resolution::bit12, adcPin);
-Lptmr adcTrigger (Lptmr::division::div8);
 
+
+
+/*
 //Pwm channels
 Pin triac1Pin (Gpio::Port::B, 6, Gpio::mux::Alt2);
 Pin triac2Pin (Gpio::Port::B, 7, Gpio::mux::Alt2);
@@ -70,29 +74,40 @@ Button buttonEnc (Gpio::Port::A, 5);
 Button button (Gpio::Port::A, 6);
 
 
-
+*/
 
 extern "C"
 {
 	void SysTick_Handler ();
 	void ADC0_IRQHandler ();
+	void LPTimer_IRQHandler ();
+
 }
+
+void LPTimer_IRQHandler ()
+{
+	LPTMR0->CSR |= LPTMR_CSR_TCF_MASK;
+
+}
+
+
 
 void ADC0_IRQHandler ()
 {
-	uint16_t result = thermocouple.getResult();
-
+	//uint16_t result = thermocouple.getResult();
+	
+	uint16_t result = ADC0->R[1];
 	currTemp = result/200;
-	uint16_t pidResult = regulator.compute(currTemp);
+	/*uint16_t pidResult = regulator.compute(currTemp);
 	for (uint8_t i=0;i<2;++i)
 	{
 		if (flag.triacs&(1 << i))
 		{
 			triacs[i]->setValue(pidResult);
 		}
-	}
+	}*/
 }
-
+/*
 void SysTick_Handler ()
 {
 	static struct
@@ -104,7 +119,7 @@ void SysTick_Handler ()
 	{
 		encoder.scan();
 		setTemp.value = encoder.getValue();
-		buffer.parsDec16(setTemp.value);
+		buffer.parsDec16(setTemp.value, 3);
 		indicator.blink(buffer.getContent(), buffer.getCount(), interval.blink);
 		buttonEnc.scanButton();
 		buttonEnc.scanAction();
@@ -140,7 +155,7 @@ void SysTick_Handler ()
 	buttonEnc.scanButton();
 	buttonEnc.scanAction();
 	}
-}
+}*/
 
 void buttonEncShort ();
 void buttonEncLong ();
@@ -149,10 +164,13 @@ void buttonShort ();
 void buttonLong ();
 
 void initData ();
-*/
+
 int main()
 {
-/*	initData();
+//initData();
+Pin adcPin (Gpio::Port::B, 13, Gpio::mux::Analog);
+Adc thermocouple (Adc::mode::hardwareTrg, Adc::channel::SE1, Adc::resolution::bit12, adcPin);
+Lptmr adcTrigger ;
 	thermocouple.calibrate();
 
 
@@ -165,9 +183,10 @@ int main()
 
 
 	//10ms
-	adcTrigger.setComp(30000);
+	adcTrigger.setComp(30);
+	NVIC_EnableIRQ (LPTimer_IRQn);
 	adcTrigger.start();
-
+/*
 	//settings buttons
 	button.setShortLimit(10);
 	buttonEnc.setShortLimit(10);
@@ -178,12 +197,10 @@ int main()
 
 	button.setLongLimit(1000);
 	buttonEnc.setLongLimit(1000);
+	SysTick_Config (0xbb80);
 */
-	uint16_t i;
-
 	while (1)
 	{
-		++i;
 	}
 }
 /*
@@ -237,4 +254,5 @@ void buttonLong ()
 		flag.setBeeper ^= 1;
 	}
 }
+
 */

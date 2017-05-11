@@ -1,11 +1,20 @@
 #include "lptmr.h"
 
-Lptmr::Lptmr(division d)
+Lptmr::Lptmr(division d, source s_)
 {
+	s = static_cast<uint8_t>(s_);
 	SIM->SCGC5 |= SIM_SCGC5_LPTMR_MASK;
-	LPTMR0->CSR =  LPTMR_PSR_PRESCALE(static_cast<uint8_t>(d));
+	LPTMR0->CSR = 0;
+	LPTMR0->PSR =  (LPTMR_PSR_PRESCALE(static_cast<uint8_t>(d))|s << LPTMR_PSR_PCS_SHIFT);
 }
 
+Lptmr::Lptmr(source s_)
+{
+	s = static_cast<uint8_t>(s_);
+	SIM->SCGC5 |= SIM_SCGC5_LPTMR_MASK;
+	LPTMR0->CSR = 0;
+	LPTMR0->PSR =  (LPTMR_PSR_PBYP_MASK|s << LPTMR_PSR_PCS_SHIFT);
+}
 void Lptmr::start ()
 {
 	LPTMR0->CSR |= LPTMR_CSR_TEN_MASK;

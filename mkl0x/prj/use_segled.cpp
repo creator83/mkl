@@ -1,23 +1,67 @@
 #include "device.h" // Device header
+#include "buffer.h"
 #include "mcg0x.h"
 #include "segled.h"
-#include "systimer0x.h"
+#include "adc0x.h"
+#include "lptmr.h"
 
-//	Tact frq (Tact::mode::fei);
+	Tact frq (Tact::mode::fei);
 	Segled indicator (4);
-/*
+	
+	uint16_t num = 0;
+	char heatState [3] = {0, 0x06, 0x36};
+	char buf[4]= {0, 0, 0, heatState[2]};
+	Buffer buffer (buf, 3);
+	
+Pin adcPin (Gpio::Port::B, 11, Gpio::mux::Analog);
+	Adc thermocouple (Adc::channel::SE8, Adc::resolution::bit12, adcPin);
+Lptmr adcTrigger (Lptmr::source::mcgirclk);
+
 extern "C"
 {
 	void SysTick_Handler(void);
+	void ADC0_IRQHandler (void);
+	void LPTimer_IRQHandler (void);
+}
+/*
+void HardFault_Handler ()
+{
+	
+}
+
+void LPTimer_IRQHandler (void)
+{
+	LPTMR0->CSR |= LPTMR_CSR_TCF_MASK;
 }*/
+
+void ADC0_IRQHandler ()
+{
+	num = thermocouple.getResult();
+	
+}
 
 void SysTick_Handler()
 {
-	static uint16_t i=0;
-	indicator.clearDigits();
-	indicator.setDigit(i);
-	++i;
-	if (i>=4)i=0;
+	static struct
+	{
+		uint16_t adc;
+		uint16_t lcd;
+	}counter{0};
+	++counter.adc;
+	++counter.lcd;
+	if (counter.adc>100)
+	{
+		counter.adc = 0;
+		thermocouple.setADC();
+	}	
+	if (counter.lcd>500)
+	{
+		counter.lcd = 0;
+		buffer.parsDec16(num, 3);
+	}	
+	
+	indicator.value(buf, 4);
+
 }
 
 
@@ -161,29 +205,30 @@ void initData ();
 */
 int main()
 {
-	//SysTick_Config(1000);
-	Systimer mainloop (Systimer::mode::ms, 100);
-	//NVIC_EnableIRQ(SysTick_IRQn);
-	char j = 0xFF;
+	
+	
+	buffer.setFont(ArraySegChar);
 
-	indicator.setSegments(&j);
-
-
-	/*	initData();
-	thermocouple.calibrate();
-
-
-	buffer.parsDec16 (1284);
-
-	thermocouple.setHwTrg(Adc::hwTriger::lptmr0);
-	thermocouple.setHwAVG(Adc::samples::smpls32);
+	//thermocouple.setHwTrg(Adc::hwTriger::lptmr0);
 	thermocouple.interruptEnable();
-	thermocouple.setADC();
+	SysTick_Config(0xbb80);
+	/*thermocouple.setHwAVG(Adc::samples::smpls8);
+	while (!(LPTMR0->CSR & LPTMR_CSR_TCF_MASK));
+	LPTMR0->CSR &= ~LPTMR_CSR_TEN_MASK;
 
+  Set up LPTMR to use 1kHz LPO with no prescaler as its clock source */
+  //LPTMR0->PSR = LPTMR_PSR_PCS(1)|LPTMR_PSR_PBYP_MASK;
 
-	//10ms
-	adcTrigger.setComp(30000);
-	adcTrigger.start();
+  /* Wait for counter to reach compare value */
+  //;
+
+  /* Disable counter and Clear Timer Compare Flag */
+  
+		/*	
+initData();
+	
+
+	
 
 	//settings buttons
 	button.setShortLimit(10);
@@ -197,9 +242,10 @@ int main()
 	buttonEnc.setLongLimit(1000);
 */
 
-
+	uint16_t j=0;
 	while (1)
 	{
+		++j;
 	}
 }
 /*

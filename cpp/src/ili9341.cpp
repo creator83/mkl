@@ -234,7 +234,7 @@ void Ili9341::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 	uint16_t colors [2] = {fon, color};
 	uint8_t byte = s.getWidth()>>3;
 	uint8_t pix = s.getWidth()%8;
-	uint16_t num, lArea;
+	uint16_t num;
 
 	if (pix){
 		num = (ch-s.getShift())*(byte+1)*s.getHeight();
@@ -243,7 +243,7 @@ void Ili9341::symbol (uint16_t x, uint16_t y, const uint16_t color, const uint16
 
 	const uint8_t * ptrFont = s.getFont(num);
 
-	lArea = s.getWidth()*s.getHeight();
+	uint16_t lArea = s.getWidth()*s.getHeight();
 
 	uint16_t arrSymbol [lArea];
 	uint16_t * arr=arrSymbol;

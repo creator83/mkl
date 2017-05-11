@@ -1,6 +1,6 @@
 #include "tpm0x.h"
 
-TPM_MemMapPtr Tpm::tpmPtr[2]={TPM0_BASE_PTR, TPM1_BASE_PTR};
+TPM_Type * Tpm::tpmPtr[2]={TPM0, TPM1};
 
 Tpm::setF Tpm::fMode [6] = {};
 
@@ -12,8 +12,8 @@ Tpm::Tpm (nTpm n_, channel ch, division d)
 
 	SIM->SCGC6 |= (SIM_SCGC6_TPM0_MASK << numTpm);
 	SIM->SOPT2 |= SIM_SOPT2_TPMSRC(3);
-	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_PS_MASK;
-	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_PS(d);
+	tpmPtr[numTpm]->SC &= ~TPM_SC_PS_MASK;
+	tpmPtr[numTpm]->SC |= TPM_SC_PS(d);
 
 }
 
@@ -23,33 +23,33 @@ Tpm::Tpm(nTpm n_, division d)
 
 	SIM->SCGC6 |= (SIM_SCGC6_TPM0_MASK << numTpm);
 	SIM->SOPT2 |= SIM_SOPT2_TPMSRC(3);
-	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_PS_MASK;
-	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_PS(d);
+	tpmPtr[numTpm]->SC &= ~TPM_SC_PS_MASK;
+	tpmPtr[numTpm]->SC |= TPM_SC_PS(d);
 }
 
 void Tpm::setModulo (uint16_t val)
 {
-	TPM_MOD_REG(tpmPtr [numTpm]) = val;
+	tpmPtr[numTpm]->MOD = val;
 }
 
 void Tpm::setCnt (uint16_t val)
 {
-	TPM_CnV_REG(tpmPtr [numTpm],nCh) = val;
+	tpmPtr[numTpm]->CONTROLS[nCh].CnV = val;
 }
 
 void Tpm::start ()
 {
-	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_CMOD(1);
+	tpmPtr[numTpm]->SC |= TPM_SC_CMOD(1);
 }
 
 void Tpm::stop ()
 {
-	TPM_SC_REG(tpmPtr [numTpm]) &= ~TPM_SC_CMOD_MASK;
+	tpmPtr[numTpm]->SC &= ~TPM_SC_CMOD_MASK;
 }
 
 void Tpm::clearFlag ()
 {
-	TPM_SC_REG(tpmPtr [numTpm]) |= TPM_SC_TOF_MASK;
+	tpmPtr[numTpm]->SC |= TPM_SC_TOF_MASK;
 }
 /*
 void Tpm::setMode (mode m, togPulseMode n)

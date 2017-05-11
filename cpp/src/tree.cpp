@@ -9,11 +9,11 @@ Tree::Item::Item(List *o, Item * p , Item * b , Item * s)
 
 
 Tree::Tree(List *o)
-//:count (0)
 {
-	Item * newItem = new Item (o);
+Item * newItem = new Item (o);
 	root = newItem;
 	currentItem = newItem;
+
 }
 
 Tree::~Tree()
@@ -49,6 +49,7 @@ void Tree::addSon (List *o)
 	currentItem->son = newItem;
 	newItem->parent = currentItem;
 	currentItem = newItem;
+
 	//++count;
 }
 

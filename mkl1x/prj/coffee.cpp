@@ -181,9 +181,7 @@ int main ()
 	memory.setDma( dma2, dma1);
 	initScreens ();
 	makeTree ();
-	/*memory.writeEnable ();
-	memory.readStatus ();*/
-	//memory.read (dest, 0, 10);
+	/*
 	//memory.eraseChip ();
 	/*uint32_t add=0;
 		for (uint16_t i=0;i<600;++i, add+=128)

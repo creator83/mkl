@@ -1,6 +1,6 @@
 #include "device.h"
 #include "pin.h"
-#include "tpm.h"
+#include "tpm0x.h"
 
 #ifndef PWM_H
 #define PWM_H

@@ -1,9 +1,15 @@
 #include "device.h"                 // Device header
-#include "pin.h"
+#include "pin0x.h"
 
 
-#ifndef ADC0X_H
-#define ADC0X_H
+#ifndef ADC_H
+#define ADC_H
+
+const uint32_t resDef1 = 0x4003B010;
+const uint32_t resDef2 = 0x4003B014;
+
+const uint32_t setDef1 = 0x4003B000;
+const uint32_t setDef2 = 0x4003B004;
 
 class Adc
 {
@@ -19,8 +25,8 @@ private:
 	uint8_t n_channel, nMode;
 	uint8_t res;
 	bool intrpt;
-	static uint32_t resReg [2];
-	static uint32_t setReg [2];
+	static uint32_t * resReg [2];
+	static uint32_t * setReg [2];
 public:
 	//constructor software
 	Adc(channel ch_, resolution r_, Pin &);

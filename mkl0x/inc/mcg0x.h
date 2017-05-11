@@ -12,11 +12,11 @@ public:
   enum class mode {fei, fee};
  private:
   using setF = void (Tact::*) ();
-  static uint16_t cpuClock;
-  static uint16_t busClock;
-  static uint16_t mcgirClock;
-  static uint16_t mcgpllClock;
-  static uint16_t mcgfllClock;
+  static uint32_t cpuClock;
+  static uint32_t busClock;
+  static uint32_t mcgirClock;
+  static uint32_t mcgpllClock;
+  static uint32_t mcgfllClock;
   uint8_t src;
   static setF setMode [3];
   //functions
@@ -24,11 +24,11 @@ public:
   Tact ();
   Tact (mode m);
 
-  static uint16_t & getFrqCpu (){return cpuClock;};
-  static uint16_t & getFrqBus (){return busClock;};
-  static uint16_t & getFrqMcgir (){return mcgirClock;};
-  static uint16_t & getFrqMcgpll (){return mcgirClock;};
-  static uint16_t & getFrqMcgfll (){return mcgirClock;};
+  static uint32_t & getFrqCpu (){return cpuClock;};
+  static uint32_t & getFrqBus (){return busClock;};
+  static uint32_t & getFrqMcgir (){return mcgirClock;};
+  static uint32_t & getFrqMcgpll (){return mcgirClock;};
+  static uint32_t & getFrqMcgfll (){return mcgirClock;};
 
 private:
 
