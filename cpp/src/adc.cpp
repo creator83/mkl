@@ -113,13 +113,13 @@ bool Adc::calibrate ()
 	  ADC0->PG = ADC_PG_PG(cal_var);
 
 	  // Calculate minus-side calibration
-    cal_var = 0x00;
+  cal_var = 0x00;
     cal_var =  ADC0->CLM0;
-	cal_var += ADC0->CLM1;
-	cal_var += ADC0->CLM2;
-	cal_var += ADC0->CLM3;
-	cal_var += ADC0->CLM4;
-	cal_var += ADC0->CLMS;
+  cal_var += ADC0->CLM1;
+  cal_var += ADC0->CLM2;
+  cal_var += ADC0->CLM3;
+  cal_var += ADC0->CLM4;
+  cal_var += ADC0->CLMS;
 
     cal_var = cal_var/2;
 
