@@ -2,8 +2,6 @@
 
 TPM_Type * Tpm::tpmPtr[2]={TPM0, TPM1};
 
-Tpm::setF Tpm::fMode [6] = {};
-
 
 Tpm::Tpm (nTpm n_, channel ch, division d)
 {
@@ -45,39 +43,25 @@ void Tpm::clearFlag ()
 	tpmPtr[numTpm]->SC |= TPM_SC_TOF_MASK;
 }
 
-void Tpm::setMode (mode m, togPulseMode n)
+
+void Tpm::setModulo (uint16_t val)
 {
-	(this->*(Tpm::fMode[static_cast <uint8_t>(m)]))(n);
+	tpmPtr[numTpm]->MOD = val;
 }
 
-void Tpm::initOutputTogle(togPulseMode t_mode)
+void Tpm::setCnt (uint16_t val)
 {
-	tpmPtr[numTpm]->SC &= ~TPM_SC_CPWMS_MASK;
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC |= TPM_CnSC_MSA_MASK|(static_cast <uint8_t>(t_mode) << TPM_CnSC_ELSA_SHIFT);
+	tpmPtr[numTpm]->CNT = val;
 }
 
-void Tpm::initOutputPulse(togPulseMode p_mode)
+void Tpm::interruptEnable ()
 {
-	tpmPtr[numTpm]->SC &= ~TPM_SC_CPWMS_MASK;
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC |= TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK|(static_cast <uint8_t>(p_mode) << TPM_CnSC_ELSA_SHIFT );
+	tpmPtr[numTpm]->SC |= TPM_SC_TOIE_MASK ;
 }
 
-void Tpm::initEdgePwm(togPulseMode e_mode)
+void Tpm::interruptDisable ()
 {
-	tpmPtr[numTpm]->SC &= ~TPM_SC_CPWMS_MASK;
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC |= TPM_CnSC_MSB_MASK|(static_cast <uint8_t>(e_mode) << TPM_CnSC_ELSA_SHIFT) ;
-
-}
-
-void Tpm::initCenterPwm(togPulseMode e_mode)
-{
-	tpmPtr[numTpm]->SC |= TPM_SC_CPWMS_MASK;
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC &= ~(TPM_CnSC_ELSA_MASK|TPM_CnSC_ELSB_MASK|TPM_CnSC_MSA_MASK|TPM_CnSC_MSB_MASK);
-	tpmPtr[numTpm]->CONTROLS[nCh].CnSC |= TPM_CnSC_MSB_MASK|(static_cast <uint8_t>(e_mode) << TPM_CnSC_ELSA_SHIFT) ;
-
+	tpmPtr[numTpm]->SC &= ~ TPM_SC_TOIE_MASK ;
 }
 
 void Tpm::setKhz (uint16_t val)
