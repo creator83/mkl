@@ -19,7 +19,9 @@ int main ()
 	turn.addTask (f4, 25);
 	while (1)
 	{
-		
+		turn.tickTask();
+		turn.checkTasks();
+		turn.checkQueue();
 	}
 }
 
