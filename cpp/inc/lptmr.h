@@ -27,4 +27,4 @@ private:
 
 };
 
-#endif /* PIT_H */
+#endif

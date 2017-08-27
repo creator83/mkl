@@ -30,12 +30,12 @@ void SysTick_Handler()
 
 int main()
 {
-	MCG->C1 |=MCG_C1_IRCLKEN_MASK ;
-	timer.setComp (10);
+	timer.setComp (20);
 	timer.interruptEnable ();
 	timer.start ();
+	uint16_t i;
 	while (1)
 	{
-
+		++i;
 	}
 }
