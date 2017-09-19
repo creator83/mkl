@@ -1,10 +1,11 @@
 #include "device.h"                    // Device header
-#include "mcglight.h" 
+//#include "mcglight.h" 
+#include "mcg0x.h" 
 #include "dispatcher.h"
 
 
 Tact frq;
-Dispatcher turn;
+
 
 void f1 ();
 void f2 ();
@@ -13,6 +14,7 @@ void f4 ();
 
 int main ()
 {
+	Dispatcher turn;
 	turn.addTask (f1, 10);
 	turn.addTask (f2, 15);
 	turn.addTask (f3, 20);

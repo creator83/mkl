@@ -78,7 +78,7 @@ void Tact::initFei ()
 							|MCG_C4_DRST_DRS(0x02)))
 							| (uint8_t)(MCG_C4_DRST_DRS(0x01)))
 							;
-		OSC0->CR = 0; //External reference clock is inactive
+	  OSC0->CR = 0; //External reference clock is inactive
 	  while((MCG->S & MCG_S_IREFST_MASK) == 0x00U) { /* Check that the source of the FLL reference clock is the internal reference clock. */
 	  }
 	  while((MCG->S & MCG_S_CLKST_MASK) != 0x00U) {    /* Wait until output of the FLL is selected */
