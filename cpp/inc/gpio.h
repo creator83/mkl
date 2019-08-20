@@ -8,24 +8,23 @@ class Gpio
 {
 //variables
 public:
-  enum class Port {A , B , C , D , E};
   enum class mux {Analog, GPIO , Alt2 , Alt3 , Alt4 , Alt5 , Alt6 , Alt7};
   enum class mode {Input, Output};
   enum class PP {PullDown, PullUp};
   enum class state {Off, On};
 
 protected:
-  static PORT_Type * PortBase [5];
-  static GPIO_Type * GpioBase [5];
-  uint8_t prt;
+	PORT_Type * portPtr;
+	GPIO_Type * gpioPtr;
+	uint32_t * clockPortRegister;
 private:
 
 //functions
 public:
   Gpio ();
-  Gpio(Port p );
+Gpio(Device::port p );
   Gpio(uint8_t p );
-  void setPort (Port p);
+  void setPort (Device::port p);
 
   //function for port
   void settingPort (uint32_t val, mux mx = mux::GPIO, mode m = mode::Output);

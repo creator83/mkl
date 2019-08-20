@@ -1,25 +1,23 @@
-#include "MKL17Z4.h"                 // Device header
-#include "gpio.h"
+#include "device.h"                 // Device header
+#include "pin.h"
 #include "tact.h"
 
 
 #ifndef UART_H
 #define UART_H
 
-typedef unsigned int* reg;
-
-
-class uart
+class Uart
 {
 //variables
 public:
   enum baud {baud9600 = 9600 , baud57600 = 57600 , baud115200 = 115200};
 private:
-  gpio pin;
-  enum pin_def {TX = 16 , RX};
+	Pin & rx_;
+	Pin & tx_; 
+	UART_Type * uartPtr;
 //functions
 public:
-  uart (baud b);
+	Uart (Device::uart, baud b, Pin & tx, Pin & rx);
   void transmit (uint8_t data);
   void transmit (char * str);  
   uint8_t receive ();
