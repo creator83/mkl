@@ -3,7 +3,7 @@
 
 uint32_t Adc::resReg [2] = {ADC0->R[0], ADC0->R[1]};
 uint32_t Adc::setReg [2] = {ADC0->SC1[0], ADC0->SC1[1]};
-
+/*test*/
 Adc::Adc(channel ch_, resolution r_, Pin &d)
 :nMode(0)
 {
